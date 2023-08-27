@@ -43,3 +43,6 @@ This is a [.NET Core](https://learn.microsoft.com/en-us/dotnet/core/introduction
     -   `docker compose stop`
 #### Stops and removes all the containers
     -   `docker compose down`
+
+### Linting and Formatting the Codebase
+    - `dotnet format`
