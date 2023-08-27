@@ -28,6 +28,10 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
+        
+    #set the working directory
+    run:
+      working-directory: ./Dissertation_Interface
 
     # Each job run contains these five steps
     steps:
