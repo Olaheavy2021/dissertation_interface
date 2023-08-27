@@ -10,7 +10,7 @@ services:
           - "7000:1433"
       env_file:
           - sqlserver.env
-          - .env
+          - .env.database
       volumes: 
           - sqlsystem:/var/opt/mssql/
           - sqldata:/var/opt/sqlserver/data
@@ -22,26 +22,36 @@ services:
     dissertation_api: 
       build:
         context: .
-        dockerfile: DissertationInterface/DissertationInterface.Services.DissertationAPI/Dockerfile 
+        dockerfile: Dissertation_API/Dockerfile
       restart: on-failure
       ports: 
-        - 8000:8000
+        - "8000:8000"
+        - "8001:8001"
       depends_on:
         - dissertation_db
       networks:
         - dissertation_app_network
+      env_file:
+        - .env.dissertation
+      volumes:
+        - ~/.aspnet/https:/https
 
     notification_api: 
       build:
         context: .
-        dockerfile: DissertationInterface/DissertationInterface.Services.NotificationAPI/Dockerfile 
+        dockerfile: Notification_API/Dockerfile
       restart: on-failure
       ports: 
-        - 9000:9000
+        - "9000:9000"
+        - "9001:9001"
       depends_on:
         - dissertation_db
       networks:
         - dissertation_app_network
+      env_file:
+        - .env.notification
+      volumes:
+        - ~/.aspnet/https:/https
 
 volumes:
   sqlsystem:
