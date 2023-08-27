@@ -364,6 +364,6 @@ FodyWeavers.xsd
 
 #Environment Variables
 .env
-.env.notification
+.env.database
 .env.dissertation
-.env.sql
+.env.notification
