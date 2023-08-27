@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+    dissertation_db:
+      build: 
+          context: .
+          dockerfile: DockerfileSql
+      restart: always
+      ports:  
+          - "7000:1433"
+      env_file:
+          - sqlserver.env
+          - .env
+      volumes: 
+          - sqlsystem:/var/opt/mssql/
+          - sqldata:/var/opt/sqlserver/data
+          - sqllog:/var/opt/sqlserver/log
+          - sqlbackup:/var/opt/sqlserver/backup
+      networks:
+        - dissertation_app_network
+
+    dissertation_api: 
+      build:
+        context: .
+        dockerfile: DissertationInterface/DissertationInterface.Services.DissertationAPI/Dockerfile 
+      restart: on-failure
+      ports: 
+        - 8000:8000
+      depends_on:
+        - dissertation_db
+      networks:
+        - dissertation_app_network
+
+    notification_api: 
+      build:
+        context: .
+        dockerfile: DissertationInterface/DissertationInterface.Services.NotificationAPI/Dockerfile 
+      restart: on-failure
+      ports: 
+        - 9000:9000
+      depends_on:
+        - dissertation_db
+      networks:
+        - dissertation_app_network
+
+volumes:
+  sqlsystem:
+  sqldata:
+  sqllog:
+  sqlbackup:
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  dissertation_app_network:
+    external: true
+
