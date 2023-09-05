@@ -1,5 +1,5 @@
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
+var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER");
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -16,7 +16,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (string.IsNullOrEmpty(isRunningInDocker) || !isRunningInDocker.ToLower().Equals("true"))
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 

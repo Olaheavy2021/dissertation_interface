@@ -367,3 +367,4 @@ FodyWeavers.xsd
 .env.database
 .env.dissertation
 .env.notification
+.env.gateway

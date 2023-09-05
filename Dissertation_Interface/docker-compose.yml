@@ -19,6 +19,23 @@ services:
       networks:
         - dissertation_app_network
 
+    api_gateway: 
+      build:
+        context: .
+        dockerfile: Gateway_Solution/Dockerfile
+      restart: on-failure
+      ports: 
+        - "5000:5000"
+        - "5001:5001"
+      depends_on:
+        - dissertation_db
+      networks:
+        - dissertation_app_network
+      env_file:
+        - Gateway_Solution/.env.gateway
+      volumes:
+        - ~/.aspnet/https:/https
+
     dissertation_api: 
       build:
         context: .
@@ -29,10 +46,11 @@ services:
         - "8001:8001"
       depends_on:
         - dissertation_db
+        - api_gateway
       networks:
         - dissertation_app_network
       env_file:
-        - .env.dissertation
+        - Dissertation_API/.env.dissertation
       volumes:
         - ~/.aspnet/https:/https
 
@@ -46,10 +64,11 @@ services:
         - "9001:9001"
       depends_on:
         - dissertation_db
+        - api_gateway
       networks:
         - dissertation_app_network
       env_file:
-        - .env.notification
+        - Notification_API/.env.notification
       volumes:
         - ~/.aspnet/https:/https
 

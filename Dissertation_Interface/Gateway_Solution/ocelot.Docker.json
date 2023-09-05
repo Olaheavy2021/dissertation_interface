@@ -1,0 +1,33 @@
+{
+  "Routes": [
+    //"DissertationAPI": "https://localhost:8000",
+    {
+      "DownstreamPathTemplate": "/WeatherForecast",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/dissertation/WeatherForecast",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    //"NotificationAPI": "https://localhost:9000",
+    {
+      "DownstreamPathTemplate": "/WeatherForecast",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-notification_api-1",
+          "Port": 9001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/notification/WeatherForecast",
+      "UpstreamHttpMethod": [ "Get" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://dissertation_interface-api_gateway-1:5001"
+  }
+}
