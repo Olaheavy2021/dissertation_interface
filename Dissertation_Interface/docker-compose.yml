@@ -7,7 +7,7 @@ services:
           dockerfile: DockerfileSql
       restart: always
       ports:  
-          - "7000:1433"
+          - "1433:1433"
       env_file:
           - sqlserver.env
           - .env.database
@@ -33,6 +33,24 @@ services:
         - dissertation_app_network
       env_file:
         - Gateway_Solution/.env.gateway
+      volumes:
+        - ~/.aspnet/https:/https
+          
+    user_management_api:
+      build:
+        context: .
+        dockerfile: UserManagement_API/Dockerfile
+      restart: on-failure
+      ports:
+        - "7000:7000"
+        - "7001:7001"
+      depends_on:
+        - dissertation_db
+        - api_gateway
+      networks:
+        - dissertation_app_network
+      env_file:
+        - UserManagement_API/.env.user
       volumes:
         - ~/.aspnet/https:/https
 
