@@ -1,5 +1,18 @@
 ﻿{
   "Routes": [
+    //"UserManagementAPI": "https://localhost:7000",
+    {
+      "DownstreamPathTemplate": "/WeatherForecast",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7000
+        }
+      ],
+      "UpstreamPathTemplate": "/api/user/WeatherForecast",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
     //"DissertationAPI": "https://localhost:8000",
     {
       "DownstreamPathTemplate": "/WeatherForecast",
