@@ -29,6 +29,9 @@ services:
         - "5001:5001"
       depends_on:
         - dissertation_db
+        - user_management_api
+        - dissertation_api
+        - notification_api
       networks:
         - dissertation_app_network
       env_file:
@@ -46,7 +49,6 @@ services:
         - "7001:7001"
       depends_on:
         - dissertation_db
-        - api_gateway
       networks:
         - dissertation_app_network
       env_file:
@@ -64,7 +66,6 @@ services:
         - "8001:8001"
       depends_on:
         - dissertation_db
-        - api_gateway
       networks:
         - dissertation_app_network
       env_file:
@@ -82,7 +83,6 @@ services:
         - "9001:9001"
       depends_on:
         - dissertation_db
-        - api_gateway
       networks:
         - dissertation_app_network
       env_file:

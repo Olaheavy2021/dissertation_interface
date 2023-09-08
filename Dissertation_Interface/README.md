@@ -26,23 +26,37 @@ This is a [.NET Core](https://learn.microsoft.com/en-us/dotnet/core/introduction
     - .env.notification.sample to .env.notification
     - .env.dissertation.sample to .env.dissertation
     - .env.database.sample to .env.database
+  
 #### Create a network for the application
-
-    -   `docker network create dissertation_app_network`
+    - docker network create dissertation_app_network
 
 #### Start up application and build images
 
-    -   `docker compose up -d --build`
+    -   docker compose up -d --build
 
 #### Start the application
 
-    -   `docker compose up`
+    -   docker compose up
 
 #### Stop the application
 
-    -   `docker compose stop`
+    -   docker compose stop
+
 #### Stops and removes all the containers
-    -   `docker compose down`
+
+    -   docker compose down
 
 ### Linting and Formatting the Codebase
-    - `dotnet format`
+    -   dotnet format
+### Running Database Migrations
+
+#### Install Dotnet EF Tools
+  -   ```dotnet tool install --global dotnet-ef```
+
+#### Add Migration
+  - ```add-migration <migration-name>```
+
+#### Update Database
+  -  ```dotnet ef database update```
+
+

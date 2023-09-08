@@ -2,6 +2,18 @@
   "Routes": [
     //"UserManagementAPI": "https://localhost:7000",
     {
+      "DownstreamPathTemplate": "/api/auth/login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-user_management_api-1",
+          "Port": 7001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/user/login",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    {
       "DownstreamPathTemplate": "/WeatherForecast",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -10,7 +22,7 @@
           "Port": 7001
         }
       ],
-      "UpstreamPathTemplate": "/api/user/WeatherForecast",
+      "UpstreamPathTemplate": "/api/v1/user/WeatherForecast",
       "UpstreamHttpMethod": [ "Get" ]
     },
     //"DissertationAPI": "https://localhost:8000",
@@ -23,7 +35,7 @@
           "Port": 8001
         }
       ],
-      "UpstreamPathTemplate": "/api/dissertation/WeatherForecast",
+      "UpstreamPathTemplate": "/api/v1/dissertation/WeatherForecast",
       "UpstreamHttpMethod": [ "Get" ]
     },
     //"NotificationAPI": "https://localhost:9000",
@@ -36,7 +48,7 @@
           "Port": 9001
         }
       ],
-      "UpstreamPathTemplate": "/api/notification/WeatherForecast",
+      "UpstreamPathTemplate": "/api/v1/notification/WeatherForecast",
       "UpstreamHttpMethod": [ "Get" ]
     }
   ],
