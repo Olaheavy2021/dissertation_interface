@@ -16,12 +16,19 @@ public class AuthController : Controller
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto model)
     {
-        ResponseDto loginResponse = await this._authService.Login(model);
-        if (loginResponse.IsSuccess)
+        ResponseDto response = await this._authService.Login(model);
+        if (response.IsSuccess)
         {
-            return Ok(loginResponse);
+            return Ok(response);
         }
 
-        return Unauthorized(loginResponse);
+        return Unauthorized(response);
+    }
+
+    [HttpPost("register-admin")]
+    public async Task<IActionResult> RegisterAdmin([FromBody] AdminRegistrationRequestDto model)
+    {
+        ResponseDto response = await this._authService.RegisterAdmin(model);
+        return Ok(response);
     }
 }

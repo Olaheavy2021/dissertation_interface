@@ -6,6 +6,6 @@ public interface IAuthService
 {
     Task<ResponseDto> RegisterStudentOrSupervisor(RegistrationRequestDto registrationRequestDto);
 
-    Task<ResponseDto> RegisterAdmin(RegistrationRequestDto registrationRequestDto);
+    Task<ResponseDto> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto);
     Task<ResponseDto> Login(LoginRequestDto loginRequestDto);
 }

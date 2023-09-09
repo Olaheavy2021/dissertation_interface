@@ -6,6 +6,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Constants;
 using Shared.Exceptions;
 using Shared.Logging;
 using Shared.Settings;
@@ -42,53 +43,49 @@ public class AuthService : IAuthService
 
     private async Task<ResponseDto> Register(RegistrationRequestDto registrationRequestDto)
     {
+        //validate the incoming request
+        var validator = new RegisterRequestDtoValidator(this._db);
+        ValidationResult? validationResult = await validator.ValidateAsync(registrationRequestDto);
+        if (validationResult.Errors.Any())
+            throw new BadRequestException("Invalid Registration Request", validationResult);
+
+        // register the user
         ApplicationUser user = new()
-        {
-            UserName = registrationRequestDto.UserName,
-            Email = registrationRequestDto.Email,
-            NormalizedEmail = registrationRequestDto.Email.ToUpper(),
-            FirstName = registrationRequestDto.FirstName,
-            LastName = registrationRequestDto.LastName,
-            NormalizedUserName = registrationRequestDto.UserName.ToUpper()
-        };
-
-        try
-        {
-            IdentityResult result =await this._userManager.CreateAsync(user,registrationRequestDto.Password);
-            if (result.Succeeded)
             {
-                ApplicationUser? userToReturn = await this._db.ApplicationUserRepository.GetAsync(u => u.UserName == registrationRequestDto.Email);
+                UserName = registrationRequestDto.UserName,
+                Email = registrationRequestDto.Email,
+                NormalizedEmail = registrationRequestDto.Email.ToUpper(),
+                FirstName = registrationRequestDto.FirstName,
+                LastName = registrationRequestDto.LastName,
+                NormalizedUserName = registrationRequestDto.UserName.ToUpper()
+            };
+        IdentityResult registrationResult =await this._userManager.CreateAsync(user,registrationRequestDto.Password);
+        if (registrationResult.Succeeded)
+        {
+            //assign a role to the user
+            IdentityResult roleResult = await AssignRole(user, registrationRequestDto.Role);
 
-                if (userToReturn is { Email: { }, UserName: { } })
+            if (roleResult.Succeeded)
+            {
+                UserDto userDto = new()
                 {
-                    UserDto userDto = new()
-                    {
-                        Email = userToReturn.Email,
-                        Id = userToReturn.Id,
-                        FirstName = userToReturn.FirstName,
-                        LastName = userToReturn.LastName,
-                        UserName = userToReturn.UserName,
-                    };
+                    Email = user.Email,
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    UserName = user.UserName
+                };
 
-                    this._response.Message = "User Registration was Successful.";
-                    this._response.IsSuccess = true;
-                    this._response.Result = userDto;
-                }
+                this._response.Message = "User Registration was Successful.";
+                this._response.IsSuccess = true;
+                this._response.Result = userDto;
             }
             else
             {
-                this._response.Message = result.Errors.FirstOrDefault()?.Description;
+                this._response.Message = roleResult.Errors.FirstOrDefault()?.Description;
                 this._response.IsSuccess = false;
                 this._response.Result = registrationRequestDto;
             }
-
-        }
-        catch (Exception ex)
-        {
-            this._response.Message = "An unexpected error occurred. Please contact admin";
-            this._response.IsSuccess = false;
-            this._response.Result = registrationRequestDto;
-            this._logger.LogError(ex.Message);
         }
 
         return this._response;
@@ -96,7 +93,20 @@ public class AuthService : IAuthService
 
     public Task<ResponseDto> RegisterStudentOrSupervisor(RegistrationRequestDto registrationRequestDto) => throw new NotImplementedException();
 
-    public Task<ResponseDto> RegisterAdmin(RegistrationRequestDto registrationRequestDto) => throw new NotImplementedException();
+    public async Task<ResponseDto> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto)
+    {
+        var registrationRequest = new RegistrationRequestDto()
+        {
+            Password = "Password10$",
+            FirstName = registrationRequestDto.FirstName,
+            LastName = registrationRequestDto.LastName,
+            UserName = registrationRequestDto.UserName,
+            Email = registrationRequestDto.Email,
+            Role = Roles.RoleAdmin
+        };
+
+       return await Register(registrationRequest);
+    }
 
     public async Task<ResponseDto> Login(LoginRequestDto loginRequestDto)
     {
@@ -110,7 +120,7 @@ public class AuthService : IAuthService
 
             //check the database for the user using the username
             ApplicationUser? user = await this._db.ApplicationUserRepository.GetFirstOrDefaultAsync(u =>
-                u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
+                u.UserName != null && u.NormalizedUserName == loginRequestDto.UserName.ToUpper());
 
             //check if the user exists
             if (user == null)
@@ -124,6 +134,14 @@ public class AuthService : IAuthService
             if (isValid == false)
             {
                 throw new NotFoundException(nameof(ApplicationUser), user.Id);
+            }
+
+            //check if the email is confirmed
+            if (!user.EmailConfirmed)
+            {
+                this._response.IsSuccess = false;
+                this._response.Message = "Please confirm your email before you can sign in.";
+                return this._response;
             }
 
             //generate jwt token
@@ -149,13 +167,6 @@ public class AuthService : IAuthService
             this._response.Message = "Invalid username or password entered.";
             return this._response;
         }
-        /*catch (Exception ex)
-        {
-            this._logger.LogError(ex.Message, ex);
-            this._response.IsSuccess = false;
-            this._response.Message = "An unexpected error occurred. Please contact admin";
-            return this._response;
-        }*/
     }
 
     private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
@@ -193,5 +204,5 @@ public class AuthService : IAuthService
         throw new NotFoundException(nameof(ApplicationUser), user.Id);
     }
 
-    private Task<bool> AssignRole(string email, string roleName) => throw new NotImplementedException();
+    private async Task<IdentityResult> AssignRole(ApplicationUser user, string roleName) => await this._userManager.AddToRoleAsync(user, roleName);
 }

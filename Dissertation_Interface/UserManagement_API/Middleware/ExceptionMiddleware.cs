@@ -12,7 +12,7 @@ public class ExceptionMiddleware
 
         public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
-            _next = next;
+            this._next = next;
             this._logger = logger;
         }
 
@@ -20,7 +20,7 @@ public class ExceptionMiddleware
         {
             try
             {
-                await _next(httpContext);
+                await this._next(httpContext);
             }
             catch (Exception ex)
             {
@@ -46,14 +46,14 @@ public class ExceptionMiddleware
                         Errors = badRequestException.ValidationErrors
                     };
                     break;
-                case NotFoundException NotFound:
+                case NotFoundException notFound:
                     statusCode = HttpStatusCode.NotFound;
                     problem = new CustomProblemDetails
                     {
-                        Title = NotFound.Message,
+                        Title = notFound.Message,
                         Status = (int)statusCode,
                         Type = nameof(NotFoundException),
-                        Detail = NotFound.InnerException?.Message,
+                        Detail = notFound.InnerException?.Message,
                     };
                     break;
                 default:
@@ -69,7 +69,7 @@ public class ExceptionMiddleware
 
             httpContext.Response.StatusCode = (int)statusCode;
             var logMessage = JsonConvert.SerializeObject(problem);
-            _logger.LogError(logMessage);
+            this._logger.LogError(logMessage);
             await httpContext.Response.WriteAsJsonAsync(problem);
 
         }

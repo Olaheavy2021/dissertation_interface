@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Shared.Logging;
+using Shared.Repository;
 using UserManagement_API.Data;
 using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Repository;
@@ -18,6 +19,7 @@ public static class ApplicationServiceRegistration
         // Interfaces and Services
         services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddHttpContextAccessor();
 
