@@ -15,23 +15,27 @@ public class RegisterRequestDtoValidator: AbstractValidator<RegistrationRequestD
         RuleFor(p => p.FirstName)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .NotNull().WithMessage(ErrorMessages.RequiredField)
-            .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50);
+            .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50)
+            .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace);
 
         RuleFor(p => p.LastName)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .NotNull().WithMessage(ErrorMessages.RequiredField)
-            .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50);
+            .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50)
+            .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace);
 
         RuleFor(p => p.UserName)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .NotNull().WithMessage(ErrorMessages.RequiredField)
-            .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50);
+            .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50)
+            .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace);;
 
         RuleFor(p => p.Email)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .NotNull().WithMessage(ErrorMessages.RequiredField)
             .MaximumLength(100).WithMessage(ErrorMessages.MaximumLength100)
             .Matches(@"^[a-zA-Z0-9._%+-]+@hallam\.shu\.ac\.uk$").WithMessage(ErrorMessages.MustBeHallamEmailFormat)
+            .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace)
             .EmailAddress();
 
         RuleFor(p => p.Password)
@@ -41,6 +45,7 @@ public class RegisterRequestDtoValidator: AbstractValidator<RegistrationRequestD
             .Matches(@"[A-Z]+").WithMessage(ErrorMessages.MustContainUppercase)
             .Matches(@"[a-z]+").WithMessage(ErrorMessages.MustContainLowercase)
             .Matches(@"[0-9]+").WithMessage(ErrorMessages.MustContainNumber)
+            .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace)
             .Matches(@".*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-].*").WithMessage(ErrorMessages.MustContainSpecialCharacter);
 
         RuleFor(q => q)

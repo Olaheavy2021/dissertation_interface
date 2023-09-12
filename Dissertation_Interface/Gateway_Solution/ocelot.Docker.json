@@ -2,6 +2,18 @@
   "Routes": [
     //"UserManagementAPI": "https://localhost:7000",
     {
+      "DownstreamPathTemplate": "/api/auth/initiate-reset-password",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-user_management_api-1",
+          "Port": 7001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/user/initiate-reset-password",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    {
     "DownstreamPathTemplate": "/api/auth/register-admin",
     "DownstreamScheme": "http",
     "DownstreamHostAndPorts": [

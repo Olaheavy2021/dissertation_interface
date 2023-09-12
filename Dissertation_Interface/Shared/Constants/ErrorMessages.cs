@@ -13,4 +13,7 @@ public static class ErrorMessages
     public const string MustContainSpecialCharacter = "Your {PropertyName} must contain at least one special character.";
     public const string MustBeHallamEmailFormat =
         "Your {PropertyName} must be in this format : username@hallam.shu.ac.uk";
+
+    public const string MustNotContainWhiteSpace = "Your {PropertyName} must not contain any whitespace";
+    public const string MustBeInRoleEnum = "Invalid role assigned to the user.";
 }

@@ -31,4 +31,25 @@ public class AuthController : Controller
         ResponseDto response = await this._authService.RegisterAdmin(model);
         return Ok(response);
     }
+
+    [HttpPost("initiate-reset-password")]
+    public async Task<IActionResult> InitiateResetPassword([FromBody] InitiatePasswordResetDto model)
+    {
+        ResponseDto response = await this._authService.InitiatePasswordReset(model);
+        return Ok(response);
+    }
+
+    [HttpPost("confirm-reset-password")]
+    public async Task<IActionResult> ConfirmResetPassword([FromBody] ConfirmPasswordResetDto model)
+    {
+        ResponseDto response = await this._authService.ConfirmPasswordReset(model);
+        return Ok(response);
+    }
+
+    [HttpPost("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto model)
+    {
+        ResponseDto response = await this._authService.ConfirmEmail(model);
+        return Ok(response);
+    }
 }

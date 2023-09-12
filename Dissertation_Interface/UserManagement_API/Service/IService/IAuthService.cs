@@ -4,8 +4,10 @@ namespace UserManagement_API.Service.IService;
 
 public interface IAuthService
 {
-    Task<ResponseDto> RegisterStudentOrSupervisor(RegistrationRequestDto registrationRequestDto);
-
-    Task<ResponseDto> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto);
-    Task<ResponseDto> Login(LoginRequestDto loginRequestDto);
+    Task<ResponseDto> RegisterStudentOrSupervisor(RegistrationRequestDto request);
+    Task<ResponseDto> RegisterAdmin(AdminRegistrationRequestDto request);
+    Task<ResponseDto> Login(LoginRequestDto request);
+    Task<ResponseDto> InitiatePasswordReset(InitiatePasswordResetDto request);
+    Task<ResponseDto> ConfirmPasswordReset(ConfirmPasswordResetDto request);
+    Task<ResponseDto> ConfirmEmail(ConfirmEmailDto request);
 }
