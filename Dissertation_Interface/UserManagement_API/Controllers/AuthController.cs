@@ -4,7 +4,7 @@ using UserManagement_API.Service.IService;
 
 namespace UserManagement_API.Controllers;
 
-[Route("api/auth")]
+[Route("api/v1/auth")]
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;

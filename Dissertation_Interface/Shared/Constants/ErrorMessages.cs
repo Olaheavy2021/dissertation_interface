@@ -2,6 +2,7 @@
 
 public static class ErrorMessages
 {
+    #region Validation Error Messages
     public const string RequiredField = "{PropertyName} is required";
     public const string MaximumLength50 = "{PropertyName} must be fewer than 50 characters";
     public const string MaximumLength100 = "{PropertyName} must be fewer than 100 characters";
@@ -16,4 +17,11 @@ public static class ErrorMessages
 
     public const string MustNotContainWhiteSpace = "Your {PropertyName} must not contain any whitespace";
     public const string MustBeInRoleEnum = "Invalid role assigned to the user.";
+    #endregion
+
+    #region Application Error Messages
+
+    public const string EmailServiceUnableToSaveEmail = "An error occurred while saving the email into the database";
+
+    #endregion
 }

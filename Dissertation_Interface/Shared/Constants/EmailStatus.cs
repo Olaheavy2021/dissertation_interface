@@ -1,6 +1,10 @@
 ﻿namespace Shared.Constants;
 
-public class EmailStatus
+public static class EmailStatus
 {
-    
+    public const string EmailStatusPending = "pending";
+
+    public const string EmailStatusSent = "sent";
+
+    public const string EmailStatusError = "error";
 }

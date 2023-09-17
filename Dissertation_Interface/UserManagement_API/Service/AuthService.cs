@@ -11,12 +11,14 @@ using Shared.Constants;
 using Shared.Exceptions;
 using Shared.Extensions;
 using Shared.Logging;
+using Shared.MessageBus;
 using Shared.Settings;
 using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;
 using UserManagement_API.Data.Models.Validators;
 using UserManagement_API.Service.IService;
+using UserManagement_API.Settings;
 
 namespace UserManagement_API.Service;
 
@@ -28,15 +30,17 @@ public class AuthService : IAuthService
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ResponseDto _response;
     private readonly JwtSettings _jwtSettings;
+    private readonly ServiceBusSettings _serviceBusSettings;
     private readonly ApplicationUrlSettings _applicationUrlSettings;
     private readonly IMapper _mapper;
     private readonly IWebHostEnvironment _env;
-    private readonly string _folderPath;
+    private readonly IMessageBus _messageBus;
 
 
-    public AuthService(IUnitOfWork db, IOptions<ApplicationUrlSettings> applicationUrlSettings,
+
+    public AuthService(IUnitOfWork db, IOptions<ApplicationUrlSettings> applicationUrlSettings,IMessageBus messageBus,
         IOptions<JwtSettings> jwtSettings, SignInManager<ApplicationUser> signInManager,IWebHostEnvironment env,
-        UserManager<ApplicationUser> userManager, IAppLogger<AuthService> logger, IMapper mapper)
+        UserManager<ApplicationUser> userManager, IAppLogger<AuthService> logger, IMapper mapper, IOptions<ServiceBusSettings> serviceBusSettings)
     {
         this._db = db;
         this._userManager = userManager;
@@ -44,20 +48,25 @@ public class AuthService : IAuthService
         this._logger = logger;
         this._jwtSettings = jwtSettings.Value;
         this._applicationUrlSettings = applicationUrlSettings.Value;
+        this._serviceBusSettings = serviceBusSettings.Value;
         this._mapper = mapper;
         this._signInManager = signInManager;
         this._response = new();
         this._env = env;
-        this._folderPath = Path.Combine( this._env.WebRootPath, "/Email/Snapshots");
+        this._messageBus = messageBus;
     }
 
     private async Task<ResponseDto> Register(RegistrationRequestDto registrationRequestDto)
     {
         //validate the incoming request
+        this._logger.LogInformation("Processing register request {@RegistrationRequestDto}", registrationRequestDto);
         var validator = new RegisterRequestDtoValidator(this._db);
         ValidationResult? validationResult = await validator.ValidateAsync(registrationRequestDto);
         if (validationResult.Errors.Any())
+        {
+            this._logger.LogWarning("Register - Validation errors in user registration for {0}", registrationRequestDto.Email);
             throw new BadRequestException("Invalid Registration Request", validationResult);
+        }
 
         // register the user
         ApplicationUser user = new()
@@ -86,15 +95,23 @@ public class AuthService : IAuthService
                     UserName = user.UserName
                 };
 
+                if (registrationRequestDto.Role.ToLower().Equals(Roles.RoleAdmin) ||
+                    registrationRequestDto.Role.ToLower().Equals(Roles.RoleSuperAdmin))
+                    await PublishEmailConfirmationForAdminUsers(user);
+
                 this._response.Message = "User Registration was Successful.";
                 this._response.IsSuccess = true;
                 this._response.Result = userDto;
+                this._logger.LogInformation("Register - User with this email registered successfully {0}", registrationRequestDto.Email);
+
             }
             else
             {
                 this._response.Message = roleResult.Errors.FirstOrDefault()?.Description;
                 this._response.IsSuccess = false;
                 this._response.Result = registrationRequestDto;
+
+                this._logger.LogWarning("Register - An error occurred while registering this user {0} - {1}", registrationRequestDto.Email, roleResult.Errors.FirstOrDefault()?.Description ?? "Undefined Error");
             }
         }
 
@@ -105,11 +122,15 @@ public class AuthService : IAuthService
 
     public async Task<ResponseDto> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto)
     {
+        this._logger.LogInformation("Processing admin register request {@AdminRegistrationRequestDto}", registrationRequestDto);
         //validate the incoming request
         var validator = new AdminRegistrationRequestDtoValidator();
         ValidationResult? validationResult = await validator.ValidateAsync(registrationRequestDto);
         if (validationResult.Errors.Any())
+        {
+            this._logger.LogWarning("Register Admin - Validation errors while registering admin user - {0} ", registrationRequestDto.Email);
             throw new BadRequestException("Invalid Registration Request", validationResult);
+        }
 
         var registrationRequest = new RegistrationRequestDto()
         {
@@ -121,13 +142,12 @@ public class AuthService : IAuthService
             Role = registrationRequestDto.Role.ToLower()
         };
 
-        // TODO: initiate an Event to send an email.
-
        return await Register(registrationRequest);
     }
 
     public async Task<ResponseDto> Login(LoginRequestDto loginRequestDto)
     {
+        this._logger.LogInformation("Processing login request {@LoginRequestDto}", loginRequestDto);
         this._response.IsSuccess = false;
         this._response.Message = "Invalid Login Attempt.";
 
@@ -135,8 +155,10 @@ public class AuthService : IAuthService
         var validator = new LoginRequestDtoValidator();
         ValidationResult? validationResult = await validator.ValidateAsync(loginRequestDto);
         if (validationResult.Errors.Any())
+        {
+            this._logger.LogWarning("Login - Validation errors in admin user registration for {0} - {1}", nameof(ApplicationUser), loginRequestDto.UserName);
             throw new BadRequestException("Invalid Login Request", validationResult);
-
+        }
 
         //check if the password is correct and sign the user in
         SignInResult result =
@@ -148,6 +170,7 @@ public class AuthService : IAuthService
                u.UserName != null && u.NormalizedUserName == loginRequestDto.UserName.ToUpper());
             if (user == null)
             {
+                this._logger.LogWarning("Login - User not found", loginRequestDto.UserName);
                 return this._response;
             }
             //generate jwt token
@@ -155,7 +178,7 @@ public class AuthService : IAuthService
 
             //return the appropriate response
             UserDto? userToReturn = this._mapper.Map<UserDto>(user);
-            var responseDto = new LoginResponseDto()
+            var responseDto = new LoginResponseDto
             {
                 User = userToReturn, Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
             };
@@ -163,6 +186,7 @@ public class AuthService : IAuthService
             this._response.IsSuccess = true;
             this._response.Message = "Login Successful";
             this._response.Result = responseDto;
+            this._logger.LogInformation("Login - User signed in successfully {0}", loginRequestDto.UserName);
             return this._response;
         }
         //check if the email is confirmed
@@ -170,6 +194,7 @@ public class AuthService : IAuthService
         {
             this._response.IsSuccess = false;
             this._response.Message = "Please confirm your email address, then try and login again.";
+            this._logger.LogInformation("Login - Email has not been confirmed {0}", loginRequestDto.UserName);
             return this._response;
         }
         //check if the account is locked out
@@ -177,6 +202,7 @@ public class AuthService : IAuthService
         {
             this._response.IsSuccess = false;
             this._response.Message = "Your account is currently locked out";
+            this._logger.LogInformation("Login - Account has been locked out {0}", loginRequestDto.UserName);
             return this._response;
         }
 
@@ -185,18 +211,22 @@ public class AuthService : IAuthService
 
     public async Task<ResponseDto> InitiatePasswordReset(InitiatePasswordResetDto request)
     {
+        this._logger.LogInformation("Initiating password request {@InitiatePasswordResetDto}", request);
         this._response.IsSuccess = true;
         this._response.Message = "A notification will be sent to this email if an account is registered under it.";
+        this._logger.LogInformation("Password reset initiated for this user {0}", request.Email);
+
         ApplicationUser? user = await this._db.ApplicationUserRepository.GetAsync(x => x.NormalizedEmail == request.Email.ToUpper());
         if (user == null)
             return this._response;
 
-        await GeneratePasswordResetLink(user);
+        await PublishPasswordResetEmail(user);
         return this._response;
     }
 
     public async Task<ResponseDto> ConfirmPasswordReset(ConfirmPasswordResetDto request)
     {
+        this._logger.LogInformation("Confirm password request {@ConfirmPasswordResetDto}", request);
         this._response.Message = "Invalid Password Reset Request";
         this._response.IsSuccess = false;
 
@@ -208,17 +238,20 @@ public class AuthService : IAuthService
         IdentityResult result = await this._userManager.ResetPasswordAsync(user, Encoding.UTF8.DecodeBase64( request.Token), request.Password);
         if (result.Succeeded)
         {
+            this._logger.LogInformation("Password reset completed for this user {0}", request.UserName);
             this._response.Message = "Your password has been reset. Please sign in.";
             this._response.IsSuccess = true;
             return this._response;
         }
 
         this._response.Message = result.Errors.FirstOrDefault()?.Description;
+        this._logger.LogWarning("Password reset failed with an error {0} - {1}", request.UserName, this._response.Message ?? "Undefined identity error");
         return this._response;
     }
 
     public async Task<ResponseDto> ConfirmEmail(ConfirmEmailDto request)
     {
+        this._logger.LogInformation("Confirm email request {@ConfirmEmailDto}", request);
         this._response.Message = "Invalid Email Confirmation Request";
         this._response.IsSuccess = false;
 
@@ -230,12 +263,14 @@ public class AuthService : IAuthService
         IdentityResult result = await this._userManager.ConfirmEmailAsync(user, Encoding.UTF8.DecodeBase64( request.Token));
         if (result.Succeeded)
         {
+            this._logger.LogInformation("Email has been confirmed for this user {0}", request.UserName);
             this._response.Message = "Your email has been confirmed. Please sign in.";
             this._response.IsSuccess = true;
             return this._response;
         }
 
         this._response.Message = result.Errors.FirstOrDefault()?.Description;
+        this._logger.LogInformation("Email confirmation failed for this user {0} - {1}", request.UserName, this._response.Message ?? "Undefined Identity Error" );
         return this._response;
     }
 
@@ -276,90 +311,30 @@ public class AuthService : IAuthService
 
     private async Task<IdentityResult> AssignRole(ApplicationUser user, string roleName) => await this._userManager.AddToRoleAsync(user, roleName);
 
-    private async Task GeneratePasswordResetLink(ApplicationUser user)
-    {
-        var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
-
-        var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebResetPasswordRoute}?username={user.UserName}&activationToken={Encoding.UTF8.EncodeBase64(code)}";
-
-        var webRoot = this._env.WebRootPath; //get wwwroot Folder
-
-        //Get TemplateFile located at wwwroot/Templates/EmailTemplates/
-        var pathToFile = this._env.WebRootPath
-                         + Path.DirectorySeparatorChar
-                         + "Templates"
-                         + Path.DirectorySeparatorChar
-                         + "EmailTemplates"
-                         + Path.DirectorySeparatorChar
-                         + "Change_Password.Html";
-
-        var builder = new BodyBuilder();
-
-        using StreamReader sourceReader = File.OpenText(pathToFile);
-        builder.HtmlBody = await sourceReader.ReadToEndAsync();
-
-        //{0} : Subject
-        const string subject = "Reset Password";
-        //{1} : Date
-        //{2} : FirstName
-        //{3} : Username
-        //{4} : CallbackUrl
-
-        string messageBody = string.Format(builder.HtmlBody,
-            subject,
-            String.Format("{0:dddd, d MMMM yyyy}", DateTime.Now),
-            user.FirstName,
-            user.UserName,
-            callbackUrl
-        );
-        await SaveToFile("Reset_Email.html", messageBody);
-
-    }
-
-    private async Task GenerateEmailConfirmationLink(ApplicationUser user)
+    private async Task PublishEmailConfirmationForAdminUsers(ApplicationUser user)
     {
         var code = await this._userManager.GenerateEmailConfirmationTokenAsync(user);
 
         var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebConfirmEmailRoute}?username={user.UserName}&activationToken={Encoding.UTF8.EncodeBase64(code)}";
+        UserDto? userToReturn = this._mapper.Map<UserDto>(user);
+        this._logger.LogInformation("Email Confirmation Published for this user {0}", user.UserName ?? string.Empty);
 
-        //Get TemplateFile located at wwwroot/Templates/EmailTemplates/
-        var pathToFile = this._env.WebRootPath
-                         + Path.DirectorySeparatorChar
-                         + "Templates"
-                         + Path.DirectorySeparatorChar
-                         + "EmailTemplates"
-                         + Path.DirectorySeparatorChar
-                         + "Welcome_Email.Html";
 
-        var builder = new BodyBuilder();
-
-        using StreamReader sourceReader = File.OpenText(pathToFile);
-        builder.HtmlBody = await sourceReader.ReadToEndAsync();
-
-        //{0} : Subject
-        const string subject = "Confirm Email";
-        //{1} : Date
-        //{2} : FirstName
-        //{3} : Username
-        //{4} : CallbackUrl
-
-        string messageBody = string.Format(builder.HtmlBody,
-            subject,
-            String.Format("{0:dddd, d MMMM yyyy}", DateTime.Now),
-            user.FirstName,
-            user.UserName,
-            callbackUrl
-        );
-
-        //Send email to the user
-        await SaveToFile("Confirm_Email.html", messageBody);
-
+        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl };
+        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.RegisterAdminUserQueue,
+            this._serviceBusSettings.ServiceBusConnectionString);
     }
 
-    private async Task SaveToFile(string name, string content)
+    private async Task PublishPasswordResetEmail(ApplicationUser user)
     {
-        var fullPath = Path.Combine(this._folderPath, name);
-        Directory.CreateDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty);
-        await File.WriteAllTextAsync(fullPath, content);
+        var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
+        var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebResetPasswordRoute}?username={user.UserName}&activationToken={Encoding.UTF8.EncodeBase64(code)}";
+        UserDto? userToReturn = this._mapper.Map<UserDto>(user);
+        this._logger.LogInformation("Password Reset Email Published for this user {0}", user.UserName ?? string.Empty);
+
+
+        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl };
+        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.ResetPasswordQueue,
+            this._serviceBusSettings.ServiceBusConnectionString);
     }
 }

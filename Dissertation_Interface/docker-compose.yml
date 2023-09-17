@@ -89,12 +89,25 @@ services:
         - Notification_API/.env.notification
       volumes:
         - ~/.aspnet/https:/https
+    
+    portainer:
+      image: portainer/portainer-ce
+      container_name: portainer
+      restart: always
+      ports:
+        - "8080:8000"
+        - "9090:9000"
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - portainer_data:/data
 
 volumes:
   sqlsystem:
   sqldata:
   sqllog:
   sqlbackup:
+  portainer_data:
+  elasticsearch-data:
 
 # Define a network, which allows containers to communicate
 # with each other, by using their container name as a hostname

@@ -1,6 +1,7 @@
 ﻿namespace UserManagement_API.Middleware.Correlation;
 
-public class ICorrelationIdGenerator
+public interface ICorrelationIdGenerator
 {
-    
+    string Get();
+    void Set(string correlationId);
 }

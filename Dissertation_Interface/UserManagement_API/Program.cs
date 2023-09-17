@@ -3,6 +3,7 @@ using Serilog;
 using UserManagement_API;
 using UserManagement_API.Data;
 using UserManagement_API.Middleware;
+using UserManagement_API.Middleware.Correlation;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER");
@@ -10,6 +11,8 @@ var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CO
 // Serilog
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
     .WriteTo.Console()
+    .Enrich.FromLogContext()
+    .Enrich.WithCorrelationIdHeader("X-Correlation-Id")
     .ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddControllers();
@@ -30,6 +33,7 @@ WebApplication app = builder.Build();
 
 //Middleware
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

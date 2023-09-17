@@ -1,6 +1,6 @@
 ﻿namespace Shared.Constants;
 
-public class SuccessMessages
+public static class SuccessMessages
 {
-    
+    public const string DefaultSuccess = "Successful";
 }
