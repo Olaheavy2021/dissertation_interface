@@ -1,8 +1,33 @@
+using Microsoft.EntityFrameworkCore;
+using Notification_API.Data;
+using Notification_API.Extensions;
+using Notification_API.Messaging;
+using Notification_API.Services;
+using Serilog;
+using Shared.Logging;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER");
 
-// Add services to the container.
+// Serilog
+builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
+    .WriteTo.Console()
+    .Enrich.FromLogContext()
+    .ReadFrom.Configuration(context.Configuration));
 
+// Add services to the container.
+builder.Services.AddTransient(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
+
+//Database Connection
+builder.Services.AddDbContext<NotificationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("NotificationDatabaseConnectionString")));
+
+//Singleton Implementation of the email service
+var optionBuilder = new DbContextOptionsBuilder<NotificationDbContext>();
+optionBuilder.UseSqlServer(builder.Configuration.GetConnectionString("NotificationDatabaseConnectionString"));
+builder.Services.AddSingleton(new EmailService(optionBuilder.Options, builder.Configuration));
+
+builder.Services.AddSingleton<IAzureServiceBusConsumer, AzureServiceBusConsumer>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -25,5 +50,17 @@ if (string.IsNullOrEmpty(isRunningInDocker) || !isRunningInDocker.ToLower().Equa
 app.UseAuthorization();
 
 app.MapControllers();
-
+ApplyMigration();
+//app.UseAzureServiceBusConsumer();
 app.Run();
+
+void ApplyMigration()
+{
+    using IServiceScope scope = app.Services.CreateScope();
+    NotificationDbContext db = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
+
+    if (db.Database.GetPendingMigrations().Any())
+    {
+        db.Database.Migrate();
+    }
+}
