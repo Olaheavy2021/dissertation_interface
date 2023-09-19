@@ -5,7 +5,7 @@ namespace UserManagement_API.Middleware.Correlation;
 public class CorrelationIdMiddleware
 {
     private readonly RequestDelegate _next;
-    private const string CorrelationIdHeader = "X-Correlation-Id";
+    private const string CorrelationIdHeader = "x-correlation-id";
 
     public CorrelationIdMiddleware(RequestDelegate next) => this._next = next;
 
@@ -30,7 +30,7 @@ public class CorrelationIdMiddleware
     private static void AddCorrelationIdHeader(HttpContext context, StringValues correlationId) =>
         context.Response.OnStarting(() =>
         {
-            context.Response.Headers.Add(CorrelationIdHeader, new[] {correlationId.ToString()} );
+            context.Response.Headers[CorrelationIdHeader] = correlationId.ToString();
             return Task.CompletedTask;
         });
 }

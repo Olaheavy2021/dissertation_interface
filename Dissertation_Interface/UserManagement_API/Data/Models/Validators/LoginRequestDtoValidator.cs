@@ -14,7 +14,7 @@ public class LoginRequestDtoValidator : AbstractValidator<LoginRequestDto>
 
         RuleFor(p => p.UserName)
             .NotNull().WithMessage(ErrorMessages.RequiredField)
-            .MaximumLength(10)
+            .MaximumLength(15)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField);
     }
 }

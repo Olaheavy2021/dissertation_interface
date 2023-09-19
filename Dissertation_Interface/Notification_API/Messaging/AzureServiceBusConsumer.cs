@@ -61,43 +61,65 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
 
     private async Task OnResetPasswordRequestReceived(ProcessMessageEventArgs args)
     {
-        ServiceBusReceivedMessage? message = args.Message;
-        var body = Encoding.UTF8.GetString(message.Body);
-        PublishEmailDto? emailDto = JsonConvert.DeserializeObject<PublishEmailDto>(body);
+        try
+        {
+            ServiceBusReceivedMessage? message = args.Message;
+            var body = Encoding.UTF8.GetString(message.Body);
+            PublishEmailDto? emailDto = JsonConvert.DeserializeObject<PublishEmailDto>(body);
 
-        // try to send email
-        //Get TemplateFile located at wwwroot/Templates/EmailTemplates/
-        var pathToFile = this._env.WebRootPath
-                         + Path.DirectorySeparatorChar
-                         + "Templates"
-                         + Path.DirectorySeparatorChar
-                         + "EmailTemplates"
-                         + Path.DirectorySeparatorChar
-                         + "Change_Password.html";
+            // try to send email
+            //Get TemplateFile located at wwwroot/Templates/EmailTemplates/
+            var pathToFile = this._env.WebRootPath
+                             + Path.DirectorySeparatorChar
+                             + "Templates"
+                             + Path.DirectorySeparatorChar
+                             + "EmailTemplates"
+                             + Path.DirectorySeparatorChar
+                             + "Change_Password.html";
 
-        var builder = new BodyBuilder();
+            var builder = new BodyBuilder();
 
-        using StreamReader sourceReader = File.OpenText(pathToFile);
-        builder.HtmlBody = await sourceReader.ReadToEndAsync();
+            using StreamReader sourceReader = File.OpenText(pathToFile);
+            builder.HtmlBody = await sourceReader.ReadToEndAsync();
 
-        //{0} : Subject
-        const string subject = "Dissertation Interface - Reset Password";
-        //{1} : Date
-        //{2} : FirstName
-        //{3} : Username
-        //{4} : Callback URL
+            //{0} : Subject
+            const string subject = "Dissertation Interface - Reset Password";
+            //{1} : Date
+            //{2} : FirstName
+            //{3} : Username
+            //{4} : Callback URL
 
-        var messageBody = string.Format(builder.HtmlBody,
-            subject,
-            $"{DateTime.Now:dddd, d MMMM yyyy}",
-            emailDto?.User?.FirstName,
-            emailDto?.User?.UserName,
-            emailDto?.CallbackUrl
-        );
+            var messageBody = string.Format(builder.HtmlBody,
+                subject,
+                $"{DateTime.Now:dddd, d MMMM yyyy}",
+                emailDto?.User?.FirstName,
+                emailDto?.User?.UserName,
+                emailDto?.CallbackUrl
+            );
 
+            // try to send email
+            if (emailDto != null)
+            {
+                ResponseDto response = await this._emailService.ResetPasswordEmailAndLog(messageBody,
+                    emailDto.User?.Email ?? string.Empty);
+                if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
+                {
+                    await this._emailService.UpdateEmailLogger(response.Message);
+                    this._logger.LogInformation("Reset Password Email has been sent successfully for this user - {@PublishEmailDto}", emailDto);
+                    await args.CompleteMessageAsync(args.Message);
+                }
+                else
+                {
+                    this._logger.LogWarning("An error occurred whilst sending email to reset password for this user - {@ResponseDto}", response);
+                }
 
-        if (emailDto != null) await this._emailService.ResetPasswordEmailAndLog(messageBody, emailDto?.User?.Email ?? string.Empty);
-        await args.CompleteMessageAsync(args.Message);
+            }
+        }
+        catch (Exception ex)
+        {
+            this._logger.LogError("An error occurred whilst sending the reset password email - {0}", ex);
+        }
+
     }
 
     private async Task OnAdminUserRegisterRequestReceived(ProcessMessageEventArgs args)
@@ -154,16 +176,14 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                    {
                        await this._emailService.UpdateEmailLogger(response.Message);
                        this._logger.LogInformation("Email Confirmation has been sent successfully for this user - {@PublishEmailDto}", emailDto);
+                       await args.CompleteMessageAsync(args.Message);
                    }
                    else
                    {
                        this._logger.LogWarning("An error occurred whilst sending email confirmation for this user - {@ResponseDto}", response);
                    }
-
                 }
             }
-
-            await args.CompleteMessageAsync(args.Message);
         }
         catch (Exception ex)
         {

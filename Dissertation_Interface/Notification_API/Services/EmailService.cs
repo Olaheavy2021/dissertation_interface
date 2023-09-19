@@ -34,7 +34,14 @@ public class EmailService : IEmailService
         return await SaveAndSendEmail(logEmailDto);
     }
 
-    public Task<ResponseDto> ResetPasswordEmailAndLog(string emailBody, string email) => throw new NotImplementedException();
+    public async Task<ResponseDto> ResetPasswordEmailAndLog(string emailBody, string email)
+    {
+        var logEmailDto = new LogEmailRequestDto
+        {
+            Message = emailBody, EmailType = EmailType.EmailTypeResetPasswordEmail, Email = email, Subject = EmailSubject.EmailSubjectEmailConfirmation
+        };
+        return await SaveAndSendEmail(logEmailDto);
+    }
 
     private async Task<string> SaveEmail(LogEmailRequestDto request)
     {

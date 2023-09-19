@@ -1,22 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Constants;
+using Shared.Middleware;
+using Swashbuckle.AspNetCore.Annotations;
 using UserManagement_API.Data.Models.Dto;
 using UserManagement_API.Service.IService;
 
 namespace UserManagement_API.Controllers;
 
-[Route("api/v1/auth")]
+[Route("api/v{version:apiVersion}/auth")]
+[SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request", typeof(CustomProblemDetails))]
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
 
-    public AuthController(IAuthService authService)
-    {
-        this._authService = authService;
-    }
+    public AuthController(IAuthService authService) => this._authService = authService;
+
+
     [HttpPost("login")]
+    [SwaggerOperation(Summary = "Login for all users")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<AuthResponseDto>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Request Unsuccessful", typeof(ResponseDto<string>))]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto model)
     {
-        ResponseDto response = await this._authService.Login(model);
+        ResponseDto<AuthResponseDto> response = await this._authService.Login(model);
         if (response.IsSuccess)
         {
             return Ok(response);
@@ -25,31 +32,30 @@ public class AuthController : Controller
         return Unauthorized(response);
     }
 
-    [HttpPost("register-admin")]
-    public async Task<IActionResult> RegisterAdmin([FromBody] AdminRegistrationRequestDto model)
-    {
-        ResponseDto response = await this._authService.RegisterAdmin(model);
-        return Ok(response);
-    }
-
     [HttpPost("initiate-reset-password")]
+    [SwaggerOperation(Summary = "Initiate reset password for all users")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
     public async Task<IActionResult> InitiateResetPassword([FromBody] InitiatePasswordResetDto model)
     {
-        ResponseDto response = await this._authService.InitiatePasswordReset(model);
+        ResponseDto<string> response = await this._authService.InitiatePasswordReset(model);
         return Ok(response);
     }
 
     [HttpPost("confirm-reset-password")]
+    [SwaggerOperation(Summary = "Confirm reset password for all users")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
     public async Task<IActionResult> ConfirmResetPassword([FromBody] ConfirmPasswordResetDto model)
     {
-        ResponseDto response = await this._authService.ConfirmPasswordReset(model);
+        ResponseDto<string> response = await this._authService.ConfirmPasswordReset(model);
         return Ok(response);
     }
 
     [HttpPost("confirm-email")]
+    [SwaggerOperation(Summary = "Confirm email for all users")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<AuthResponseDto>))]
     public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto model)
     {
-        ResponseDto response = await this._authService.ConfirmEmail(model);
+        ResponseDto<AuthResponseDto> response = await this._authService.ConfirmEmail(model);
         return Ok(response);
     }
 }

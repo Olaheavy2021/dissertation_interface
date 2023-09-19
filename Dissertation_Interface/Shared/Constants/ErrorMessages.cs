@@ -2,6 +2,7 @@
 
 public static class ErrorMessages
 {
+    public const string DefaultError = "Failed";
     #region Validation Error Messages
     public const string RequiredField = "{PropertyName} is required";
     public const string MaximumLength50 = "{PropertyName} must be fewer than 50 characters";
@@ -17,6 +18,16 @@ public static class ErrorMessages
 
     public const string MustNotContainWhiteSpace = "Your {PropertyName} must not contain any whitespace";
     public const string MustBeInRoleEnum = "Invalid role assigned to the user.";
+    #endregion
+
+    #region Auth Errors
+
+    public const string AuthConfirmEmail = "ConfirmEmail";
+    public const string AuthLockedOut = "LockedOut";
+    public const string AuthDefaultPassword = "DefaultPassword";
+    public const string AuthInvalidRequest = "InvalidRequest";
+    public const string AuthIdentityError = "IdentityError";
+
     #endregion
 
     #region Application Error Messages

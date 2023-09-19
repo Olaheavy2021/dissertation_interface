@@ -1,3 +1,4 @@
+using Destructurama;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using UserManagement_API;
@@ -12,7 +13,8 @@ var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CO
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
     .WriteTo.Console()
     .Enrich.FromLogContext()
-    .Enrich.WithCorrelationIdHeader("X-Correlation-Id")
+    .Destructure.UsingAttributes()
+    .Enrich.WithCorrelationId()
     .ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddControllers();
@@ -34,13 +36,12 @@ WebApplication app = builder.Build();
 //Middleware
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<SwaggerBasicAuthMiddleware>();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseCors("all");
 
 app.UseSerilogRequestLogging();
 

@@ -51,7 +51,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 ApplyMigration();
-//app.UseAzureServiceBusConsumer();
+app.UseAzureServiceBusConsumer();
 app.Run();
 
 void ApplyMigration()
