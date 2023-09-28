@@ -11,4 +11,5 @@ public interface IAuthService
     Task<ResponseDto<string>> ConfirmPasswordReset(ConfirmPasswordResetDto request);
     Task<ResponseDto<AuthResponseDto>>  ConfirmEmail(ConfirmEmailDto request);
     Task<ResponseDto<string>> ResendConfirmationEmail(EmailRequestDto request);
+    Task<ResponseDto<RefreshTokenDto>> GetRefreshToken(RefreshTokenDto request);
 }

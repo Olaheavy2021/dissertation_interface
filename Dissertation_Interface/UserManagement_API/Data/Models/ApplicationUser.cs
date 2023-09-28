@@ -9,4 +9,6 @@ public class ApplicationUser : IdentityUser
     public string FirstName { get; set; } = string.Empty;
     [StringLength(50)]
     public string LastName { get; set; } = string.Empty;
+    public string RefreshToken { get; set; } = string.Empty;
+    public DateTime RefreshTokenExpiryTime { get; set; }
 }

@@ -9,4 +9,6 @@ public class JwtSettings
     public string Secret { get; set; } = string.Empty;
 
     public double DurationInMinutes { get; set; }
+
+    public int RefreshTokenValidityInDays { get; set; }
 }

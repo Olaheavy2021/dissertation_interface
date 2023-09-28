@@ -370,3 +370,9 @@ FodyWeavers.xsd
 .env.gateway
 .env.user
 .idea
+
+#appsettings
+UserManagement_API/appsettings.Production.json
+Notification_API/appsettings.Production.json
+UserManagement_API/Properties/ServiceDependencies/DIFUserManagementAPI - Web Deploy/profile.arm.json
+Notification_API/Properties/ServiceDependencies/DIFUserManagementAPI - Web Deploy/profile.arm.json

@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using FluentValidation.Results;
@@ -150,11 +151,18 @@ public class AuthService : IAuthService
                     true);
         if (result.Succeeded)
         {
-            ApplicationUser? user = await this._db.ApplicationUserRepository.GetFirstOrDefaultAsync(u =>
-               u.UserName != null && u.NormalizedUserName == loginRequestDto.UserName.ToUpper());
+            ApplicationUser? user = await this._userManager.FindByNameAsync(loginRequestDto.UserName);
             if (user == null)
             {
                 this._logger.LogWarning("Login - User not found", loginRequestDto.UserName);
+                return response;
+            }
+
+            //check if the user is not locked out by the admin
+            if (user.LockoutEnd != null && user.LockoutEnd.Equals(SystemDefault.LockOutEndDate))
+            {
+                response.IsSuccess = false;
+                response.Message = "You account has been deactivated. Please contact admin..";
                 return response;
             }
 
@@ -167,14 +175,18 @@ public class AuthService : IAuthService
                 return response;
             }
 
-            //generate jwt token
+            //generate jwt token and refresh token
             JwtSecurityToken jwtSecurityToken = await GenerateJwtToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(this._jwtSettings.RefreshTokenValidityInDays);
+            await this._userManager.UpdateAsync(user);
 
             //return the appropriate response
             UserDto? userToReturn = this._mapper.Map<UserDto>(user);
             var responseDto = new AuthResponseDto
             {
-                User = userToReturn, Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken), Role = roles.FirstOrDefault() ?? string.Empty
+                User = userToReturn, AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken), Role = roles.FirstOrDefault() ?? string.Empty, RefreshToken = newRefreshToken
             };
 
             response.IsSuccess = true;
@@ -194,8 +206,10 @@ public class AuthService : IAuthService
         //check if the account is locked out
         if (result.IsLockedOut)
         {
+            ApplicationUser? user = await this._userManager.FindByNameAsync(loginRequestDto.UserName);
             response.IsSuccess = false;
             response.Message = "Your account is currently locked out. Please reset your password.";
+            if (user != null) await PublishAccountLockedOutEmail(user);
             this._logger.LogInformation("Login - Account has been locked out {0}", loginRequestDto.UserName);
             return response;
         }
@@ -303,6 +317,42 @@ public class AuthService : IAuthService
         return response;
     }
 
+    public async Task<ResponseDto<RefreshTokenDto>> GetRefreshToken(RefreshTokenDto request)
+    {
+        ResponseDto<RefreshTokenDto> response = new() { IsSuccess = false, Message = "Invalid access token or refresh token" };
+        ClaimsPrincipal principal = GetPrincipalFromExpiredToken(request.AccessToken);
+        var email = principal.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+        //check that the username exists on the token
+        if (string.IsNullOrEmpty(email)) return response;
+
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(email);
+
+        if (user == null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+        {
+            response.IsSuccess = false;
+            response.Message = "Invalid access token or refresh token";
+            return response;
+        }
+
+        //generate jwt token
+        JwtSecurityToken jwtSecurityToken = await GenerateJwtToken(user);
+        var newRefreshToken = GenerateRefreshToken();
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiryTime = DateTime.Now.AddDays(this._jwtSettings.RefreshTokenValidityInDays);
+        await this._userManager.UpdateAsync(user);
+
+        response.IsSuccess = true;
+        response.Message = "Success";
+        response.Result = new RefreshTokenDto
+        {
+            AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+            RefreshToken = newRefreshToken
+        };
+
+        return response;
+
+    }
+
     private async Task<JwtSecurityToken> GenerateJwtToken(ApplicationUser user)
     {
         IList<Claim> userClaims = await this._userManager.GetClaimsAsync(user);
@@ -310,7 +360,7 @@ public class AuthService : IAuthService
 
         var roleClaims = roles.Select(q => new Claim(ClaimTypes.Role, q)).ToList();
 
-        if (user is { UserName: { }, Email: { } })
+        if (user is { UserName: not null, Email: not null })
         {
             IEnumerable<Claim> claims = new[]
                 {
@@ -366,4 +416,44 @@ public class AuthService : IAuthService
         await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.ResetPasswordQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
     }
+
+    private async Task PublishAccountLockedOutEmail(ApplicationUser user)
+    {
+        var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
+        var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebResetPasswordRoute}?username={user.UserName}&activationToken={code}";
+        UserDto? userToReturn = this._mapper.Map<UserDto>(user);
+        this._logger.LogInformation("Account Locked out Email Published for this user {0}", user.UserName ?? string.Empty);
+
+
+        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl };
+        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.ResetPasswordQueue,
+            this._serviceBusSettings.ServiceBusConnectionString);
+    }
+
+    private ClaimsPrincipal GetPrincipalFromExpiredToken(string? token)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this._jwtSettings.Secret)),
+            ValidateLifetime = false
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        ClaimsPrincipal? principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+        if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            throw new SecurityTokenException("Invalid token");
+
+        return principal;
+    }
+    private static string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
+    }
+
 }

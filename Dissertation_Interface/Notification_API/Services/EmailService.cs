@@ -68,6 +68,8 @@ public class EmailService : IEmailService
     private async Task<ResponseDto> SaveAndSendEmail(LogEmailRequestDto request)
     {
         var response = new ResponseDto { IsSuccess = false, Message = ErrorMessages.EmailServiceUnableToSaveEmail };
+        //TODO:Remove this for production
+        var testEmail = this._configuration.GetValue<string>("SendGridSettings:TestEmail");
 
         //save email into the database
         var  emailIdentifier = await SaveEmail(request);
@@ -76,7 +78,9 @@ public class EmailService : IEmailService
             var apiKey = this._configuration.GetValue<string>("SendGridSettings:ApiKey");
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress(this._configuration.GetValue<string>("SendGridSettings:From"),this._configuration.GetValue<string>("SendGridSettings:Name"));
-            var to = new EmailAddress(request.Email);
+            //TODO:Remove this for production
+            //var to = new EmailAddress(request.Email);
+            var to = new EmailAddress(testEmail);
             var subject = request.Subject;
             SendGridMessage? msg = MailHelper.CreateSingleEmail(from, to, subject, null, request.Message);
             Response? sendGridResponse = await client.SendEmailAsync(msg);

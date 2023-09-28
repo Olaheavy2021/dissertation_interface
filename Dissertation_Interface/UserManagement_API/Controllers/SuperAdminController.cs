@@ -34,6 +34,7 @@ public class SuperAdminController : Controller
     [SwaggerOperation(Summary = "Registration for admin users")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ResendConfirmationEmail([FromBody] EmailRequestDto model)
     {
         ResponseDto<string> response = await this._authService.ResendConfirmationEmail(model);
@@ -43,6 +44,8 @@ public class SuperAdminController : Controller
     [HttpGet("admin-users")]
     [SwaggerOperation(Summary = "Get all admin users")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<List<UserDto>>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetAdminUsers()
     {
         ResponseDto<List<UserDto>> response = await this._userService.GetAdminUsers();
@@ -52,9 +55,35 @@ public class SuperAdminController : Controller
     [HttpGet("admin-user/{id}")]
     [SwaggerOperation(Summary = "Get an admin user")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetAdminUser(string id)
     {
         ResponseDto<GetUserDto> response = await this._userService.GetUser(id);
         return Ok(response);
     }
+
+    [HttpPost("user/deactivate")]
+    [SwaggerOperation(Summary = "Lock out or deactivate a user")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<bool>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> LockOutUser(string email)
+    {
+        ResponseDto<bool> response = await this._userService.LockOutUser(email);
+        return Ok(response);
+    }
+
+    [HttpPost("user/activate")]
+    [SwaggerOperation(Summary = "Activate or unlock a user")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<bool>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> UnlockUser(string email)
+    {
+        ResponseDto<bool> response = await this._userService.UnlockUser(email);
+        return Ok(response);
+    }
+
+
 }
