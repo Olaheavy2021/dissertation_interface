@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+using FluentValidation;
+using Shared.Constants;
 using UserManagement_API.Data.Models.Dto;
 
 namespace UserManagement_API.Data.Models.Validators;
@@ -8,11 +9,12 @@ public class LoginRequestDtoValidator : AbstractValidator<LoginRequestDto>
     public LoginRequestDtoValidator()
     {
         RuleFor(p => p.Password)
-            .NotNull().WithMessage("{PropertyName} is required")
-            .NotEmpty().WithMessage("{PropertyName} is required");
+            .NotNull().WithMessage(ErrorMessages.RequiredField)
+            .NotEmpty().WithMessage(ErrorMessages.RequiredField);
 
         RuleFor(p => p.UserName)
-            .NotNull().WithMessage("{PropertyName} is required")
-            .NotEmpty().WithMessage("{PropertyName} is required");
+            .NotNull().WithMessage(ErrorMessages.RequiredField)
+            .MaximumLength(15)
+            .NotEmpty().WithMessage(ErrorMessages.RequiredField);
     }
 }

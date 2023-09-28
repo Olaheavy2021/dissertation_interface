@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage;
 using UserManagement_API.Data.IRepository;
 
 namespace UserManagement_API.Data.Repository;
 
-public class UnitOfWork: IUnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
     private IDbContextTransaction _transaction;
     public UserDbContext Context;

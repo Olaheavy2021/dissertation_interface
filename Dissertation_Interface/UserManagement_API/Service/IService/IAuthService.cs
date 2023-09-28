@@ -1,11 +1,15 @@
-﻿using UserManagement_API.Data.Models.Dto;
+using UserManagement_API.Data.Models.Dto;
 
 namespace UserManagement_API.Service.IService;
 
 public interface IAuthService
 {
-    Task<ResponseDto> RegisterStudentOrSupervisor(RegistrationRequestDto registrationRequestDto);
-
-    Task<ResponseDto> RegisterAdmin(RegistrationRequestDto registrationRequestDto);
-    Task<ResponseDto> Login(LoginRequestDto loginRequestDto);
+    Task<ResponseDto<RegistrationRequestDto>> RegisterStudentOrSupervisor(RegistrationRequestDto request);
+    Task<ResponseDto<RegistrationRequestDto>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto);
+    Task<ResponseDto<AuthResponseDto>> Login(LoginRequestDto request);
+    Task<ResponseDto<string>> InitiatePasswordReset(InitiatePasswordResetDto request);
+    Task<ResponseDto<string>> ConfirmPasswordReset(ConfirmPasswordResetDto request);
+    Task<ResponseDto<AuthResponseDto>> ConfirmEmail(ConfirmEmailDto request);
+    Task<ResponseDto<string>> ResendConfirmationEmail(EmailRequestDto request);
+    Task<ResponseDto<RefreshTokenDto>> GetRefreshToken(RefreshTokenDto request);
 }

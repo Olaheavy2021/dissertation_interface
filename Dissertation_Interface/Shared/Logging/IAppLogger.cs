@@ -1,4 +1,4 @@
-﻿namespace Shared.Logging;
+namespace Shared.Logging;
 
 public interface IAppLogger<T>
 {

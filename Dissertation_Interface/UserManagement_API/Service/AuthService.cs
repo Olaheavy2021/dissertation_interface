@@ -1,19 +1,23 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Constants;
 using Shared.Exceptions;
 using Shared.Logging;
+using Shared.MessageBus;
 using Shared.Settings;
 using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;
 using UserManagement_API.Data.Models.Validators;
 using UserManagement_API.Service.IService;
+using UserManagement_API.Settings;
 
 namespace UserManagement_API.Service;
 
@@ -21,27 +25,46 @@ public class AuthService : IAuthService
 {
     private readonly IUnitOfWork _db;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IAppLogger<AuthService> _logger;
-    private readonly ResponseDto _response;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly JwtSettings _jwtSettings;
+    private readonly ServiceBusSettings _serviceBusSettings;
+    private readonly ApplicationUrlSettings _applicationUrlSettings;
     private readonly IMapper _mapper;
+    private readonly IMessageBus _messageBus;
 
-    public AuthService(IUnitOfWork db,
-        IOptions<JwtSettings> jwtSettings,
-        UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IAppLogger<AuthService> logger, IMapper mapper)
+
+
+    public AuthService(IUnitOfWork db, IOptions<ApplicationUrlSettings> applicationUrlSettings, IMessageBus messageBus,
+        IOptions<JwtSettings> jwtSettings, SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager, IAppLogger<AuthService> logger, IMapper mapper, IOptions<ServiceBusSettings> serviceBusSettings)
     {
         this._db = db;
         this._userManager = userManager;
-        this._roleManager = roleManager;
+        this._signInManager = signInManager;
         this._logger = logger;
         this._jwtSettings = jwtSettings.Value;
+        this._applicationUrlSettings = applicationUrlSettings.Value;
+        this._serviceBusSettings = serviceBusSettings.Value;
         this._mapper = mapper;
-        this._response = new();
+        this._signInManager = signInManager;
+        this._messageBus = messageBus;
     }
 
-    private async Task<ResponseDto> Register(RegistrationRequestDto registrationRequestDto)
+    private async Task<ResponseDto<RegistrationRequestDto>> Register(RegistrationRequestDto registrationRequestDto)
     {
+        //validate the incoming request
+        ResponseDto<RegistrationRequestDto> response = new();
+        this._logger.LogInformation("Processing register request {@RegistrationRequestDto}", registrationRequestDto);
+        var validator = new RegisterRequestDtoValidator(this._db);
+        ValidationResult? validationResult = await validator.ValidateAsync(registrationRequestDto);
+        if (validationResult.Errors.Any())
+        {
+            this._logger.LogWarning("Register - Validation errors in user registration for {0}", registrationRequestDto.Email);
+            throw new BadRequestException("Invalid Registration Request", validationResult);
+        }
+
+        // register the user
         ApplicationUser user = new()
         {
             UserName = registrationRequestDto.UserName,
@@ -51,121 +74,297 @@ public class AuthService : IAuthService
             LastName = registrationRequestDto.LastName,
             NormalizedUserName = registrationRequestDto.UserName.ToUpper()
         };
-
-        try
+        IdentityResult registrationResult = await this._userManager.CreateAsync(user, registrationRequestDto.Password);
+        if (registrationResult.Succeeded)
         {
-            IdentityResult result =await this._userManager.CreateAsync(user,registrationRequestDto.Password);
-            if (result.Succeeded)
+            //assign a role to the user
+            IdentityResult roleResult = await AssignRole(user, registrationRequestDto.Role);
+
+            if (roleResult.Succeeded)
             {
-                ApplicationUser? userToReturn = await this._db.ApplicationUserRepository.GetAsync(u => u.UserName == registrationRequestDto.Email);
+                if (registrationRequestDto.Role.ToLower().Equals(Roles.RoleAdmin) ||
+                    registrationRequestDto.Role.ToLower().Equals(Roles.RoleSuperAdmin))
+                    await PublishEmailConfirmationForAdminUsers(user);
 
-                if (userToReturn is { Email: { }, UserName: { } })
-                {
-                    UserDto userDto = new()
-                    {
-                        Email = userToReturn.Email,
-                        Id = userToReturn.Id,
-                        FirstName = userToReturn.FirstName,
-                        LastName = userToReturn.LastName,
-                        UserName = userToReturn.UserName,
-                    };
-
-                    this._response.Message = "User Registration was Successful.";
-                    this._response.IsSuccess = true;
-                    this._response.Result = userDto;
-                }
+                response.Message = "User Registration was Successful.";
+                response.IsSuccess = true;
+                response.Result = registrationRequestDto;
+                this._logger.LogInformation("Register - User with this email registered successfully {0}", registrationRequestDto.Email);
             }
             else
             {
-                this._response.Message = result.Errors.FirstOrDefault()?.Description;
-                this._response.IsSuccess = false;
-                this._response.Result = registrationRequestDto;
+                response.Message = roleResult.Errors.FirstOrDefault()?.Description;
+                response.IsSuccess = false;
+                response.Result = registrationRequestDto;
+
+                this._logger.LogWarning("Register - An error occurred while registering this user {0} - {1}", registrationRequestDto.Email, roleResult.Errors.FirstOrDefault()?.Description ?? "Undefined Error");
             }
-
-        }
-        catch (Exception ex)
-        {
-            this._response.Message = "An unexpected error occurred. Please contact admin";
-            this._response.IsSuccess = false;
-            this._response.Result = registrationRequestDto;
-            this._logger.LogError(ex.Message);
         }
 
-        return this._response;
+        return response;
     }
 
-    public Task<ResponseDto> RegisterStudentOrSupervisor(RegistrationRequestDto registrationRequestDto) => throw new NotImplementedException();
+    public Task<ResponseDto<RegistrationRequestDto>> RegisterStudentOrSupervisor(RegistrationRequestDto registrationRequestDto) => throw new NotImplementedException();
 
-    public Task<ResponseDto> RegisterAdmin(RegistrationRequestDto registrationRequestDto) => throw new NotImplementedException();
-
-    public async Task<ResponseDto> Login(LoginRequestDto loginRequestDto)
+    public async Task<ResponseDto<RegistrationRequestDto>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto)
     {
-        try
+        this._logger.LogInformation("Processing admin register request {@AdminRegistrationRequestDto}", registrationRequestDto);
+        //validate the incoming request
+        var validator = new AdminRegistrationRequestDtoValidator();
+        ValidationResult? validationResult = await validator.ValidateAsync(registrationRequestDto);
+        if (validationResult.Errors.Any())
         {
-            var validator = new LoginRequestDtoValidator();
-            ValidationResult? validationResult = await validator.ValidateAsync(loginRequestDto);
+            this._logger.LogWarning("Register Admin - Validation errors while registering admin user - {0} ", registrationRequestDto.Email);
+            throw new BadRequestException("Invalid Registration Request", validationResult);
+        }
 
-            if (validationResult.Errors.Any())
-                throw new BadRequestException("Invalid Login Request", validationResult);
+        var registrationRequest = new RegistrationRequestDto()
+        {
+            Password = SystemDefault.DefaultPassword,
+            FirstName = registrationRequestDto.FirstName,
+            LastName = registrationRequestDto.LastName,
+            UserName = registrationRequestDto.UserName,
+            Email = registrationRequestDto.Email,
+            Role = registrationRequestDto.Role.ToLower()
+        };
 
-            //check the database for the user using the username
-            ApplicationUser? user = await this._db.ApplicationUserRepository.GetFirstOrDefaultAsync(u =>
-                u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
+        return await Register(registrationRequest);
+    }
 
-            //check if the user exists
+    public async Task<ResponseDto<AuthResponseDto>> Login(LoginRequestDto loginRequestDto)
+    {
+        this._logger.LogInformation("Processing login request {@LoginRequestDto}", loginRequestDto);
+        ResponseDto<AuthResponseDto> response = new() { IsSuccess = false, Message = "Invalid Login Attempt." };
+
+        //validate the request
+        var validator = new LoginRequestDtoValidator();
+        ValidationResult? validationResult = await validator.ValidateAsync(loginRequestDto);
+        if (validationResult.Errors.Any())
+        {
+            this._logger.LogWarning("Login - Validation errors in admin user registration for {0} - {1}", nameof(ApplicationUser), loginRequestDto.UserName);
+            throw new BadRequestException("Invalid Login Request", validationResult);
+        }
+
+        //check if the password is correct and sign the user in
+        SignInResult result =
+            await this._signInManager.PasswordSignInAsync(loginRequestDto.UserName, loginRequestDto.Password, false,
+                    true);
+        if (result.Succeeded)
+        {
+            ApplicationUser? user = await this._userManager.FindByNameAsync(loginRequestDto.UserName);
             if (user == null)
             {
-                throw new NotFoundException(nameof(ApplicationUser), loginRequestDto.UserName);
+                this._logger.LogWarning("Login - User not found", loginRequestDto.UserName);
+                return response;
             }
 
-            //check if the password is correct
-            var isValid = await this._userManager.CheckPasswordAsync(user, loginRequestDto.Password);
-
-            if (isValid == false)
+            //check if the user is not locked out by the admin
+            if (user.LockoutEnd != null && user.LockoutEnd.Equals(SystemDefault.LockOutEndDate))
             {
-                throw new NotFoundException(nameof(ApplicationUser), user.Id);
+                response.IsSuccess = false;
+                response.Message = "You account has been deactivated. Please contact admin..";
+                return response;
             }
 
-            //generate jwt token
-            JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
+            IList<string> roles = await this._userManager.GetRolesAsync(user);
+            //check if user is an admin and is signing in with the default password
+            if ((roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleAdmin) || roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleSuperAdmin)) && loginRequestDto.Password.Equals(SystemDefault.DefaultPassword))
+            {
+                response.IsSuccess = false;
+                response.Message = "You cannot sign in with the default password. Please reset your password";
+                return response;
+            }
+
+            //generate jwt token and refresh token
+            JwtSecurityToken jwtSecurityToken = await GenerateJwtToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(this._jwtSettings.RefreshTokenValidityInDays);
+            await this._userManager.UpdateAsync(user);
 
             //return the appropriate response
             UserDto? userToReturn = this._mapper.Map<UserDto>(user);
-            var responseDto = new LoginResponseDto()
+            var responseDto = new AuthResponseDto
             {
-                User = userToReturn, Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
+                User = userToReturn,
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                Role = roles.FirstOrDefault() ?? string.Empty,
+                RefreshToken = newRefreshToken
             };
 
-            this._response.IsSuccess = true;
-            this._response.Message = "Login Successful";
-            this._response.Result = responseDto;
+            response.IsSuccess = true;
+            response.Message = "Login Successful";
+            response.Result = responseDto;
+            this._logger.LogInformation("Login - User signed in successfully {0}", loginRequestDto.UserName);
+            return response;
+        }
+        //check if the email is confirmed
+        if (result.IsNotAllowed)
+        {
+            response.IsSuccess = false;
+            response.Message = "Please confirm your email address, then try and login again.";
+            this._logger.LogInformation("Login - Email has not been confirmed {0}", loginRequestDto.UserName);
+            return response;
+        }
+        //check if the account is locked out
+        if (result.IsLockedOut)
+        {
+            ApplicationUser? user = await this._userManager.FindByNameAsync(loginRequestDto.UserName);
+            response.IsSuccess = false;
+            response.Message = "Your account is currently locked out. Please reset your password.";
+            if (user != null) await PublishAccountLockedOutEmail(user);
+            this._logger.LogInformation("Login - Account has been locked out {0}", loginRequestDto.UserName);
+            return response;
+        }
 
-            return this._response;
-        }
-        catch (NotFoundException ex)
-        {
-            this._logger.LogWarning("User details is incomplete or does not exist", ex);
-            this._response.IsSuccess = false;
-            this._response.Message = "Invalid username or password entered.";
-            return this._response;
-        }
-        /*catch (Exception ex)
-        {
-            this._logger.LogError(ex.Message, ex);
-            this._response.IsSuccess = false;
-            this._response.Message = "An unexpected error occurred. Please contact admin";
-            return this._response;
-        }*/
+        return response;
     }
 
-    private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
+    public async Task<ResponseDto<string>> InitiatePasswordReset(InitiatePasswordResetDto request)
+    {
+        this._logger.LogInformation("Initiating password request {@InitiatePasswordResetDto}", request);
+        ResponseDto<string> response = new() { IsSuccess = true, Message = "A notification will be sent to this email if an account is registered under it." };
+
+        ApplicationUser? user = await this._db.ApplicationUserRepository.GetAsync(x => x.NormalizedEmail == request.Email.ToUpper());
+        if (user == null)
+            return response;
+
+        if (user.UserName != null && (user.UserName.Equals(SystemDefault.DefaultSuperAdmin1) ||
+                                      user.UserName.Equals(SystemDefault.DefaultSuperAdmin2)))
+        {
+            this._logger.LogWarning("Password reset initiated for a default user {0}", request.Email);
+            response.Message = "You cannot initiate password for a system default user";
+            response.IsSuccess = false;
+            return response;
+        }
+
+        await PublishPasswordResetEmail(user);
+        return response;
+    }
+
+    public async Task<ResponseDto<string>> ConfirmPasswordReset(ConfirmPasswordResetDto request)
+    {
+        ResponseDto<string> response = new();
+        this._logger.LogInformation("Confirm password request {@ConfirmPasswordResetDto}", request);
+        response.Message = "Invalid Password Reset Request";
+        response.IsSuccess = false;
+
+        ApplicationUser? user = await this._userManager.FindByNameAsync(request.UserName);
+        if (user == null)
+            return response;
+
+        IdentityResult result = await this._userManager.ResetPasswordAsync(user, request.Token, request.Password);
+        if (result.Succeeded)
+        {
+            this._logger.LogInformation("Password reset completed for this user {0}", request.UserName);
+            response.Message = "Your password has been reset. Please sign in.";
+            response.IsSuccess = true;
+            return response;
+        }
+
+        response.Message = result.Errors.FirstOrDefault()?.Description;
+        this._logger.LogWarning("Password reset failed with an error {0} - {1}", request.UserName, response.Message ?? "Undefined identity error");
+        return response;
+    }
+
+    public async Task<ResponseDto<AuthResponseDto>> ConfirmEmail(ConfirmEmailDto request)
+    {
+        ResponseDto<AuthResponseDto> response = new();
+        this._logger.LogInformation("Confirm email request {@ConfirmEmailDto}", request);
+        response.Message = "Invalid Email Confirmation Request";
+        response.IsSuccess = false;
+
+        ApplicationUser? user = await this._userManager.FindByNameAsync(request.UserName);
+        if (user == null)
+            return response;
+
+        IdentityResult result = await this._userManager.ConfirmEmailAsync(user, request.Token);
+        if (result.Succeeded)
+        {
+            this._logger.LogInformation("Email has been confirmed for this user {0}", request.UserName);
+            response.Message = "Your email has been confirmed. Please sign in.";
+            response.IsSuccess = true;
+            UserDto? userToReturn = this._mapper.Map<UserDto>(user);
+            IList<string> roles = await this._userManager.GetRolesAsync(user);
+            var responseDto = new AuthResponseDto
+            {
+                User = userToReturn,
+                Role = roles.FirstOrDefault() ?? string.Empty
+            };
+            response.Result = responseDto;
+            return response;
+        }
+
+        response.Message = result.Errors.FirstOrDefault()?.Description;
+        this._logger.LogInformation("Email confirmation failed for this user {0} - {1}", request.UserName, response.Message ?? "Undefined Identity Error");
+        return response;
+    }
+
+    public async Task<ResponseDto<string>> ResendConfirmationEmail(EmailRequestDto request)
+    {
+        ResponseDto<string> response = new() { IsSuccess = false, Message = "Invalid Request", Result = ErrorMessages.DefaultError };
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email);
+        if (user == null)
+            return response;
+
+        if (user.EmailConfirmed)
+        {
+            response.Message = "The email for this user has been confirmed already";
+            response.Result = ErrorMessages.DefaultError;
+            return response;
+        }
+
+        await PublishEmailConfirmationForAdminUsers(user);
+        response.IsSuccess = true;
+        response.Message = "Confirmation Email has been resent to the user";
+        response.Result = SuccessMessages.DefaultSuccess;
+        return response;
+    }
+
+    public async Task<ResponseDto<RefreshTokenDto>> GetRefreshToken(RefreshTokenDto request)
+    {
+        ResponseDto<RefreshTokenDto> response = new() { IsSuccess = false, Message = "Invalid access token or refresh token" };
+        ClaimsPrincipal principal = GetPrincipalFromExpiredToken(request.AccessToken);
+        var email = principal.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+        //check that the username exists on the token
+        if (string.IsNullOrEmpty(email)) return response;
+
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(email);
+
+        if (user == null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+        {
+            response.IsSuccess = false;
+            response.Message = "Invalid access token or refresh token";
+            return response;
+        }
+
+        //generate jwt token
+        JwtSecurityToken jwtSecurityToken = await GenerateJwtToken(user);
+        var newRefreshToken = GenerateRefreshToken();
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiryTime = DateTime.Now.AddDays(this._jwtSettings.RefreshTokenValidityInDays);
+        await this._userManager.UpdateAsync(user);
+
+        response.IsSuccess = true;
+        response.Message = "Success";
+        response.Result = new RefreshTokenDto
+        {
+            AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+            RefreshToken = newRefreshToken
+        };
+
+        return response;
+
+    }
+
+    private async Task<JwtSecurityToken> GenerateJwtToken(ApplicationUser user)
     {
         IList<Claim> userClaims = await this._userManager.GetClaimsAsync(user);
         IList<string> roles = await this._userManager.GetRolesAsync(user);
 
         var roleClaims = roles.Select(q => new Claim(ClaimTypes.Role, q)).ToList();
 
-        if (user.UserName != null && user.Email != null)
+        if (user is { UserName: not null, Email: not null })
         {
             IEnumerable<Claim> claims = new[]
                 {
@@ -193,5 +392,72 @@ public class AuthService : IAuthService
         throw new NotFoundException(nameof(ApplicationUser), user.Id);
     }
 
-    private Task<bool> AssignRole(string email, string roleName) => throw new NotImplementedException();
+    private async Task<IdentityResult> AssignRole(ApplicationUser user, string roleName) => await this._userManager.AddToRoleAsync(user, roleName);
+
+    private async Task PublishEmailConfirmationForAdminUsers(ApplicationUser user)
+    {
+        var code = await this._userManager.GenerateEmailConfirmationTokenAsync(user);
+
+        var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebConfirmEmailRoute}?username={user.UserName}&activationToken={code}";
+        UserDto? userToReturn = this._mapper.Map<UserDto>(user);
+        this._logger.LogInformation("Email Confirmation Published for this user {0}", user.UserName ?? string.Empty);
+
+
+        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl };
+        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.RegisterAdminUserQueue,
+            this._serviceBusSettings.ServiceBusConnectionString);
+    }
+
+    private async Task PublishPasswordResetEmail(ApplicationUser user)
+    {
+        var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
+        var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebResetPasswordRoute}?username={user.UserName}&activationToken={code}";
+        UserDto? userToReturn = this._mapper.Map<UserDto>(user);
+        this._logger.LogInformation("Password Reset Email Published for this user {0}", user.UserName ?? string.Empty);
+
+
+        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl };
+        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.ResetPasswordQueue,
+            this._serviceBusSettings.ServiceBusConnectionString);
+    }
+
+    private async Task PublishAccountLockedOutEmail(ApplicationUser user)
+    {
+        var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
+        var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebResetPasswordRoute}?username={user.UserName}&activationToken={code}";
+        UserDto? userToReturn = this._mapper.Map<UserDto>(user);
+        this._logger.LogInformation("Account Locked out Email Published for this user {0}", user.UserName ?? string.Empty);
+
+
+        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl };
+        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.ResetPasswordQueue,
+            this._serviceBusSettings.ServiceBusConnectionString);
+    }
+
+    private ClaimsPrincipal GetPrincipalFromExpiredToken(string? token)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this._jwtSettings.Secret)),
+            ValidateLifetime = false
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        ClaimsPrincipal? principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+        if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            throw new SecurityTokenException("Invalid token");
+
+        return principal;
+    }
+    private static string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
+    }
+
 }

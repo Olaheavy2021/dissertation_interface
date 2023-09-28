@@ -1,8 +1,8 @@
-﻿namespace UserManagement_API.Data.Models.Dto;
+namespace UserManagement_API.Data.Models.Dto;
 
-public class ResponseDto
+public class ResponseDto<T>
 {
-    public object? Result { get; set; }
-    public bool IsSuccess { get; set; } = true;
-    public string? Message { get; set; } = "";
+    public T? Result { get; set; }
+    public bool IsSuccess { get; set; }
+    public string? Message { get; set; } = string.Empty;
 }

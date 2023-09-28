@@ -245,6 +245,13 @@ namespace UserManagement_API.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -272,7 +279,7 @@ namespace UserManagement_API.Migrations
                         {
                             Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a815e166-94a8-4381-bfb7-f5b19dc9200b",
+                            ConcurrencyStamp = "f7ade31c-9336-4222-87f2-da5aff786ddf",
                             Email = "superadmin1@shu.com",
                             EmailConfirmed = true,
                             FirstName = "Super",
@@ -280,9 +287,11 @@ namespace UserManagement_API.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN1@SHU.COM",
                             NormalizedUserName = "SUPERADMIN1",
-                            PasswordHash = "AQAAAAIAAYagAAAAENwMO/66+NOOjZrfbVqva9nWZ4TO+SA5HCZyyk5VvflJGOMnKAL0Q01DTYrncuvF5g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEL6cSHnS/Re6jrf5XnuqztvwOmOV0QtqesOhpdowbHRSzNoCuK+6Jvd8CvFdYE3qQQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d3dca18e-5e7d-44bf-ac3a-565f4a65a2cb",
+                            RefreshToken = "",
+                            RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SecurityStamp = "eba40ad9-cc8d-47af-9388-a43c2bcf2f4a",
                             TwoFactorEnabled = false,
                             UserName = "superadmin1"
                         },
@@ -290,7 +299,7 @@ namespace UserManagement_API.Migrations
                         {
                             Id = "9e224968-33e4-4652-b7b7-8574d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1037e3b1-62f0-49f0-95a1-85b6157758fc",
+                            ConcurrencyStamp = "16b4c1f9-a5ab-4c69-8033-1254ee490556",
                             Email = "superadmin2@shu.com",
                             EmailConfirmed = true,
                             FirstName = "Super",
@@ -298,9 +307,11 @@ namespace UserManagement_API.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN2@SHU.COM",
                             NormalizedUserName = "SUPERADMIN2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFbazlstcB9oEag17TGd1QhWB8Yb4P2hfb4xDg/O7NNoIS/AC61mmmNG2N8a8uRgyw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBOTxnoSIzcXBYTSZ9eRparqHt+dnLBDFX3GqkPNYDB8Bwp/MEY/GZVs2D6SBz5hxw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8dc7a998-339f-4894-9938-d08e4d0f577c",
+                            RefreshToken = "",
+                            RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SecurityStamp = "7050bb5a-563b-4748-be89-06dec440e634",
                             TwoFactorEnabled = false,
                             UserName = "superadmin2"
                         });

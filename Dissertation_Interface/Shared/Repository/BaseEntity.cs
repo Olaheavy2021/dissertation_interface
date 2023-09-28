@@ -1,4 +1,4 @@
-﻿namespace Shared.Repository;
+namespace Shared.Repository;
 
 public class BaseEntity
 {

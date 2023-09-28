@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UserManagement_API.Data.Models;
 
 namespace UserManagement_API.Data;
 
-public class UserDbContext: IdentityDbContext<ApplicationUser>
+public class UserDbContext : IdentityDbContext<ApplicationUser>
 {
     public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
     {

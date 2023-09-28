@@ -54,7 +54,7 @@ This is a [.NET Core](https://learn.microsoft.com/en-us/dotnet/core/introduction
   -   ```dotnet tool install --global dotnet-ef```
 
 #### Add Migration
-  - ```add-migration <migration-name>```
+  - ```dotnet ef migrations  add <migration-name>```
 
 #### Update Database
   -  ```dotnet ef database update```

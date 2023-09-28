@@ -1,4 +1,4 @@
-﻿namespace UserManagement_API.Data.Models.Dto;
+namespace UserManagement_API.Data.Models.Dto;
 
 public class AdminRegistrationRequestDto
 {
@@ -8,7 +8,7 @@ public class AdminRegistrationRequestDto
 
     public string LastName { get; set; } = string.Empty;
 
-    public string Password { get; set; } = string.Empty;
-
     public string UserName { get; set; } = string.Empty;
+
+    public string Role { get; set; } = string.Empty;
 }
