@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
 
@@ -6,7 +6,7 @@ namespace Shared.MessageBus;
 
 public class MessageBus : IMessageBus
 {
-    public async Task PublishMessage(object message, string topicQueueName,string connectionString)
+    public async Task PublishMessage(object message, string topicQueueName, string connectionString)
     {
         await using var client = new ServiceBusClient(connectionString);
 

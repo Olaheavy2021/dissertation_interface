@@ -1,4 +1,4 @@
-﻿using Notification_API.Messaging;
+using Notification_API.Messaging;
 
 namespace Notification_API.Extensions;
 

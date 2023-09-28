@@ -31,7 +31,7 @@ namespace Notification_API.Controllers
         })
             .ToArray();
 
-        [HttpPost(  "TestEmail")]
+        [HttpPost("TestEmail")]
         public async Task<IActionResult> TestEmail([FromBody] TestEmailDto request)
         {
             ResponseDto response = await this._emailService.RegisterAdminUserEmailAndLog(request.emailBody, request.email);

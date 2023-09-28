@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
 using UserManagement_API.Data.Models.Dto;

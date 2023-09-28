@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Shared.Constants;
 using UserManagement_API.Data.Models.Dto;
 

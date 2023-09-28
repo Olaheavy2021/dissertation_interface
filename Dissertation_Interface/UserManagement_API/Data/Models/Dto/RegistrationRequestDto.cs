@@ -1,4 +1,4 @@
-﻿using Destructurama.Attributed;
+using Destructurama.Attributed;
 
 namespace UserManagement_API.Data.Models.Dto;
 

@@ -1,4 +1,4 @@
-﻿namespace Notification_API.Messaging;
+namespace Notification_API.Messaging;
 
 public interface IAzureServiceBusConsumer
 {

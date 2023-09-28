@@ -1,4 +1,4 @@
-﻿namespace UserManagement_API.Data.IRepository;
+namespace UserManagement_API.Data.IRepository;
 
 public interface IUnitOfWork
 {

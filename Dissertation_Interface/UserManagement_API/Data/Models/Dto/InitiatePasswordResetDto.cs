@@ -1,4 +1,4 @@
-﻿namespace UserManagement_API.Data.Models.Dto;
+namespace UserManagement_API.Data.Models.Dto;
 
 public class InitiatePasswordResetDto
 {

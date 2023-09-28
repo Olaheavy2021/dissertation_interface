@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
@@ -29,7 +29,10 @@ public class EmailService : IEmailService
     {
         var logEmailDto = new LogEmailRequestDto
         {
-            Message = emailBody, EmailType = EmailType.EmailTypeAdminConfirmationEmail, Email = email, Subject = EmailSubject.EmailSubjectEmailConfirmation
+            Message = emailBody,
+            EmailType = EmailType.EmailTypeAdminConfirmationEmail,
+            Email = email,
+            Subject = EmailSubject.EmailSubjectEmailConfirmation
         };
         return await SaveAndSendEmail(logEmailDto);
     }
@@ -38,7 +41,10 @@ public class EmailService : IEmailService
     {
         var logEmailDto = new LogEmailRequestDto
         {
-            Message = emailBody, EmailType = EmailType.EmailTypeResetPasswordEmail, Email = email, Subject = EmailSubject.EmailSubjectEmailConfirmation
+            Message = emailBody,
+            EmailType = EmailType.EmailTypeResetPasswordEmail,
+            Email = email,
+            Subject = EmailSubject.EmailSubjectEmailConfirmation
         };
         return await SaveAndSendEmail(logEmailDto);
     }
@@ -72,12 +78,12 @@ public class EmailService : IEmailService
         var testEmail = this._configuration.GetValue<string>("SendGridSettings:TestEmail");
 
         //save email into the database
-        var  emailIdentifier = await SaveEmail(request);
+        var emailIdentifier = await SaveEmail(request);
         if (!string.IsNullOrEmpty(emailIdentifier))
         {
             var apiKey = this._configuration.GetValue<string>("SendGridSettings:ApiKey");
             var client = new SendGridClient(apiKey);
-            var from = new EmailAddress(this._configuration.GetValue<string>("SendGridSettings:From"),this._configuration.GetValue<string>("SendGridSettings:Name"));
+            var from = new EmailAddress(this._configuration.GetValue<string>("SendGridSettings:From"), this._configuration.GetValue<string>("SendGridSettings:Name"));
             //TODO:Remove this for production
             //var to = new EmailAddress(request.Email);
             var to = new EmailAddress(testEmail);

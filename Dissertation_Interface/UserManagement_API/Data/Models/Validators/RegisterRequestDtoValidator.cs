@@ -1,11 +1,11 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Shared.Constants;
 using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Models.Dto;
 
 namespace UserManagement_API.Data.Models.Validators;
 
-public class RegisterRequestDtoValidator: AbstractValidator<RegistrationRequestDto>
+public class RegisterRequestDtoValidator : AbstractValidator<RegistrationRequestDto>
 {
     private readonly IUnitOfWork _db;
 
@@ -28,7 +28,7 @@ public class RegisterRequestDtoValidator: AbstractValidator<RegistrationRequestD
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .NotNull().WithMessage(ErrorMessages.RequiredField)
             .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50)
-            .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace);;
+            .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace); ;
 
         RuleFor(p => p.Email)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)

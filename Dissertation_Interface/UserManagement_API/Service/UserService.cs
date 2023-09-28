@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Shared.Constants;
 using Shared.Enums;
@@ -17,7 +17,7 @@ public class UserService : IUserService
     private readonly IAppLogger<UserService> _logger;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public UserService(IUnitOfWork db,IAppLogger<UserService> logger, IMapper mapper, UserManager<ApplicationUser> userManager)
+    public UserService(IUnitOfWork db, IAppLogger<UserService> logger, IMapper mapper, UserManager<ApplicationUser> userManager)
     {
         this._db = db;
         this._mapper = mapper;
@@ -31,15 +31,15 @@ public class UserService : IUserService
         var users = new List<ApplicationUser>();
         this._logger.LogInformation("Fetching all the admin users on the system");
 
-        IList<ApplicationUser> adminUsers =await this._userManager.GetUsersInRoleAsync(RolesEnum.AdminRoles.Admin.ToString());
-        if(adminUsers.Any())
+        IList<ApplicationUser> adminUsers = await this._userManager.GetUsersInRoleAsync(RolesEnum.AdminRoles.Admin.ToString());
+        if (adminUsers.Any())
             users.AddRange(adminUsers);
-        IList<ApplicationUser> superAdminUsers =await this._userManager.GetUsersInRoleAsync(RolesEnum.AdminRoles.Superadmin.ToString());
+        IList<ApplicationUser> superAdminUsers = await this._userManager.GetUsersInRoleAsync(RolesEnum.AdminRoles.Superadmin.ToString());
         if (superAdminUsers.Any())
         {
             //filter out system default users
-           IEnumerable<ApplicationUser> filteredSuperAdminUsers =  superAdminUsers.Where(s =>
-                s.UserName != SystemDefault.DefaultSuperAdmin1 || s.UserName != SystemDefault.DefaultSuperAdmin2);
+            IEnumerable<ApplicationUser> filteredSuperAdminUsers = superAdminUsers.Where(s =>
+                 s.UserName != SystemDefault.DefaultSuperAdmin1 || s.UserName != SystemDefault.DefaultSuperAdmin2);
             users.AddRange(filteredSuperAdminUsers);
         }
 
@@ -69,7 +69,7 @@ public class UserService : IUserService
             IList<string> roles = await this._userManager.GetRolesAsync(user);
             var isLockedOut = await this._userManager.IsLockedOutAsync(user);
             UserDto mappedUser = this._mapper.Map<ApplicationUser, UserDto>(user);
-            var getUserDto = new GetUserDto() { User = mappedUser, Role = roles.FirstOrDefault() ?? string.Empty, IsLockedOut = isLockedOut};
+            var getUserDto = new GetUserDto() { User = mappedUser, Role = roles.FirstOrDefault() ?? string.Empty, IsLockedOut = isLockedOut };
 
             response.IsSuccess = true;
             response.Message = SuccessMessages.DefaultSuccess;
@@ -86,23 +86,23 @@ public class UserService : IUserService
 
     public async Task<ResponseDto<bool>> LockOutUser(string email)
     {
-        var response = new ResponseDto<bool> { IsSuccess = false, Result = false, Message = "An error occurred whilst locking out the user"};
+        var response = new ResponseDto<bool> { IsSuccess = false, Result = false, Message = "An error occurred whilst locking out the user" };
         this._logger.LogInformation("Request to lock out this user with this email -  {0}", email);
         ApplicationUser? user = await this._userManager.FindByEmailAsync(email);
         if (user == null) return response;
 
         IdentityResult lockDate = await this._userManager.SetLockoutEndDateAsync(user, SystemDefault.LockOutEndDate);
 
-        response.IsSuccess =  lockDate.Succeeded;
-        response.Result =  lockDate.Succeeded;
+        response.IsSuccess = lockDate.Succeeded;
+        response.Result = lockDate.Succeeded;
         response.Message = "User locked out successfully";
         this._logger.LogInformation("User lock out processed with this response - {0}", lockDate.Succeeded);
         return response;
     }
 
-    public async  Task<ResponseDto<bool>> UnlockUser(string email)
+    public async Task<ResponseDto<bool>> UnlockUser(string email)
     {
-        var response = new ResponseDto<bool> { IsSuccess = false, Result = false, Message = "An error occurred whilst unlocking the user"};
+        var response = new ResponseDto<bool> { IsSuccess = false, Result = false, Message = "An error occurred whilst unlocking the user" };
         this._logger.LogInformation("Request to unlock user with this email -  {0}", email);
         ApplicationUser? user = await this._userManager.FindByEmailAsync(email);
         if (user == null) return response;

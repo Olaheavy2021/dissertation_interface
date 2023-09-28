@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Notification_API.Data.Models;
 
 namespace Notification_API.Data;
 
-public class NotificationDbContext:  DbContext
+public class NotificationDbContext : DbContext
 {
     public NotificationDbContext(DbContextOptions<NotificationDbContext> options) : base(options)
     {

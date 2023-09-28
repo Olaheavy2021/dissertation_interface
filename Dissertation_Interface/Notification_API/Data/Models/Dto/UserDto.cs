@@ -1,4 +1,4 @@
-﻿namespace Notification_API.Data.Models.Dto;
+namespace Notification_API.Data.Models.Dto;
 
 public class UserDto
 {

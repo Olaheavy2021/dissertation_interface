@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Shared.Repository;
@@ -63,7 +63,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         Expression<Func<T, bool>>? predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
         params Expression<Func<T, object>>[]? includes)
     {
-        if(pageNumber == 0) pageNumber = 1;
+        if (pageNumber == 0) pageNumber = 1;
         IQueryable<T> query = this._context.Set<T>().AsNoTracking();
         if (predicate != null)
         {
@@ -84,7 +84,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
     public async Task AddAsync(T model) => await this._context.Set<T>().AddAsync(model).ConfigureAwait(false);
 
-    public async Task AddRangeAsync(IReadOnlyList<T> models) =>  await this._context.Set<T>().AddRangeAsync(models).ConfigureAwait(false);
+    public async Task AddRangeAsync(IReadOnlyList<T> models) => await this._context.Set<T>().AddRangeAsync(models).ConfigureAwait(false);
 
     public void Update(T model) => this._context.Update(model);
 

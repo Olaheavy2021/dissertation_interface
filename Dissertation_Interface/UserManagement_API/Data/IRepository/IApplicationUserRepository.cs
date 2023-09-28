@@ -1,4 +1,4 @@
-﻿using Shared.Repository;
+using Shared.Repository;
 using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;
 

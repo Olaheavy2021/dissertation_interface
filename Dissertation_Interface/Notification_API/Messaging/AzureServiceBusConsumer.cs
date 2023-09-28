@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Azure.Messaging.ServiceBus;
 using MimeKit;
 using Newtonsoft.Json;
@@ -20,15 +20,15 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
     private readonly string _resetPasswordQueue;
     private readonly IConfiguration _configuration;
     private readonly EmailService _emailService;
-    private ServiceBusProcessor _registerAdminUserProcessor;
-    private ServiceBusProcessor _resetPasswordProcessor;
+    private readonly ServiceBusProcessor _registerAdminUserProcessor;
+    private readonly ServiceBusProcessor _resetPasswordProcessor;
     private readonly IAppLogger<AzureServiceBusConsumer> _logger;
     private readonly IWebHostEnvironment _env;
 
-    public AzureServiceBusConsumer(IConfiguration configuration, EmailService emailService,IWebHostEnvironment env, IAppLogger<AzureServiceBusConsumer> logger)
+    public AzureServiceBusConsumer(IConfiguration configuration, EmailService emailService, IWebHostEnvironment env, IAppLogger<AzureServiceBusConsumer> logger)
     {
         this._configuration = configuration;
-        this._emailService= emailService;
+        this._emailService = emailService;
         this._configuration = configuration;
         this._env = env;
         this._logger = logger;
@@ -170,18 +170,18 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                 // try to send email
                 if (emailDto != null)
                 {
-                   ResponseDto response = await this._emailService.RegisterAdminUserEmailAndLog(messageBody,
-                        emailDto.User?.Email ?? string.Empty);
-                   if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
-                   {
-                       await this._emailService.UpdateEmailLogger(response.Message);
-                       this._logger.LogInformation("Email Confirmation has been sent successfully for this user - {@PublishEmailDto}", emailDto);
-                       await args.CompleteMessageAsync(args.Message);
-                   }
-                   else
-                   {
-                       this._logger.LogWarning("An error occurred whilst sending email confirmation for this user - {@ResponseDto}", response);
-                   }
+                    ResponseDto response = await this._emailService.RegisterAdminUserEmailAndLog(messageBody,
+                         emailDto.User?.Email ?? string.Empty);
+                    if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
+                    {
+                        await this._emailService.UpdateEmailLogger(response.Message);
+                        this._logger.LogInformation("Email Confirmation has been sent successfully for this user - {@PublishEmailDto}", emailDto);
+                        await args.CompleteMessageAsync(args.Message);
+                    }
+                    else
+                    {
+                        this._logger.LogWarning("An error occurred whilst sending email confirmation for this user - {@ResponseDto}", response);
+                    }
                 }
             }
         }

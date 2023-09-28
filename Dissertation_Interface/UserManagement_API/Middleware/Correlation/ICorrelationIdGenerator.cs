@@ -1,4 +1,4 @@
-﻿namespace UserManagement_API.Middleware.Correlation;
+namespace UserManagement_API.Middleware.Correlation;
 
 public interface ICorrelationIdGenerator
 {

@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -35,7 +35,7 @@ public class AuthService : IAuthService
 
 
 
-    public AuthService(IUnitOfWork db, IOptions<ApplicationUrlSettings> applicationUrlSettings,IMessageBus messageBus,
+    public AuthService(IUnitOfWork db, IOptions<ApplicationUrlSettings> applicationUrlSettings, IMessageBus messageBus,
         IOptions<JwtSettings> jwtSettings, SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager, IAppLogger<AuthService> logger, IMapper mapper, IOptions<ServiceBusSettings> serviceBusSettings)
     {
@@ -66,15 +66,15 @@ public class AuthService : IAuthService
 
         // register the user
         ApplicationUser user = new()
-            {
-                UserName = registrationRequestDto.UserName,
-                Email = registrationRequestDto.Email,
-                NormalizedEmail = registrationRequestDto.Email.ToUpper(),
-                FirstName = registrationRequestDto.FirstName,
-                LastName = registrationRequestDto.LastName,
-                NormalizedUserName = registrationRequestDto.UserName.ToUpper()
-            };
-        IdentityResult registrationResult =await this._userManager.CreateAsync(user,registrationRequestDto.Password);
+        {
+            UserName = registrationRequestDto.UserName,
+            Email = registrationRequestDto.Email,
+            NormalizedEmail = registrationRequestDto.Email.ToUpper(),
+            FirstName = registrationRequestDto.FirstName,
+            LastName = registrationRequestDto.LastName,
+            NormalizedUserName = registrationRequestDto.UserName.ToUpper()
+        };
+        IdentityResult registrationResult = await this._userManager.CreateAsync(user, registrationRequestDto.Password);
         if (registrationResult.Succeeded)
         {
             //assign a role to the user
@@ -128,7 +128,7 @@ public class AuthService : IAuthService
             Role = registrationRequestDto.Role.ToLower()
         };
 
-       return await Register(registrationRequest);
+        return await Register(registrationRequest);
     }
 
     public async Task<ResponseDto<AuthResponseDto>> Login(LoginRequestDto loginRequestDto)
@@ -168,7 +168,7 @@ public class AuthService : IAuthService
 
             IList<string> roles = await this._userManager.GetRolesAsync(user);
             //check if user is an admin and is signing in with the default password
-            if((roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleAdmin) || roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleSuperAdmin)) && loginRequestDto.Password.Equals(SystemDefault.DefaultPassword))
+            if ((roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleAdmin) || roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleSuperAdmin)) && loginRequestDto.Password.Equals(SystemDefault.DefaultPassword))
             {
                 response.IsSuccess = false;
                 response.Message = "You cannot sign in with the default password. Please reset your password";
@@ -186,7 +186,10 @@ public class AuthService : IAuthService
             UserDto? userToReturn = this._mapper.Map<UserDto>(user);
             var responseDto = new AuthResponseDto
             {
-                User = userToReturn, AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken), Role = roles.FirstOrDefault() ?? string.Empty, RefreshToken = newRefreshToken
+                User = userToReturn,
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                Role = roles.FirstOrDefault() ?? string.Empty,
+                RefreshToken = newRefreshToken
             };
 
             response.IsSuccess = true;
@@ -285,20 +288,21 @@ public class AuthService : IAuthService
             IList<string> roles = await this._userManager.GetRolesAsync(user);
             var responseDto = new AuthResponseDto
             {
-                User = userToReturn,Role = roles.FirstOrDefault() ?? string.Empty
+                User = userToReturn,
+                Role = roles.FirstOrDefault() ?? string.Empty
             };
             response.Result = responseDto;
             return response;
         }
 
         response.Message = result.Errors.FirstOrDefault()?.Description;
-        this._logger.LogInformation("Email confirmation failed for this user {0} - {1}", request.UserName, response.Message ?? "Undefined Identity Error" );
+        this._logger.LogInformation("Email confirmation failed for this user {0} - {1}", request.UserName, response.Message ?? "Undefined Identity Error");
         return response;
     }
 
     public async Task<ResponseDto<string>> ResendConfirmationEmail(EmailRequestDto request)
     {
-        ResponseDto<string> response = new() { IsSuccess = false, Message = "Invalid Request", Result = ErrorMessages.DefaultError};
+        ResponseDto<string> response = new() { IsSuccess = false, Message = "Invalid Request", Result = ErrorMessages.DefaultError };
         ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email);
         if (user == null)
             return response;

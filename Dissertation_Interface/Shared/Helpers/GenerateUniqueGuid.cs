@@ -1,4 +1,4 @@
-﻿namespace Shared.Helpers;
+namespace Shared.Helpers;
 
 public static class GenerateUniqueGuid
 {

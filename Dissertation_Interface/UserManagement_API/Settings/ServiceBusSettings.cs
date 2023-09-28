@@ -1,4 +1,4 @@
-﻿namespace UserManagement_API.Settings;
+namespace UserManagement_API.Settings;
 
 public class ServiceBusSettings
 {

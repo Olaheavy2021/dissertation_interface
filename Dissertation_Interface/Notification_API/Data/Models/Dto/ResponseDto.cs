@@ -1,4 +1,4 @@
-﻿using SendGrid;
+using SendGrid;
 
 namespace Notification_API.Data.Models.Dto;
 

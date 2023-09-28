@@ -1,4 +1,4 @@
-﻿namespace Shared.MessageBus;
+namespace Shared.MessageBus;
 
 public interface IMessageBus
 {

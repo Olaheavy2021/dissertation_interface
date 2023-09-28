@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -9,9 +9,7 @@ namespace Notification_API.Migrations
     public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.CreateTable(
+        protected override void Up(MigrationBuilder migrationBuilder) => migrationBuilder.CreateTable(
                 name: "EmailLoggers",
                 columns: table => new
                 {
@@ -27,13 +25,9 @@ namespace Notification_API.Migrations
                 {
                     table.PrimaryKey("PK_EmailLoggers", x => x.Id);
                 });
-        }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
+        protected override void Down(MigrationBuilder migrationBuilder) => migrationBuilder.DropTable(
                 name: "EmailLoggers");
-        }
     }
 }
