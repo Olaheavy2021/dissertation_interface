@@ -3,8 +3,10 @@ using Notification_API.Data;
 using Notification_API.Extensions;
 using Notification_API.Messaging;
 using Notification_API.Services;
+using Notification_API.Settings;
 using Serilog;
 using Shared.Logging;
+using Shared.Settings;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER");
@@ -32,6 +34,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<ServiceBusSettings>(builder.Configuration.GetSection("ServiceBusSettings"));
+builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection("SendGridSettings"));
 
 WebApplication app = builder.Build();
 

@@ -2,7 +2,7 @@ namespace Notification_API.Data.Models.Dto;
 
 public class TestEmailDto
 {
-    public string emailBody { get; set; }
+    public string EmailBody { get; set; } = string.Empty;
 
-    public string email { get; set; }
+    public string Email { get; set; } = string.Empty;
 }

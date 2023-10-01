@@ -13,7 +13,6 @@ using UserManagement_API.Data.Repository;
 using UserManagement_API.Middleware.Correlation;
 using UserManagement_API.Service;
 using UserManagement_API.Service.IService;
-using UserManagement_API.Settings;
 
 namespace UserManagement_API;
 

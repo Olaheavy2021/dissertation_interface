@@ -32,7 +32,7 @@ public class EmailService : IEmailService
             Message = emailBody,
             EmailType = EmailType.EmailTypeAdminConfirmationEmail,
             Email = email,
-            Subject = EmailSubject.EmailSubjectEmailConfirmation
+            Subject = EmailSubject.EmailSubjectForAdminEmailConfirmation
         };
         return await SaveAndSendEmail(logEmailDto);
     }
@@ -44,7 +44,31 @@ public class EmailService : IEmailService
             Message = emailBody,
             EmailType = EmailType.EmailTypeResetPasswordEmail,
             Email = email,
-            Subject = EmailSubject.EmailSubjectEmailConfirmation
+            Subject = EmailSubject.EmailSubjectForResetPassword
+        };
+        return await SaveAndSendEmail(logEmailDto);
+    }
+
+    public async Task<ResponseDto> AccountLockedEmailAndLog(string emailBody, string email)
+    {
+        var logEmailDto = new LogEmailRequestDto
+        {
+            Message = emailBody,
+            EmailType = EmailType.EmailTypeAccountDeactivationEmail,
+            Email = email,
+            Subject = EmailSubject.EmailSubjectForAccountLockedOut
+        };
+        return await SaveAndSendEmail(logEmailDto);
+    }
+
+    public async Task<ResponseDto> AccountUnLockedEmailAndLog(string emailBody, string email)
+    {
+        var logEmailDto = new LogEmailRequestDto
+        {
+            Message = emailBody,
+            EmailType = EmailType.EmailTypeAccountActivationEmail,
+            Email = email,
+            Subject = EmailSubject.EmailSubjectForAccountUnlocked
         };
         return await SaveAndSendEmail(logEmailDto);
     }

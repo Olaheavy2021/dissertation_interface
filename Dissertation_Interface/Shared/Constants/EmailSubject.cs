@@ -1,6 +1,9 @@
 namespace Shared.Constants;
 
-public class EmailSubject
+public static class EmailSubject
 {
-    public const string EmailSubjectEmailConfirmation = "Dissertation Interface - Email Confirmation";
+    public const string EmailSubjectForAdminEmailConfirmation = "Dissertation Interface - Account Activation Instructions";
+    public const string EmailSubjectForAccountLockedOut = "Dissertation Interface - Account Locked Out";
+    public const string EmailSubjectForAccountUnlocked = "Dissertation Interface - Account Unlocked";
+    public const string EmailSubjectForResetPassword = "Dissertation Interface - Reset Password";
 }

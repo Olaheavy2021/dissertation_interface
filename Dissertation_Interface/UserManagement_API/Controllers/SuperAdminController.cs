@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Shared.Helpers;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
+using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;
 using UserManagement_API.Service.IService;
 
@@ -41,18 +44,7 @@ public class SuperAdminController : Controller
         return Ok(response);
     }
 
-    [HttpGet("admin-users")]
-    [SwaggerOperation(Summary = "Get all admin users")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<List<UserDto>>))]
-    [SwaggerResponse(StatusCodes.Status403Forbidden)]
-    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAdminUsers()
-    {
-        ResponseDto<List<UserDto>> response = await this._userService.GetAdminUsers();
-        return Ok(response);
-    }
-
-    [HttpGet("admin-user/{id}")]
+    [HttpGet("user/{id}")]
     [SwaggerOperation(Summary = "Get an admin user")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
@@ -68,9 +60,9 @@ public class SuperAdminController : Controller
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<bool>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
     [SwaggerResponse(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> LockOutUser(string email)
+    public async Task<IActionResult> LockOutUser([FromBody] EmailRequestDto model)
     {
-        ResponseDto<bool> response = await this._userService.LockOutUser(email);
+        ResponseDto<bool> response = await this._userService.LockOutUser(model.Email);
         return Ok(response);
     }
 
@@ -79,11 +71,39 @@ public class SuperAdminController : Controller
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<bool>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
     [SwaggerResponse(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> UnlockUser(string email)
+    public async Task<IActionResult> UnlockUser([FromBody] EmailRequestDto model)
     {
-        ResponseDto<bool> response = await this._userService.UnlockUser(email);
+        ResponseDto<bool> response = await this._userService.UnlockUser(model.Email);
         return Ok(response);
     }
 
+    [HttpGet("admin-users")]
+    [SwaggerOperation(Summary = "List of Admin")]
+    public ActionResult GetAdminUser([FromQuery] PaginationParameters paginationParameters)
+    {
+        ResponseDto<PagedList<UserListDto>> users = this._userService.GetPaginatedAdminUsers(paginationParameters);
 
+        if (users.Result != null)
+        {
+            var metadata = new
+            {
+                users.Result.TotalCount,
+                users.Result.PageSize,
+                users.Result.CurrentPage,
+                users.Result.TotalPages,
+                users.Result.HasNext,
+                users.Result.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+        }
+
+        return Ok(users);
+    }
+
+    [HttpPut("user")]
+    public async Task<IActionResult> EditUser([FromBody] EditUserRequestDto model)
+    {
+        ResponseDto<EditUserRequestDto> response = await this._userService.EditUser(model);
+        return Ok(response);
+    }
 }

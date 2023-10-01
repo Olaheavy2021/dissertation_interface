@@ -1,4 +1,5 @@
 using AutoMapper;
+using Shared.Helpers;
 using UserManagement_API.Data.Models.Dto;
 
 namespace UserManagement_API.Data.Models.MappingProfiles;

@@ -17,7 +17,6 @@ using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;
 using UserManagement_API.Data.Models.Validators;
 using UserManagement_API.Service.IService;
-using UserManagement_API.Settings;
 
 namespace UserManagement_API.Service;
 
@@ -158,14 +157,6 @@ public class AuthService : IAuthService
                 return response;
             }
 
-            //check if the user is not locked out by the admin
-            if (user.LockoutEnd != null && user.LockoutEnd.Equals(SystemDefault.LockOutEndDate))
-            {
-                response.IsSuccess = false;
-                response.Message = "You account has been deactivated. Please contact admin..";
-                return response;
-            }
-
             IList<string> roles = await this._userManager.GetRolesAsync(user);
             //check if user is an admin and is signing in with the default password
             if ((roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleAdmin) || roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleSuperAdmin)) && loginRequestDto.Password.Equals(SystemDefault.DefaultPassword))
@@ -206,13 +197,13 @@ public class AuthService : IAuthService
             this._logger.LogInformation("Login - Email has not been confirmed {0}", loginRequestDto.UserName);
             return response;
         }
+
         //check if the account is locked out
         if (result.IsLockedOut)
         {
             ApplicationUser? user = await this._userManager.FindByNameAsync(loginRequestDto.UserName);
             response.IsSuccess = false;
-            response.Message = "Your account is currently locked out. Please reset your password.";
-            if (user != null) await PublishAccountLockedOutEmail(user);
+            response.Message = "Your account is currently locked out. Please contact admin or reset your password.";
             this._logger.LogInformation("Login - Account has been locked out {0}", loginRequestDto.UserName);
             return response;
         }
@@ -229,6 +220,15 @@ public class AuthService : IAuthService
         if (user == null)
             return response;
 
+        //check if the user is not locked out by the admin
+        if (user.IsLockedOutByAdmin)
+        {
+            response.IsSuccess = false;
+            response.Message = "You account has been deactivated. Please contact admin..";
+            return response;
+        }
+
+        //check if the account is system default account
         if (user.UserName != null && (user.UserName.Equals(SystemDefault.DefaultSuperAdmin1) ||
                                       user.UserName.Equals(SystemDefault.DefaultSuperAdmin2)))
         {
@@ -267,10 +267,10 @@ public class AuthService : IAuthService
         return response;
     }
 
-    public async Task<ResponseDto<AuthResponseDto>> ConfirmEmail(ConfirmEmailDto request)
+    public async Task<ResponseDto<ConfirmEmailResponseDto>> ConfirmEmail(ConfirmEmailRequestDto request)
     {
-        ResponseDto<AuthResponseDto> response = new();
-        this._logger.LogInformation("Confirm email request {@ConfirmEmailDto}", request);
+        ResponseDto<ConfirmEmailResponseDto> response = new();
+        this._logger.LogInformation("Confirm email request {@ConfirmEmailRequestDto}", request);
         response.Message = "Invalid Email Confirmation Request";
         response.IsSuccess = false;
 
@@ -286,11 +286,18 @@ public class AuthService : IAuthService
             response.IsSuccess = true;
             UserDto? userToReturn = this._mapper.Map<UserDto>(user);
             IList<string> roles = await this._userManager.GetRolesAsync(user);
-            var responseDto = new AuthResponseDto
+            var responseDto = new ConfirmEmailResponseDto
             {
                 User = userToReturn,
                 Role = roles.FirstOrDefault() ?? string.Empty
             };
+
+            //generate a reset password token if the user is an admin or superadmin
+            if (responseDto.Role.Equals(Roles.RoleAdmin) || responseDto.Role.Equals(Roles.RoleSuperAdmin))
+            {
+                var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
+                responseDto.PasswordResetToken = code;
+            }
             response.Result = responseDto;
             return response;
         }
@@ -326,6 +333,7 @@ public class AuthService : IAuthService
         ResponseDto<RefreshTokenDto> response = new() { IsSuccess = false, Message = "Invalid access token or refresh token" };
         ClaimsPrincipal principal = GetPrincipalFromExpiredToken(request.AccessToken);
         var email = principal.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+
         //check that the username exists on the token
         if (string.IsNullOrEmpty(email)) return response;
 
@@ -403,7 +411,7 @@ public class AuthService : IAuthService
         this._logger.LogInformation("Email Confirmation Published for this user {0}", user.UserName ?? string.Empty);
 
 
-        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl };
+        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeAdminConfirmationEmail };
         await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.RegisterAdminUserQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
     }
@@ -416,20 +424,7 @@ public class AuthService : IAuthService
         this._logger.LogInformation("Password Reset Email Published for this user {0}", user.UserName ?? string.Empty);
 
 
-        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl };
-        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.ResetPasswordQueue,
-            this._serviceBusSettings.ServiceBusConnectionString);
-    }
-
-    private async Task PublishAccountLockedOutEmail(ApplicationUser user)
-    {
-        var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
-        var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebResetPasswordRoute}?username={user.UserName}&activationToken={code}";
-        UserDto? userToReturn = this._mapper.Map<UserDto>(user);
-        this._logger.LogInformation("Account Locked out Email Published for this user {0}", user.UserName ?? string.Empty);
-
-
-        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl };
+        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeResetPasswordEmail };
         await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.ResetPasswordQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
     }

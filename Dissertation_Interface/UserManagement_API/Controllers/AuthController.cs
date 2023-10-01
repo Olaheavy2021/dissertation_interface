@@ -50,10 +50,10 @@ public class AuthController : Controller
 
     [HttpPost("confirm-email")]
     [SwaggerOperation(Summary = "Confirm email for all users")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Processed", typeof(ResponseDto<AuthResponseDto>))]
-    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto model)
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Processed", typeof(ResponseDto<ConfirmEmailResponseDto>))]
+    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequestDto model)
     {
-        ResponseDto<AuthResponseDto> response = await this._authService.ConfirmEmail(model);
+        ResponseDto<ConfirmEmailResponseDto> response = await this._authService.ConfirmEmail(model);
         return Ok(response);
     }
 

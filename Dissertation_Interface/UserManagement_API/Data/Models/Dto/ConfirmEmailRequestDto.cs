@@ -1,6 +1,6 @@
 namespace UserManagement_API.Data.Models.Dto;
 
-public class ConfirmEmailDto
+public class ConfirmEmailRequestDto
 {
     public string UserName { get; set; } = string.Empty;
 

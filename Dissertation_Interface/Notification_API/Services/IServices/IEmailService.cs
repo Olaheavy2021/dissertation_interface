@@ -8,5 +8,9 @@ public interface IEmailService
 
     Task<ResponseDto> ResetPasswordEmailAndLog(string emailBody, string email);
 
+    Task<ResponseDto> AccountLockedEmailAndLog(string emailBody, string email);
+
+    Task<ResponseDto> AccountUnLockedEmailAndLog(string emailBody, string email);
+
     Task UpdateEmailLogger(string emailIdentifier);
 }
