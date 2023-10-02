@@ -201,7 +201,6 @@ public class AuthService : IAuthService
         //check if the account is locked out
         if (result.IsLockedOut)
         {
-            ApplicationUser? user = await this._userManager.FindByNameAsync(loginRequestDto.UserName);
             response.IsSuccess = false;
             response.Message = "Your account is currently locked out. Please contact admin or reset your password.";
             this._logger.LogInformation("Login - Account has been locked out {0}", loginRequestDto.UserName);
@@ -216,7 +215,7 @@ public class AuthService : IAuthService
         this._logger.LogInformation("Initiating password request {@InitiatePasswordResetDto}", request);
         ResponseDto<string> response = new() { IsSuccess = true, Message = "A notification will be sent to this email if an account is registered under it." };
 
-        ApplicationUser? user = await this._db.ApplicationUserRepository.GetAsync(x => x.NormalizedEmail == request.Email.ToUpper());
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email);
         if (user == null)
             return response;
 
@@ -428,7 +427,6 @@ public class AuthService : IAuthService
         await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.ResetPasswordQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
     }
-
     private ClaimsPrincipal GetPrincipalFromExpiredToken(string? token)
     {
         var tokenValidationParameters = new TokenValidationParameters

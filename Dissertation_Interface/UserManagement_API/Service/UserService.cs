@@ -35,7 +35,7 @@ public class UserService : IUserService
         this._serviceBusSettings = serviceBusSettings.Value;
     }
 
-    public async Task<ResponseDto<GetUserDto>> GetUser(string userId)
+    public async Task<ResponseDto<GetUserDto>> GetUser(string? userId)
     {
         var response = new ResponseDto<GetUserDto>();
         ApplicationUser? user = await this._db.ApplicationUserRepository.GetFirstOrDefaultAsync(a => a.Id == userId);
@@ -59,7 +59,7 @@ public class UserService : IUserService
         return response;
     }
 
-    public async Task<ResponseDto<bool>> LockOutUser(string email)
+    public async Task<ResponseDto<bool>> LockOutUser(string? email)
     {
         var response = new ResponseDto<bool> { IsSuccess = false, Result = false, Message = "An error occurred whilst locking out the user" };
         this._logger.LogInformation("Request to lock out this user with this email -  {0}", email);
@@ -87,7 +87,7 @@ public class UserService : IUserService
         return response;
     }
 
-    public async Task<ResponseDto<bool>> UnlockUser(string email)
+    public async Task<ResponseDto<bool>> UnlockUser(string? email)
     {
         var response = new ResponseDto<bool> { IsSuccess = false, Result = false, Message = "An error occurred whilst unlocking the user" };
         this._logger.LogInformation("Request to unlock user with this email -  {0}", email);

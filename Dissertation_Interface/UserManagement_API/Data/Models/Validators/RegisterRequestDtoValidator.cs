@@ -7,9 +7,9 @@ namespace UserManagement_API.Data.Models.Validators;
 
 public class RegisterRequestDtoValidator : AbstractValidator<RegistrationRequestDto>
 {
-    private readonly IUnitOfWork _db;
+    private readonly IUnitOfWork? _db;
 
-    public RegisterRequestDtoValidator(IUnitOfWork db)
+    public RegisterRequestDtoValidator(IUnitOfWork? db)
     {
         this._db = db;
         RuleFor(p => p.FirstName)

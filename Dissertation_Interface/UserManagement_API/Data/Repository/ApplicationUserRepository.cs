@@ -35,6 +35,6 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
     public async Task<bool> DoesUserNameExist(string username, CancellationToken token) =>
         await this.Context.Set<ApplicationUser>().AnyAsync(a => a.NormalizedUserName == username.ToUpper(), cancellationToken: token);
 
-    public async Task<bool> DoesEmailExist(string email, CancellationToken token) =>
+    public async Task<bool> DoesEmailExist(string? email, CancellationToken token) =>
         await this.Context.Set<ApplicationUser>().AnyAsync(a => a.NormalizedEmail == email.ToUpper(), cancellationToken: token);
 }

@@ -11,5 +11,5 @@ public interface IApplicationUserRepository : IGenericRepository<ApplicationUser
 
     Task<bool> DoesUserNameExist(string username, CancellationToken token);
 
-    Task<bool> DoesEmailExist(string email, CancellationToken token);
+    Task<bool> DoesEmailExist(string? email, CancellationToken token);
 }

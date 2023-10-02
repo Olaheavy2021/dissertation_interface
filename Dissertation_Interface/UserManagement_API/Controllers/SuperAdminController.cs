@@ -27,9 +27,9 @@ public class SuperAdminController : Controller
     [SwaggerOperation(Summary = "Registration for admin users")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<RegistrationRequestDto>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> RegisterAdmin([FromBody] AdminRegistrationRequestDto model)
+    public async Task<IActionResult> RegisterAdmin([FromBody] AdminRegistrationRequestDto? model)
     {
-        ResponseDto<RegistrationRequestDto> response = await this._authService.RegisterAdmin(model);
+        ResponseDto<RegistrationRequestDto?> response = await this._authService.RegisterAdmin(model);
         return Ok(response);
     }
 
@@ -49,7 +49,7 @@ public class SuperAdminController : Controller
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
     [SwaggerResponse(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAdminUser(string id)
+    public async Task<IActionResult> GetAdminUser(string? id)
     {
         ResponseDto<GetUserDto> response = await this._userService.GetUser(id);
         return Ok(response);

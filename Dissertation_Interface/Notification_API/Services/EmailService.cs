@@ -25,7 +25,7 @@ public class EmailService : IEmailService
         this._configuration = configuration;
     }
 
-    public async Task<ResponseDto> RegisterAdminUserEmailAndLog(string emailBody, string email)
+    public async Task<ResponseDto?> RegisterAdminUserEmailAndLog(string emailBody, string email)
     {
         var logEmailDto = new LogEmailRequestDto
         {
@@ -37,7 +37,7 @@ public class EmailService : IEmailService
         return await SaveAndSendEmail(logEmailDto);
     }
 
-    public async Task<ResponseDto> ResetPasswordEmailAndLog(string emailBody, string email)
+    public async Task<ResponseDto?> ResetPasswordEmailAndLog(string emailBody, string email)
     {
         var logEmailDto = new LogEmailRequestDto
         {
@@ -49,7 +49,7 @@ public class EmailService : IEmailService
         return await SaveAndSendEmail(logEmailDto);
     }
 
-    public async Task<ResponseDto> AccountLockedEmailAndLog(string emailBody, string email)
+    public async Task<ResponseDto?> AccountLockedEmailAndLog(string emailBody, string email)
     {
         var logEmailDto = new LogEmailRequestDto
         {
@@ -61,7 +61,7 @@ public class EmailService : IEmailService
         return await SaveAndSendEmail(logEmailDto);
     }
 
-    public async Task<ResponseDto> AccountUnLockedEmailAndLog(string emailBody, string email)
+    public async Task<ResponseDto?> AccountUnLockedEmailAndLog(string emailBody, string email)
     {
         var logEmailDto = new LogEmailRequestDto
         {
@@ -95,7 +95,7 @@ public class EmailService : IEmailService
         return string.Empty;
     }
 
-    private async Task<ResponseDto> SaveAndSendEmail(LogEmailRequestDto request)
+    private async Task<ResponseDto?> SaveAndSendEmail(LogEmailRequestDto request)
     {
         var response = new ResponseDto { IsSuccess = false, Message = ErrorMessages.EmailServiceUnableToSaveEmail };
         //TODO:Remove this for production
