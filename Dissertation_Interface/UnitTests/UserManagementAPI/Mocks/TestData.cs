@@ -62,4 +62,7 @@ public static class TestData
 
     internal static readonly InitiatePasswordResetDto InitiatePasswordResetRequest =
         new InitiatePasswordResetDto { Email = Email };
+
+    internal static readonly ConfirmPasswordResetDto ConfirmPasswordRequest =
+        new ConfirmPasswordResetDto { UserName = UserName, Token = "token", Password = "password" };
 }

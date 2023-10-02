@@ -78,8 +78,9 @@ public class SuperAdminController : Controller
     }
 
     [HttpGet("admin-users")]
-    [SwaggerOperation(Summary = "List of Admin")]
-    public ActionResult GetAdminUser([FromQuery] PaginationParameters paginationParameters)
+    [SwaggerOperation(Summary = "List of Admin Users")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PagedList<UserListDto>>))]
+    public ActionResult GetAdminUsers([FromQuery] PaginationParameters paginationParameters)
     {
         ResponseDto<PagedList<UserListDto>> users = this._userService.GetPaginatedAdminUsers(paginationParameters);
 
@@ -101,6 +102,8 @@ public class SuperAdminController : Controller
     }
 
     [HttpPut("user")]
+    [SwaggerOperation(Summary = "Edit a user")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<EditUserRequestDto>))]
     public async Task<IActionResult> EditUser([FromBody] EditUserRequestDto model)
     {
         ResponseDto<EditUserRequestDto> response = await this._userService.EditUser(model);
