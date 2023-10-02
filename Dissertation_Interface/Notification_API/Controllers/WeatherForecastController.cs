@@ -34,7 +34,7 @@ namespace Notification_API.Controllers
         [HttpPost("TestEmail")]
         public async Task<IActionResult> TestEmail([FromBody] TestEmailDto request)
         {
-            ResponseDto response = await this._emailService.RegisterAdminUserEmailAndLog(request.EmailBody, request.Email);
+            ResponseDto? response = await this._emailService.RegisterAdminUserEmailAndLog(request.EmailBody, request.Email);
             return Ok(response);
         }
     }

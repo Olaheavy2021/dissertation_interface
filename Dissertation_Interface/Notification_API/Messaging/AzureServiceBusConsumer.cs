@@ -116,7 +116,7 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
             // try to send email
             if (emailDto != null)
             {
-                ResponseDto response = await this._emailService.ResetPasswordEmailAndLog(messageBody,
+                ResponseDto? response = await this._emailService.ResetPasswordEmailAndLog(messageBody,
                     emailDto.User?.Email ?? string.Empty);
                 if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
                 {
@@ -181,7 +181,7 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                 );
 
                 // try to send email
-                ResponseDto response = await this._emailService.RegisterAdminUserEmailAndLog(messageBody,
+                ResponseDto? response = await this._emailService.RegisterAdminUserEmailAndLog(messageBody,
                      emailDto.User?.Email ?? string.Empty);
                 if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
                 {
@@ -236,7 +236,7 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                 emailDto.User?.FirstName);
 
                 // try to send email
-                ResponseDto response = await this._emailService.AccountUnLockedEmailAndLog(messageBody,
+                ResponseDto? response = await this._emailService.AccountUnLockedEmailAndLog(messageBody,
                     emailDto.User?.Email ?? string.Empty);
                 if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
                 {
@@ -282,7 +282,7 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                 // try to send email
                 if (emailDto != null)
                 {
-                    ResponseDto response = await this._emailService.AccountLockedEmailAndLog(messageBody,
+                    ResponseDto? response = await this._emailService.AccountLockedEmailAndLog(messageBody,
                         emailDto.User?.Email ?? string.Empty);
                     if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
                     {
