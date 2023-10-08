@@ -59,4 +59,13 @@ This is a [.NET Core](https://learn.microsoft.com/en-us/dotnet/core/introduction
 #### Update Database
   -  ```dotnet ef database update```
 
+### Unit tests
+#### Install the dotnet coverage tool
+  - ``` dotnet tool install --global dotnet-coverage ```
+#### Install the report generator tool
+ - ``` dotnet tool install --global dotnet-reportgenerator-globaltool ```
+####  Execute the tests and collect code coverage into a file
+ - ```dotnet coverage collect dotnet test --output .\Tests\CodeCoverage --output-format cobertura --settings CodeCoverage.runsettings ```
+#### Generate the report
+- ``` reportgenerator -reports:.\Tests\CodeCoverage  -targetdir:".\Tests\CoverageReport" -reporttypes:Html  ```
 

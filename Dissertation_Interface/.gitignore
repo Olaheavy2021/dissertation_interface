@@ -376,3 +376,7 @@ UserManagement_API/appsettings.Production.json
 Notification_API/appsettings.Production.json
 UserManagement_API/Properties/ServiceDependencies/DIFUserManagementAPI - Web Deploy/profile.arm.json
 Notification_API/Properties/ServiceDependencies/DIFUserManagementAPI - Web Deploy/profile.arm.json
+
+#unit tests
+Tests/CoverageReport
+Tests/CodeCoverage

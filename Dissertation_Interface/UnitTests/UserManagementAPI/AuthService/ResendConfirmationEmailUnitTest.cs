@@ -1,7 +1,6 @@
 using AutoMapper;
 using Microsoft.Extensions.Options;
 using Moq;
-using Shared.Constants;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Settings;
@@ -12,8 +11,7 @@ using UserManagement_API.Data.Models.Dto;
 
 namespace UnitTests.UserManagementAPI.AuthService;
 
-[TestFixture]
-public class InitiatePasswordResetUnitTest
+public class ResendConfirmationEmailUnitTest
 {
     private Mock<FakeUserManager>? _userManagerMock;
     private Mock<FakeSignInManager>? _signInManagerMock;
@@ -25,10 +23,9 @@ public class InitiatePasswordResetUnitTest
     private Mock<IMapper>? _mapperMock;
     private Mock<IOptions<ServiceBusSettings>>? _serviceBusSettings;
     private ApplicationUser? _applicationUser = new();
-    private InitiatePasswordResetDto _initiatePasswordRequest = new();
+    private EmailRequestDto _emailRequestDto = new();
     private ApplicationUrlSettings _applicationUrlSettingsValue = new();
     private ServiceBusSettings _serviceBusSettingsValue = new();
-    private UserDto _userDto = new();
 
     [SetUp]
     public void Setup()
@@ -47,10 +44,9 @@ public class InitiatePasswordResetUnitTest
 
         #region TestData
         this._applicationUser = TestData.User;
-        this._initiatePasswordRequest = TestData.InitiatePasswordResetRequest;
+        this._emailRequestDto = TestData.EmailRequestDto;
         this._applicationUrlSettingsValue = TestData.ApplicationUrlSettings;
         this._serviceBusSettingsValue = TestData.ServiceBusSettings;
-        this._userDto = TestData.UserDtoResponse;
         #endregion
     }
 
@@ -58,19 +54,46 @@ public class InitiatePasswordResetUnitTest
     public void TearDown() => this._userManagerMock?.Object.Dispose();
 
     [Test]
-    public async Task InitiatePasswordReset_Successfully()
+    public async Task ResendConfirmationEmail_Failed()
     {
         #region Arrange
+        this._applicationUser!.EmailConfirmed = true;
         this._userManagerMock?.Setup(userManager =>
             userManager.FindByEmailAsync(It.IsAny<string>())
-        ).Returns(Task.FromResult(this._applicationUser));
+        ).Returns(Task.FromResult(this._applicationUser)!);
+        #endregion
+
+        #region Act
+        var authService = new UserManagement_API.Service.AuthService(
+            this._unitOfWork?.Object!, this._applicationUrlSettings?.Object!, this._messageBus?.Object!, this._jwtSettings!.Object,
+            this._signInManagerMock?.Object!, this._userManagerMock?.Object!, this._logger?.Object!, this._mapperMock!.Object,
+            this._serviceBusSettings?.Object!
+        );
+
+        ResponseDto<string> result = await authService.ResendConfirmationEmail(this._emailRequestDto);
+        #endregion
+
+        #region Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.Not.True);
+        });
+        #endregion
+
+    }
+
+    [Test]
+    public async Task ResendConfirmationEmail_Successful()
+    {
+        #region Arrange
+        this._applicationUser!.EmailConfirmed = false;
+        this._userManagerMock?.Setup(userManager =>
+            userManager.FindByEmailAsync(It.IsAny<string>())
+        ).Returns(Task.FromResult(this._applicationUser)!);
 
         this._userManagerMock?.Setup(userManager =>
-            userManager.GeneratePasswordResetTokenAsync(It.IsAny<ApplicationUser>())
+            userManager.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>())
         ).Returns(Task.FromResult("token"));
-
-        this._mapperMock?.Setup(mapper =>
-            mapper.Map<UserDto>(It.IsAny<ApplicationUser>())).Returns(this._userDto);
 
         this._applicationUrlSettings?.Setup(settings =>
             settings.Value).Returns(this._applicationUrlSettingsValue);
@@ -81,7 +104,6 @@ public class InitiatePasswordResetUnitTest
             bus.PublishMessage(It.IsAny<PublishEmailDto>(), It.IsAny<string>(), It.IsAny<string>())).Verifiable();
         #endregion
 
-
         #region Act
         var authService = new UserManagement_API.Service.AuthService(
             this._unitOfWork?.Object!, this._applicationUrlSettings?.Object!, this._messageBus?.Object!, this._jwtSettings!.Object,
@@ -89,72 +111,15 @@ public class InitiatePasswordResetUnitTest
             this._serviceBusSettings?.Object!
         );
 
-        ResponseDto<string> result = await authService.InitiatePasswordReset(this._initiatePasswordRequest);
+        ResponseDto<string> result = await authService.ResendConfirmationEmail(this._emailRequestDto);
         #endregion
 
         #region Assert
         Assert.Multiple(() =>
         {
-            Assert.That(result.IsSuccess, Is.Not.True);
-        });
-        #endregion
-    }
-
-    [Test]
-    public async Task InitiatePasswordReset_UserLockedOutByAdmin()
-    {
-        #region Arrange
-        this._applicationUser!.IsLockedOutByAdmin = true;
-        this._userManagerMock?.Setup(userManager =>
-            userManager.FindByEmailAsync(It.IsAny<string>())
-        ).Returns(Task.FromResult(this._applicationUser)!);
-        #endregion
-
-        #region Act
-        var authService = new UserManagement_API.Service.AuthService(
-            this._unitOfWork?.Object!, this._applicationUrlSettings?.Object!, this._messageBus?.Object!, this._jwtSettings!.Object,
-            this._signInManagerMock?.Object!, this._userManagerMock?.Object!, this._logger?.Object!, this._mapperMock!.Object,
-            this._serviceBusSettings?.Object!
-        );
-
-        ResponseDto<string> result = await authService.InitiatePasswordReset(this._initiatePasswordRequest);
-        #endregion
-
-        #region Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsSuccess, Is.Not.True);
+            Assert.That(result.IsSuccess, Is.True);
         });
         #endregion
 
-
-    }
-
-    [Test]
-    public async Task InitiatePasswordReset_DefaultUser()
-    {
-        #region Arrange
-        this._applicationUser!.UserName = SystemDefault.DefaultSuperAdmin1;
-        this._userManagerMock?.Setup(userManager =>
-            userManager.FindByEmailAsync(It.IsAny<string>())
-        ).Returns(Task.FromResult(this._applicationUser)!);
-        #endregion
-
-        #region Act
-        var authService = new UserManagement_API.Service.AuthService(
-            this._unitOfWork?.Object!, this._applicationUrlSettings?.Object!, this._messageBus?.Object!, this._jwtSettings!.Object,
-            this._signInManagerMock?.Object!, this._userManagerMock?.Object!, this._logger?.Object!, this._mapperMock!.Object,
-            this._serviceBusSettings?.Object!
-        );
-
-        ResponseDto<string> result = await authService.InitiatePasswordReset(this._initiatePasswordRequest);
-        #endregion
-
-        #region Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsSuccess, Is.Not.True);
-        });
-        #endregion
     }
 }

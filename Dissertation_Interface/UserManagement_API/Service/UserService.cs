@@ -143,7 +143,10 @@ public class UserService : IUserService
         //check if the user exists
         ApplicationUser? user = await this._userManager.FindByIdAsync(request.UserId);
         if (user == null)
+        {
+            response.Message = $"User with this userid - {request.UserId} does not exist";
             return response;
+        }
 
         //check if the user's email has been confirmed
         var isEmailConfirmed = await this._userManager.IsEmailConfirmedAsync(user);
@@ -201,7 +204,8 @@ public class UserService : IUserService
             UserName = applicationUser.UserName,
             FirstName = applicationUser.FirstName,
             LastName = applicationUser.LastName,
-            IsLockedOut = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow
+            IsLockedOut = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow,
+            EmailConfirmed = applicationUser.EmailConfirmed
         };
 
     private async Task PublishAccountDeactivationOrActivationEmail(ApplicationUser user, string emailType)

@@ -20,7 +20,8 @@ public static class TestData
         FirstName = FirstName,
         LastName = LastName,
         Email = Email,
-        Id = UserId
+        Id = UserId,
+        IsLockedOutByAdmin = false
     };
 
     internal static readonly JwtSettings JwtSettings = new()
@@ -52,7 +53,7 @@ public static class TestData
         UserName = UserName,
         FirstName = FirstName,
         LastName = LastName,
-        Id = UserId
+        Id = UserId,
     };
 
     internal static readonly IList<Claim> UserClaims = new List<Claim>
@@ -60,9 +61,16 @@ public static class TestData
         new("name", "unittest")
     };
 
-    internal static readonly InitiatePasswordResetDto InitiatePasswordResetRequest =
-        new InitiatePasswordResetDto { Email = Email };
+    internal static readonly InitiatePasswordResetDto InitiatePasswordResetRequest = new() { Email = Email };
 
     internal static readonly ConfirmPasswordResetDto ConfirmPasswordRequest =
-        new ConfirmPasswordResetDto { UserName = UserName, Token = "token", Password = "password" };
+        new() { UserName = UserName, Token = "token", Password = "password" };
+
+    internal static readonly ConfirmEmailRequestDto ConfirmEmailRequest = new()
+    {
+        UserName = UserName,
+        Token = "token"
+    };
+
+    internal static readonly EmailRequestDto EmailRequestDto = new() { Email = Email };
 }

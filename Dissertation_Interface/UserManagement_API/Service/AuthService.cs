@@ -50,10 +50,10 @@ public class AuthService : IAuthService
         this._messageBus = messageBus;
     }
 
-    private async Task<ResponseDto<RegistrationRequestDto>> Register(RegistrationRequestDto registrationRequestDto)
+    private async Task<ResponseDto<string>> Register(RegistrationRequestDto registrationRequestDto)
     {
         //validate the incoming request
-        ResponseDto<RegistrationRequestDto> response = new();
+        ResponseDto<string> response = new();
         this._logger.LogInformation("Processing register request {@RegistrationRequestDto}", registrationRequestDto);
         var validator = new RegisterRequestDtoValidator(this._db);
         ValidationResult? validationResult = await validator.ValidateAsync(registrationRequestDto);
@@ -87,14 +87,14 @@ public class AuthService : IAuthService
 
                 response.Message = "User Registration was Successful.";
                 response.IsSuccess = true;
-                response.Result = registrationRequestDto;
+                response.Result = SuccessMessages.DefaultSuccess;
                 this._logger.LogInformation("Register - User with this email registered successfully {0}", registrationRequestDto.Email);
             }
             else
             {
                 response.Message = roleResult.Errors.FirstOrDefault()?.Description;
                 response.IsSuccess = false;
-                response.Result = registrationRequestDto;
+                response.Result = ErrorMessages.DefaultError;
 
                 this._logger.LogWarning("Register - An error occurred while registering this user {0} - {1}", registrationRequestDto.Email, roleResult.Errors.FirstOrDefault()?.Description ?? "Undefined Error");
             }
@@ -105,9 +105,10 @@ public class AuthService : IAuthService
 
     public Task<ResponseDto<RegistrationRequestDto>> RegisterStudentOrSupervisor(RegistrationRequestDto registrationRequestDto) => throw new NotImplementedException();
 
-    public async Task<ResponseDto<RegistrationRequestDto>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto)
+    public async Task<ResponseDto<string>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto)
     {
         this._logger.LogInformation("Processing admin register request {@AdminRegistrationRequestDto}", registrationRequestDto);
+
         //validate the incoming request
         var validator = new AdminRegistrationRequestDtoValidator();
         ValidationResult? validationResult = await validator.ValidateAsync(registrationRequestDto);
@@ -277,6 +278,15 @@ public class AuthService : IAuthService
         if (user == null)
             return response;
 
+        var isEmailConfirmed = await this._userManager.IsEmailConfirmedAsync(user);
+        if (isEmailConfirmed)
+        {
+            response.Message = "The email for this account has been confirmed already. Please sign in";
+            response.IsSuccess = false;
+
+            return response;
+        }
+
         IdentityResult result = await this._userManager.ConfirmEmailAsync(user, request.Token);
         if (result.Succeeded)
         {
@@ -292,7 +302,7 @@ public class AuthService : IAuthService
             };
 
             //generate a reset password token if the user is an admin or superadmin
-            if (responseDto.Role.Equals(Roles.RoleAdmin) || responseDto.Role.Equals(Roles.RoleSuperAdmin))
+            if (responseDto.Role.ToLower().Equals(Roles.RoleAdmin) || responseDto.Role.ToLower().Equals(Roles.RoleSuperAdmin))
             {
                 var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
                 responseDto.PasswordResetToken = code;

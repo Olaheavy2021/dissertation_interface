@@ -25,11 +25,11 @@ public class SuperAdminController : Controller
 
     [HttpPost("register-admin")]
     [SwaggerOperation(Summary = "Registration for admin users")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<RegistrationRequestDto>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> RegisterAdmin([FromBody] AdminRegistrationRequestDto? model)
+    public async Task<IActionResult> RegisterAdmin([FromBody] AdminRegistrationRequestDto model)
     {
-        ResponseDto<RegistrationRequestDto?> response = await this._authService.RegisterAdmin(model);
+        ResponseDto<string> response = await this._authService.RegisterAdmin(model);
         return Ok(response);
     }
 

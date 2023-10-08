@@ -8,6 +8,10 @@ public class EditUserRequestDtoValidator : AbstractValidator<EditUserRequestDto>
 {
     public EditUserRequestDtoValidator()
     {
+        RuleFor(p => p.UserId)
+            .NotEmpty().WithMessage(ErrorMessages.RequiredField)
+            .NotNull().WithMessage(ErrorMessages.RequiredField);
+
         RuleFor(p => p.FirstName)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .NotNull().WithMessage(ErrorMessages.RequiredField)
