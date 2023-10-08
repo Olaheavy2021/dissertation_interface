@@ -57,3 +57,16 @@ jobs:
       # 5) Test a project or solution.
       - name: Test
         run: dotnet test --no-restore --verbosity normal
+        
+      - name: Install tools for Coverage Report
+        run: |
+          dotnet new tool-manifest
+          dotnet tool install dotnet-reportgenerator-globaltool
+          dotnet tool install dotnet-coverage
+          
+      - name: Run the unit tests with code coverage
+        run: dotnet coverage collect dotnet test --output ${{ github.workspace }}/Tests/Coverage --output-format cobertura --settings CodeCoverage.runsettings
+          
+      - name: Generate Report
+        run: |
+          dotnet reportgenerator -reports:${{ github.workspace }}/Tests/Coverage.cobertura.xml -targetdir:"${{ github.workspace }}/Tests/coveragereport" -reporttypes:Html
