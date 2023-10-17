@@ -24,10 +24,11 @@ builder.Services.AddTransient(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
 builder.Services.AddDbContext<NotificationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NotificationDatabaseConnectionString")));
 
-//Singleton Implementation of the email service
+//Singleton Implementation of the email service and audit log service
 var optionBuilder = new DbContextOptionsBuilder<NotificationDbContext>();
 optionBuilder.UseSqlServer(builder.Configuration.GetConnectionString("NotificationDatabaseConnectionString"));
 builder.Services.AddSingleton(new EmailService(optionBuilder.Options, builder.Configuration));
+builder.Services.AddSingleton(new AuditLogService(optionBuilder.Options));
 
 builder.Services.AddSingleton<IAzureServiceBusConsumer, AzureServiceBusConsumer>();
 builder.Services.AddControllers();
@@ -38,14 +39,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<ServiceBusSettings>(builder.Configuration.GetSection("ServiceBusSettings"));
 builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection("SendGridSettings"));
 
+//HealthCheck
+builder.Services.AddHealthChecks();
+
 WebApplication app = builder.Build();
 
-// Configure the HTTP request pipeline.
-/*if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}*/
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -55,7 +53,7 @@ if (string.IsNullOrEmpty(isRunningInDocker) || !isRunningInDocker.ToLower().Equa
 }
 
 app.UseAuthorization();
-
+app.MapHealthChecks("/healthz");
 app.MapControllers();
 ApplyMigration();
 app.UseAzureServiceBusConsumer();

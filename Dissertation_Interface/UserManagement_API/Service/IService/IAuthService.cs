@@ -10,6 +10,6 @@ public interface IAuthService
     Task<ResponseDto<string>> InitiatePasswordReset(InitiatePasswordResetDto request);
     Task<ResponseDto<string>> ConfirmPasswordReset(ConfirmPasswordResetDto request);
     Task<ResponseDto<ConfirmEmailResponseDto>> ConfirmEmail(ConfirmEmailRequestDto request);
-    Task<ResponseDto<string>> ResendConfirmationEmail(EmailRequestDto request);
+    Task<ResponseDto<string>> ResendConfirmationEmail(EmailRequestDto request, string? loggedInAdminEmail);
     Task<ResponseDto<RefreshTokenDto>> GetRefreshToken(RefreshTokenDto request);
 }

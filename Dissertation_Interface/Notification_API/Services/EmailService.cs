@@ -25,54 +25,6 @@ public class EmailService : IEmailService
         this._configuration = configuration;
     }
 
-    public async Task<ResponseDto?> RegisterAdminUserEmailAndLog(string emailBody, string email)
-    {
-        var logEmailDto = new LogEmailRequestDto
-        {
-            Message = emailBody,
-            EmailType = EmailType.EmailTypeAdminConfirmationEmail,
-            Email = email,
-            Subject = EmailSubject.EmailSubjectForAdminEmailConfirmation
-        };
-        return await SaveAndSendEmail(logEmailDto);
-    }
-
-    public async Task<ResponseDto?> ResetPasswordEmailAndLog(string emailBody, string email)
-    {
-        var logEmailDto = new LogEmailRequestDto
-        {
-            Message = emailBody,
-            EmailType = EmailType.EmailTypeResetPasswordEmail,
-            Email = email,
-            Subject = EmailSubject.EmailSubjectForResetPassword
-        };
-        return await SaveAndSendEmail(logEmailDto);
-    }
-
-    public async Task<ResponseDto?> AccountLockedEmailAndLog(string emailBody, string email)
-    {
-        var logEmailDto = new LogEmailRequestDto
-        {
-            Message = emailBody,
-            EmailType = EmailType.EmailTypeAccountDeactivationEmail,
-            Email = email,
-            Subject = EmailSubject.EmailSubjectForAccountLockedOut
-        };
-        return await SaveAndSendEmail(logEmailDto);
-    }
-
-    public async Task<ResponseDto?> AccountUnLockedEmailAndLog(string emailBody, string email)
-    {
-        var logEmailDto = new LogEmailRequestDto
-        {
-            Message = emailBody,
-            EmailType = EmailType.EmailTypeAccountActivationEmail,
-            Email = email,
-            Subject = EmailSubject.EmailSubjectForAccountUnlocked
-        };
-        return await SaveAndSendEmail(logEmailDto);
-    }
-
     private async Task<string> SaveEmail(LogEmailRequestDto request)
     {
         EmailLogger emailLog = new()
@@ -95,9 +47,9 @@ public class EmailService : IEmailService
         return string.Empty;
     }
 
-    private async Task<ResponseDto?> SaveAndSendEmail(LogEmailRequestDto request)
+    public async Task<EmailResponseDto?> SaveAndSendEmail(LogEmailRequestDto request)
     {
-        var response = new ResponseDto { IsSuccess = false, Message = ErrorMessages.EmailServiceUnableToSaveEmail };
+        var response = new EmailResponseDto { IsSuccess = false, Message = ErrorMessages.EmailServiceUnableToSaveEmail };
         //TODO:Remove this for production
         var testEmail = this._configuration.GetValue<string>("SendGridSettings:TestEmail");
 

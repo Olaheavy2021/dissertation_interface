@@ -10,6 +10,7 @@ public class NotificationDbContext : DbContext
     }
 
     public DbSet<EmailLogger> EmailLoggers { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

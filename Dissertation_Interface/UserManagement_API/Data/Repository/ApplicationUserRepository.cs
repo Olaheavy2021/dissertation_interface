@@ -18,11 +18,19 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
     public PagedList<ApplicationUser> GetPaginatedAdminUsers(PaginationParameters paginationParameters)
     {
         string[] roleNames = { "SuperAdmin", "Admin" };
-        const string query = @"SELECT U.*, R.Name FROM AspNetUsers U INNER JOIN   AspNetUserRoles UR ON U.Id = UR.UserId INNER JOIN   AspNetRoles R ON UR.RoleId = R.Id WHERE   R.Name IN ({0})";
+        const string query = @"
+        SELECT U.*, R.Name
+        FROM AspNetUsers U
+        INNER JOIN AspNetUserRoles UR ON U.Id = UR.UserId
+        INNER JOIN AspNetRoles R ON UR.RoleId = R.Id
+        WHERE R.Name IN ({0}) AND U.Id != @currentUserId";
+
+        // FormattedQuery prepares the placeholders for role names.
         var formattedQuery = string.Format(query, string.Join(",", roleNames.Select((_, index) => $"@p{index}")));
 
-        var parameters = roleNames
-            .Select((roleName, index) => new SqlParameter($"@p{index}", roleName))
+        // Parameters for query including roles and currentUserId.
+        var parameters = roleNames.Select((roleName, index) => new SqlParameter($"@p{index}", roleName))
+            .Concat(new[] { new SqlParameter("@currentUserId", paginationParameters.LoggedInAdminId) })
             .ToArray<object>();
 
         return PagedList<ApplicationUser>.ToPagedList(

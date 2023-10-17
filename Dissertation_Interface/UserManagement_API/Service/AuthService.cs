@@ -316,24 +316,28 @@ public class AuthService : IAuthService
         return response;
     }
 
-    public async Task<ResponseDto<string>> ResendConfirmationEmail(EmailRequestDto request)
+    public async Task<ResponseDto<string>> ResendConfirmationEmail(EmailRequestDto request, string? loggedInAdminEmail)
     {
-        ResponseDto<string> response = new() { IsSuccess = false, Message = "Invalid Request", Result = ErrorMessages.DefaultError };
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email);
-        if (user == null)
-            return response;
+        if (string.IsNullOrEmpty(loggedInAdminEmail))
+            throw new UnauthorizedException();
 
+        ResponseDto<string> response = new() { IsSuccess = false, Message = "Invalid Request", Result = ErrorMessages.DefaultError };
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException(nameof(ApplicationUser), request.Email);
         if (user.EmailConfirmed)
         {
             response.Message = "The email for this user has been confirmed already";
             response.Result = ErrorMessages.DefaultError;
+            await this._messageBus.PublishAuditLog(EventType.ResendEmailConfirmation,
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError);
             return response;
         }
 
-        await PublishEmailConfirmationForAdminUsers(user);
         response.IsSuccess = true;
         response.Message = "Confirmation Email has been resent to the user";
         response.Result = SuccessMessages.DefaultSuccess;
+        await PublishEmailConfirmationForAdminUsers(user);
+        await this._messageBus.PublishAuditLog(EventType.ResendEmailConfirmation,
+            this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, SuccessMessages.DefaultSuccess);
         return response;
     }
 
@@ -424,7 +428,6 @@ public class AuthService : IAuthService
         await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.RegisterAdminUserQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
     }
-
     private async Task PublishPasswordResetEmail(ApplicationUser user)
     {
         var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
@@ -462,5 +465,4 @@ public class AuthService : IAuthService
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
     }
-
 }

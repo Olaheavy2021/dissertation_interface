@@ -7,6 +7,7 @@ using Notification_API.Data.Models.Dto;
 using Notification_API.Services;
 using Notification_API.Settings;
 using Shared.Constants;
+using Shared.DTO;
 using Shared.Logging;
 using Shared.Settings;
 
@@ -18,9 +19,9 @@ namespace Notification_API.Messaging;
 public class AzureServiceBusConsumer : IAzureServiceBusConsumer
 {
     private readonly EmailService _emailService;
-    private readonly ServiceBusProcessor _registerAdminUserProcessor;
-    private readonly ServiceBusProcessor _resetPasswordProcessor;
-    private readonly ServiceBusProcessor _accountLockedOrUnlockedProcessor;
+    private readonly AuditLogService _auditLogService;
+    private readonly ServiceBusProcessor _emailLoggerProcessor;
+    private readonly ServiceBusProcessor _auditLoggerProcessor;
     private readonly IAppLogger<AzureServiceBusConsumer> _logger;
     private readonly IWebHostEnvironment _env;
     private readonly ServiceBusSettings _serviceBusSettings;
@@ -28,97 +29,97 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
 
     public AzureServiceBusConsumer(
         EmailService emailService, IWebHostEnvironment env,
+        AuditLogService auditLogService,
         IAppLogger<AzureServiceBusConsumer> logger,
         IOptions<ServiceBusSettings> serviceBusSettings,
         IOptions<SendGridSettings> sendgridSettings)
     {
         this._emailService = emailService;
+        this._auditLogService = auditLogService;
         this._env = env;
         this._logger = logger;
         this._serviceBusSettings = serviceBusSettings.Value;
         this._sendgridSettings = sendgridSettings.Value;
 
         var client = new ServiceBusClient(this._serviceBusSettings.ServiceBusConnectionString);
-        this._registerAdminUserProcessor = client.CreateProcessor(this._serviceBusSettings.RegisterAdminUserQueue);
-        this._resetPasswordProcessor = client.CreateProcessor(this._serviceBusSettings.ResetPasswordQueue);
-        this._accountLockedOrUnlockedProcessor = client.CreateProcessor(this._serviceBusSettings.AccountLockedOutQueue);
+        this._emailLoggerProcessor = client.CreateProcessor(this._serviceBusSettings.EmailLoggerQueue);
+        this._auditLoggerProcessor = client.CreateProcessor(this._serviceBusSettings.AuditLoggerQueue);
     }
 
+    #region Processor Methods
     public async Task Start()
     {
-        //this is the processor for admin user confirmation emails
-        this._registerAdminUserProcessor.ProcessMessageAsync += OnAdminUserRegisterRequestReceived;
-        this._registerAdminUserProcessor.ProcessErrorAsync += ErrorHandler;
-        await this._registerAdminUserProcessor.StartProcessingAsync();
+        // this is the processor for processing emails
+        this._emailLoggerProcessor.ProcessMessageAsync += OnEmailRequestReceived;
+        this._emailLoggerProcessor.ProcessErrorAsync += ErrorHandler;
+        await this._emailLoggerProcessor.StartProcessingAsync();
 
-        //this is the processor for reset password emails
-        this._resetPasswordProcessor.ProcessMessageAsync += OnResetPasswordRequestReceived;
-        this._resetPasswordProcessor.ProcessErrorAsync += ErrorHandler;
-        await this._resetPasswordProcessor.StartProcessingAsync();
-
-        //this is the processor for account activation or deactivation emails
-        this._accountLockedOrUnlockedProcessor.ProcessMessageAsync += OnAccountLockedOrUnlockedRequestReceived;
-        this._accountLockedOrUnlockedProcessor.ProcessErrorAsync += ErrorHandler;
-        await this._accountLockedOrUnlockedProcessor.StartProcessingAsync();
-
+        //this is the processor for processing audit logs
+        this._auditLoggerProcessor.ProcessMessageAsync += OnAuditLogRequestReceived;
+        this._auditLoggerProcessor.ProcessErrorAsync += ErrorHandler;
+        await this._auditLoggerProcessor.StartProcessingAsync();
     }
 
     public async Task Stop()
     {
-        await this._registerAdminUserProcessor.StopProcessingAsync();
-        await this._registerAdminUserProcessor.DisposeAsync();
+        await this._auditLoggerProcessor.StopProcessingAsync();
+        await this._auditLoggerProcessor.DisposeAsync();
 
-        await this._resetPasswordProcessor.StopProcessingAsync();
-        await this._resetPasswordProcessor.DisposeAsync();
-
-        await this._accountLockedOrUnlockedProcessor.StopProcessingAsync();
-        await this._accountLockedOrUnlockedProcessor.DisposeAsync();
+        await this._emailLoggerProcessor.StopProcessingAsync();
+        await this._emailLoggerProcessor.DisposeAsync();
     }
 
-    private async Task OnResetPasswordRequestReceived(ProcessMessageEventArgs args)
+    private async Task OnEmailRequestReceived(ProcessMessageEventArgs args)
     {
         try
         {
+            // deserialize the incoming request
             ServiceBusReceivedMessage? message = args.Message;
             var body = Encoding.UTF8.GetString(message.Body);
             PublishEmailDto? emailDto = JsonConvert.DeserializeObject<PublishEmailDto>(body);
+            var userEmail = emailDto?.User?.Email;
 
-            // try to send email
-            //Get TemplateFile located at wwwroot/Templates/EmailTemplates/
-            var pathToFile = this._env.WebRootPath
-                             + Path.DirectorySeparatorChar
-                             + "Templates"
-                             + Path.DirectorySeparatorChar
-                             + "EmailTemplates"
-                             + Path.DirectorySeparatorChar
-                             + "Change_Password.html";
-
-            var builder = new BodyBuilder();
-
-            using StreamReader sourceReader = File.OpenText(pathToFile);
-            builder.HtmlBody = await sourceReader.ReadToEndAsync();
-
-            //{0} : Subject
-            const string subject = EmailSubject.EmailSubjectForResetPassword;
-            //{1} : Date
-            //{2} : FirstName
-            //{3} : Username
-            //{4} : Callback URL
-
-            var messageBody = string.Format(builder.HtmlBody,
-                subject,
-                $"{DateTime.Now:dddd, d MMMM yyyy}",
-                emailDto?.User?.FirstName,
-                emailDto?.User?.UserName,
-                emailDto?.CallbackUrl
-            );
-
-            // try to send email
-            if (emailDto != null)
+            //generate the email template
+            if (emailDto != null && !string.IsNullOrEmpty(userEmail))
             {
-                ResponseDto? response = await this._emailService.ResetPasswordEmailAndLog(messageBody,
-                    emailDto.User?.Email ?? string.Empty);
-                if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
+                var emailBody = "";
+                var emailType = "";
+                var subject = "";
+                switch (emailDto.EmailType)
+                {
+                    case EmailType.EmailTypeResetPasswordEmail:
+                        emailBody = await GenerateResetPasswordEmailBody(emailDto);
+                        emailType = EmailType.EmailTypeResetPasswordEmail;
+                        subject = EmailSubject.EmailSubjectForResetPassword;
+                        break;
+                    case EmailType.EmailTypeAdminConfirmationEmail:
+                        emailBody = await GenerateAdminConfirmationEmailBody(emailDto);
+                        emailType = EmailType.EmailTypeAdminConfirmationEmail;
+                        subject = EmailSubject.EmailSubjectForAdminEmailConfirmation;
+                        break;
+                    case EmailType.EmailTypeAccountActivationEmail:
+                        emailBody = await GenerateAccountUnLockedEmailBody(emailDto);
+                        emailType = EmailType.EmailTypeAccountActivationEmail;
+                        subject = EmailSubject.EmailSubjectForAccountUnlocked;
+                        break;
+                    case EmailType.EmailTypeAccountDeactivationEmail:
+                        emailBody = await GenerateAccountLockedEmailBody(emailDto);
+                        emailType = EmailType.EmailTypeResetPasswordEmail;
+                        subject = EmailSubject.EmailSubjectForResetPassword;
+                        break;
+                }
+
+                var logEmailDto = new LogEmailRequestDto
+                {
+                    Message = emailBody,
+                    EmailType = emailType,
+                    Email = userEmail,
+                    Subject = subject
+                };
+
+                EmailResponseDto? response = await this._emailService.SaveAndSendEmail(logEmailDto);
+
+                if (response is { Result.IsSuccessStatusCode: true, Message: not null })
                 {
                     await this._emailService.UpdateEmailLogger(response.Message);
                     this._logger.LogInformation("Reset Password Email has been sent successfully for this user - {@PublishEmailDto}", emailDto);
@@ -126,184 +127,170 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                 }
                 else
                 {
-                    this._logger.LogWarning("An error occurred whilst sending email to reset password for this user - {@ResponseDto}", response);
-                }
-
-            }
-        }
-        catch (Exception ex)
-        {
-            this._logger.LogError("An error occurred whilst sending the reset password email - {0}", ex);
-        }
-
-    }
-
-    private async Task OnAdminUserRegisterRequestReceived(ProcessMessageEventArgs args)
-    {
-        try
-        {
-            ServiceBusReceivedMessage? message = args.Message;
-            var body = Encoding.UTF8.GetString(message.Body);
-            PublishEmailDto? emailDto = JsonConvert.DeserializeObject<PublishEmailDto>(body);
-            if (emailDto != null)
-            {
-                this._logger.LogInformation("Processing Email Confirmation for this admin user - {@PublishEmailDto}",
-                    emailDto);
-
-                //Get TemplateFile located at wwwroot/Templates/EmailTemplates/
-                var pathToFile = this._env.WebRootPath
-                                 + Path.DirectorySeparatorChar
-                                 + "Templates"
-                                 + Path.DirectorySeparatorChar
-                                 + "EmailTemplates"
-                                 + Path.DirectorySeparatorChar
-                                 + "Welcome_Email_Admin.html";
-
-                var builder = new BodyBuilder();
-
-                using StreamReader sourceReader = File.OpenText(pathToFile);
-                builder.HtmlBody = await sourceReader.ReadToEndAsync();
-
-                //{0} : Subject
-                const string subject = EmailSubject.EmailSubjectForAdminEmailConfirmation;
-                //{1} : Date
-                //{2} : FirstName
-                //{3} : AdminEmail
-                var adminEmail = this._sendgridSettings.AdminEmail;
-                //{4} :Callback URL
-
-                var messageBody = string.Format(builder.HtmlBody,
-                    subject,
-                    $"{DateTime.Now:dddd, d MMMM yyyy}",
-                    emailDto.User?.FirstName,
-                    adminEmail,
-                    emailDto.CallbackUrl
-                );
-
-                // try to send email
-                ResponseDto? response = await this._emailService.RegisterAdminUserEmailAndLog(messageBody,
-                     emailDto.User?.Email ?? string.Empty);
-                if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
-                {
-                    await this._emailService.UpdateEmailLogger(response.Message);
-                    this._logger.LogInformation("Email Confirmation has been sent successfully for this user - {@PublishEmailDto}", emailDto);
-                    await args.CompleteMessageAsync(args.Message);
-                }
-                else
-                {
-                    this._logger.LogWarning("An error occurred whilst sending email confirmation for this user - {@ResponseDto}", response);
-                }
-
-            }
-        }
-        catch (Exception ex)
-        {
-            this._logger.LogError("An error occurred whilst processing admin user email confirmation - {0}", ex);
-        }
-    }
-
-    private async Task OnAccountLockedOrUnlockedRequestReceived(ProcessMessageEventArgs args)
-    {
-        ServiceBusReceivedMessage? message = args.Message;
-        var body = Encoding.UTF8.GetString(message.Body);
-        PublishEmailDto? emailDto = JsonConvert.DeserializeObject<PublishEmailDto>(body);
-        if (emailDto != null)
-        {
-            if (emailDto.EmailType.Equals(EmailType.EmailTypeAccountActivationEmail))
-            {
-                //Get TemplateFile located at wwwroot/Templates/EmailTemplates/
-                var pathToFile = this._env.WebRootPath
-                                 + Path.DirectorySeparatorChar
-                                 + "Templates"
-                                 + Path.DirectorySeparatorChar
-                                 + "EmailTemplates"
-                                 + Path.DirectorySeparatorChar
-                                 + "Account_Unlocked.html";
-
-                var builder = new BodyBuilder();
-
-                using StreamReader sourceReader = File.OpenText(pathToFile);
-                builder.HtmlBody = await sourceReader.ReadToEndAsync();
-
-                //{0} : Subject
-                const string subject = EmailSubject.EmailSubjectForAccountUnlocked;
-                //{1} : Date
-                //{2} : FirstName
-
-                var messageBody = string.Format(builder.HtmlBody,
-                subject,
-                $"{DateTime.Now:dddd, d MMMM yyyy}",
-                emailDto.User?.FirstName);
-
-                // try to send email
-                ResponseDto? response = await this._emailService.AccountUnLockedEmailAndLog(messageBody,
-                    emailDto.User?.Email ?? string.Empty);
-                if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
-                {
-                    await this._emailService.UpdateEmailLogger(response.Message);
-                    this._logger.LogInformation("Account unlocked email has been sent successfully for this user - {@PublishEmailDto}", emailDto);
-                    await args.CompleteMessageAsync(args.Message);
-                }
-                else
-                {
-                    this._logger.LogWarning("An error occurred whilst sending account unlocked user - {@ResponseDto}", response);
+                    this._logger.LogWarning("An error occurred whilst processing the email queue  - {@EmailResponseDto}", response);
                 }
             }
             else
             {
-                //Get TemplateFile located at wwwroot/Templates/EmailTemplates/
-                var pathToFile = this._env.WebRootPath
-                                 + Path.DirectorySeparatorChar
-                                 + "Templates"
-                                 + Path.DirectorySeparatorChar
-                                 + "EmailTemplates"
-                                 + Path.DirectorySeparatorChar
-                                 + "Account_Locked_Out.html";
-
-                var builder = new BodyBuilder();
-
-                using StreamReader sourceReader = File.OpenText(pathToFile);
-                builder.HtmlBody = await sourceReader.ReadToEndAsync();
-
-                //{0} : Subject
-                const string subject = EmailSubject.EmailSubjectForAccountLockedOut;
-                //{1} : Date
-                //{2} : FirstName
-                var adminEmail = this._sendgridSettings.AdminEmail;
-                //{3} : AdminEmail
-
-                var messageBody = string.Format(builder.HtmlBody,
-                    subject,
-                    $"{DateTime.Now:dddd, d MMMM yyyy}",
-                    emailDto?.User?.FirstName,
-                    adminEmail
-                    );
-
-                // try to send email
-                if (emailDto != null)
-                {
-                    ResponseDto? response = await this._emailService.AccountLockedEmailAndLog(messageBody,
-                        emailDto.User?.Email ?? string.Empty);
-                    if (response is { Result: { IsSuccessStatusCode: true }, Message: { } })
-                    {
-                        await this._emailService.UpdateEmailLogger(response.Message);
-                        this._logger.LogInformation("Account locked out email has been sent successfully for this user - {@PublishEmailDto}", emailDto);
-                        await args.CompleteMessageAsync(args.Message);
-                    }
-                    else
-                    {
-                        this._logger.LogWarning("An error occurred whilst sending account locked out email - {@ResponseDto}", response);
-                    }
-                }
+                this._logger.LogWarning("Processing Email Queue: The email DTO serialized is not null or the user email is empty");
             }
-
+        }
+        catch (Exception ex)
+        {
+            this._logger.LogError("An exception occurred whilst processing the email queue - {0}", ex);
 
         }
     }
+    private async Task OnAuditLogRequestReceived(ProcessMessageEventArgs args)
+    {
+        ServiceBusReceivedMessage? message = args.Message;
+        var body = Encoding.UTF8.GetString(message.Body);
+        AuditLogDto? auditLogDto = JsonConvert.DeserializeObject<AuditLogDto>(body);
 
+        if (auditLogDto != null)
+        {
+            EmailResponseDto emailResponse = await this._auditLogService.SaveAuditLog(auditLogDto);
+            if (emailResponse.IsSuccess)
+            {
+                this._logger.LogInformation("Audit Log saved successfully for this action {0}", auditLogDto.EventType);
+                await args.CompleteMessageAsync(args.Message);
+            }
+            else
+            {
+                this._logger.LogWarning("An error occurred whilst saving the audit log for this action {0}", auditLogDto.EventType);
+            }
+        }
+    }
     private Task ErrorHandler(ProcessErrorEventArgs args)
     {
         this._logger.LogError("An error occurred while processing messages on the queue", args.Exception.ToString());
         return Task.CompletedTask;
     }
+    #endregion
+
+    #region Generate Email Body Methods
+    //this should be in the email service but the singleton registration for the services is a bottleneck
+    private async Task<string> GenerateResetPasswordEmailBody(PublishEmailDto request)
+    {
+        var pathToFile = this._env.WebRootPath
+                         + Path.DirectorySeparatorChar
+                         + "Templates"
+                         + Path.DirectorySeparatorChar
+                         + "EmailTemplates"
+                         + Path.DirectorySeparatorChar
+                         + "Change_Password.html";
+
+        var builder = new BodyBuilder();
+
+        using StreamReader sourceReader = File.OpenText(pathToFile);
+        builder.HtmlBody = await sourceReader.ReadToEndAsync();
+
+        //{0} : Subject
+        const string subject = EmailSubject.EmailSubjectForResetPassword;
+        //{1} : Date
+        //{2} : FirstName
+        //{3} : Username
+        //{4} : Callback URL
+
+        var messageBody = string.Format(builder.HtmlBody,
+            subject,
+            $"{DateTime.Now:dddd, d MMMM yyyy}",
+            request.User?.FirstName,
+            request.User?.UserName,
+            request.CallbackUrl
+        );
+
+        return messageBody;
+    }
+    private async Task<string> GenerateAdminConfirmationEmailBody(PublishEmailDto request)
+    {
+        var pathToFile = this._env.WebRootPath
+                         + Path.DirectorySeparatorChar
+                         + "Templates"
+                         + Path.DirectorySeparatorChar
+                         + "EmailTemplates"
+                         + Path.DirectorySeparatorChar
+                         + "Welcome_Email_Admin.html";
+
+        var builder = new BodyBuilder();
+
+        using StreamReader sourceReader = File.OpenText(pathToFile);
+        builder.HtmlBody = await sourceReader.ReadToEndAsync();
+
+        //{0} : Subject
+        const string subject = EmailSubject.EmailSubjectForAdminEmailConfirmation;
+        //{1} : Date
+        //{2} : FirstName
+        //{3} : AdminEmail
+        var adminEmail = this._sendgridSettings.AdminEmail;
+        //{4} :Callback URL
+
+        var messageBody = string.Format(builder.HtmlBody,
+            subject,
+            $"{DateTime.Now:dddd, d MMMM yyyy}",
+            request.User?.FirstName,
+            adminEmail,
+            request.CallbackUrl
+        );
+
+        return messageBody;
+    }
+    private async Task<string> GenerateAccountUnLockedEmailBody(PublishEmailDto request)
+    {
+        var pathToFile = this._env.WebRootPath
+                         + Path.DirectorySeparatorChar
+                         + "Templates"
+                         + Path.DirectorySeparatorChar
+                         + "EmailTemplates"
+                         + Path.DirectorySeparatorChar
+                         + "Account_Unlocked.html";
+
+        var builder = new BodyBuilder();
+
+        using StreamReader sourceReader = File.OpenText(pathToFile);
+        builder.HtmlBody = await sourceReader.ReadToEndAsync();
+
+        //{0} : Subject
+        const string subject = EmailSubject.EmailSubjectForAccountUnlocked;
+        //{1} : Date
+        //{2} : FirstName
+
+        var messageBody = string.Format(builder.HtmlBody,
+            subject,
+            $"{DateTime.Now:dddd, d MMMM yyyy}",
+            request.User?.FirstName);
+        return messageBody;
+    }
+    private async Task<string> GenerateAccountLockedEmailBody(PublishEmailDto request)
+    {
+        var pathToFile = this._env.WebRootPath
+                         + Path.DirectorySeparatorChar
+                         + "Templates"
+                         + Path.DirectorySeparatorChar
+                         + "EmailTemplates"
+                         + Path.DirectorySeparatorChar
+                         + "Account_Locked_Out.html";
+
+        var builder = new BodyBuilder();
+
+        using StreamReader sourceReader = File.OpenText(pathToFile);
+        builder.HtmlBody = await sourceReader.ReadToEndAsync();
+
+        //{0} : Subject
+        const string subject = EmailSubject.EmailSubjectForAccountLockedOut;
+        //{1} : Date
+        //{2} : FirstName
+        var adminEmail = this._sendgridSettings.AdminEmail;
+        //{3} : AdminEmail
+
+        var messageBody = string.Format(builder.HtmlBody,
+            subject,
+            $"{DateTime.Now:dddd, d MMMM yyyy}",
+            request.User?.FirstName,
+            adminEmail
+        );
+
+        return messageBody;
+    }
+    #endregion
 }

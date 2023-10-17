@@ -1,6 +1,8 @@
 using System.Text;
 using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
+using Shared.Constants;
+using Shared.DTO;
 
 namespace Shared.MessageBus;
 
@@ -21,5 +23,27 @@ public class MessageBus : IMessageBus
 
         await sender.SendMessageAsync(finalMessage);
         await client.DisposeAsync();
+    }
+
+    public async Task PublishAuditLog(string eventType, string connectionString, string loggedInAdminEmail,
+        string outcome)
+    {
+        var auditLoggerDto = new AuditLogDto
+        {
+            EventTimeStamp = DateTime.UtcNow,
+            Email = loggedInAdminEmail,
+            Outcome = outcome,
+            EventType = eventType
+        };
+
+        switch (eventType)
+        {
+            case EventType.ResendEmailConfirmation:
+                auditLoggerDto.EventDescription = EventDescription.ResendEmailConfirmation;
+                auditLoggerDto.TargetEntity = AuditLogTargetEntity.Users;
+                break;
+        }
+
+        await PublishMessage(auditLoggerDto, ServiceBusQueues.AuditLoggerQueue, connectionString);
     }
 }

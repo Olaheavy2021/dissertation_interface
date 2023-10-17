@@ -78,6 +78,8 @@ public static class ApplicationServiceRegistration
                 new HeaderApiVersionReader("X-Version"),
                 new MediaTypeApiVersionReader("ver"));
         });
+        //HealthCheck
+        services.AddHealthChecks();
         return services;
     }
 }

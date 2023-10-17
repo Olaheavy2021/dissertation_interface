@@ -6,6 +6,7 @@ using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
 using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;
+using UserManagement_API.Extensions;
 using UserManagement_API.Service.IService;
 
 namespace UserManagement_API.Controllers;
@@ -40,7 +41,8 @@ public class SuperAdminController : Controller
     [SwaggerResponse(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ResendConfirmationEmail([FromBody] EmailRequestDto model)
     {
-        ResponseDto<string> response = await this._authService.ResendConfirmationEmail(model);
+        var email = HttpContext.GetEmail();
+        ResponseDto<string> response = await this._authService.ResendConfirmationEmail(model, email);
         return Ok(response);
     }
 
@@ -49,7 +51,7 @@ public class SuperAdminController : Controller
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
     [SwaggerResponse(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAdminUser(string? id)
+    public async Task<IActionResult> GetAdminUser(string id)
     {
         ResponseDto<GetUserDto> response = await this._userService.GetUser(id);
         return Ok(response);
@@ -82,6 +84,10 @@ public class SuperAdminController : Controller
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PagedList<UserListDto>>))]
     public ActionResult GetAdminUsers([FromQuery] PaginationParameters paginationParameters)
     {
+        var adminUserId = HttpContext.GetUserId();
+        if (!string.IsNullOrEmpty(adminUserId))
+            paginationParameters.LoggedInAdminId = adminUserId;
+
         ResponseDto<PagedList<UserListDto>> users = this._userService.GetPaginatedAdminUsers(paginationParameters);
 
         if (users.Result != null)

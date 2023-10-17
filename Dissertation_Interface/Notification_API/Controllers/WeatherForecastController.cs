@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using Notification_API.Data.Models;
 using Notification_API.Data.Models.Dto;
 using Notification_API.Services;
+using Notification_API.Services.IServices;
+using Shared.Helpers;
 
 namespace Notification_API.Controllers
 {
@@ -12,14 +15,14 @@ namespace Notification_API.Controllers
         {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
-        private readonly EmailService _emailService;
+        private readonly AuditLogService _auditLogService;
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, EmailService emailService)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, AuditLogService auditLogService)
         {
             this._logger = logger;
-            this._emailService = emailService;
+            this._auditLogService = auditLogService;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -32,9 +35,9 @@ namespace Notification_API.Controllers
             .ToArray();
 
         [HttpPost("TestEmail")]
-        public async Task<IActionResult> TestEmail([FromBody] TestEmailDto request)
+        public async Task<IActionResult> TestEmail([FromQuery] PaginationParameters parameters)
         {
-            ResponseDto? response = await this._emailService.RegisterAdminUserEmailAndLog(request.EmailBody, request.Email);
+            ResponseDto<PagedList<AuditLog>> response = await this._auditLogService.GetListOfAuditLogs(parameters);
             return Ok(response);
         }
     }

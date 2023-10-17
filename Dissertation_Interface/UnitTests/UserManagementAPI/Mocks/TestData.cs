@@ -73,4 +73,13 @@ public static class TestData
     };
 
     internal static readonly EmailRequestDto EmailRequestDto = new() { Email = Email };
+
+    internal static readonly AdminRegistrationRequestDto AdminRegistrationRequestDto = new()
+    {
+        Email = Email,
+        UserName = UserName,
+        FirstName = FirstName,
+        LastName = LastName,
+        Role = "Admin"
+    };
 }

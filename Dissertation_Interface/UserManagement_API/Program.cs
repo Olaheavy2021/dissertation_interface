@@ -37,6 +37,7 @@ WebApplication app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<SwaggerBasicAuthMiddleware>();
+app.UseMiddleware<UserDetailsMiddleware>();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
@@ -52,8 +53,8 @@ if (string.IsNullOrEmpty(isRunningInDocker) || !isRunningInDocker.ToLower().Equa
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
+app.MapHealthChecks("/healthz");
 ApplyMigration();
 app.Run();
 
