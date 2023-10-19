@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Shared.Helpers;
@@ -18,24 +19,29 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
     public PagedList<ApplicationUser> GetPaginatedAdminUsers(PaginationParameters paginationParameters)
     {
         string[] roleNames = { "SuperAdmin", "Admin" };
-        const string query = @"
-        SELECT U.*, R.Name
-        FROM AspNetUsers U
-        INNER JOIN AspNetUserRoles UR ON U.Id = UR.UserId
-        INNER JOIN AspNetRoles R ON UR.RoleId = R.Id
-        WHERE R.Name IN ({0}) AND U.Id != @currentUserId";
-
-        // FormattedQuery prepares the placeholders for role names.
-        var formattedQuery = string.Format(query, string.Join(",", roleNames.Select((_, index) => $"@p{index}")));
+        var sqlQuery = new StringBuilder("SELECT U.*, R.Name " +
+                                         "FROM AspNetUsers U " +
+                                         "INNER JOIN AspNetUserRoles UR ON U.Id = UR.UserId " +
+                                         "INNER JOIN AspNetRoles R ON UR.RoleId = R.Id " +
+                                         "WHERE R.Name IN ({0}) AND U.Id != @currentUserId");
 
         // Parameters for query including roles and currentUserId.
-        var parameters = roleNames.Select((roleName, index) => new SqlParameter($"@p{index}", roleName))
-            .Concat(new[] { new SqlParameter("@currentUserId", paginationParameters.LoggedInAdminId) })
-            .ToArray<object>();
+        var parametersList = roleNames
+            .Select((roleName, index) => new SqlParameter($"@p{index}", roleName))
+            .Concat(new[] { new SqlParameter("@currentUserId", paginationParameters.LoggedInAdminId) }).ToList();
+
+        if (!string.IsNullOrEmpty(paginationParameters.SearchQuery))
+        {
+            sqlQuery.Append(" AND U.UserName LIKE @search");
+            parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchQuery}%"));
+        }
+
+        // FormattedQuery prepares the placeholders for role names.
+        var formattedQuery = string.Format(sqlQuery.ToString(), string.Join(",", roleNames.Select((_, index) => $"@p{index}")));
 
         return PagedList<ApplicationUser>.ToPagedList(
             this.Context.Set<ApplicationUser>()
-                .FromSqlRaw(formattedQuery, parameters)
+                .FromSqlRaw(formattedQuery, parametersList.ToArray<object>())
                 .OrderBy(x => x.UserName), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }

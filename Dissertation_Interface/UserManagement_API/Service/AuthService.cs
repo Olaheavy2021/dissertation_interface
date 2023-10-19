@@ -180,7 +180,7 @@ public class AuthService : IAuthService
             {
                 User = userToReturn,
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-                Role = roles.FirstOrDefault() ?? string.Empty,
+                Role = roles,
                 RefreshToken = newRefreshToken
             };
 
@@ -425,7 +425,7 @@ public class AuthService : IAuthService
 
 
         var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeAdminConfirmationEmail };
-        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.RegisterAdminUserQueue,
+        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.EmailLoggerQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
     }
     private async Task PublishPasswordResetEmail(ApplicationUser user)
@@ -437,7 +437,7 @@ public class AuthService : IAuthService
 
 
         var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeResetPasswordEmail };
-        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.ResetPasswordQueue,
+        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.EmailLoggerQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
     }
     private ClaimsPrincipal GetPrincipalFromExpiredToken(string? token)

@@ -1,3 +1,5 @@
+using System.Text;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Notification_API.Data;
 using Notification_API.Data.Models;
@@ -40,11 +42,29 @@ public class AuditLogService : IAuditLogService
 
     public async Task<ResponseDto<PagedList<AuditLog>>> GetListOfAuditLogs(PaginationParameters paginationParameters)
     {
-        const string query = @"SELECT * FROM AuditLogs";
+        var parametersList = new List<SqlParameter>();
+        var sqlQuery = new StringBuilder("SELECT * FROM AuditLogs");
+
+        // Apply search
+        if (!string.IsNullOrEmpty(paginationParameters.SearchQuery))
+        {
+            sqlQuery.Append(" WHERE Email LIKE @search");
+            parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchQuery}%"));
+        }
+
+        // Apply filter
+        if (!string.IsNullOrEmpty(paginationParameters.FilterBy))
+        {
+            var whereOrAnd = sqlQuery.ToString().Contains("WHERE") ? "AND" : "WHERE";
+            sqlQuery.Append(" {whereOrAnd} EventType = @filter");
+            parametersList.Add(new SqlParameter("@filter", paginationParameters.FilterBy));
+        }
+
         await using var db = new NotificationDbContext(this._dbOptions);
         var auditLogs = PagedList<AuditLog>.ToPagedList(
-            db.Set<AuditLog>().FromSqlRaw(query).OrderBy(x => x.EventTimeStamp), paginationParameters.PageNumber,
+            db.Set<AuditLog>().FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>()).OrderBy(x => x.EventTimeStamp), paginationParameters.PageNumber,
             paginationParameters.PageSize);
+
         var response = new ResponseDto<PagedList<AuditLog>>
         {
             IsSuccess = true,
@@ -52,6 +72,26 @@ public class AuditLogService : IAuditLogService
             Result = auditLogs
         };
 
+        return response;
+    }
+
+    public async Task<ResponseDto<AuditLog>> GetAuditLog(long userId)
+    {
+        var response = new ResponseDto<AuditLog>();
+        await using var db = new NotificationDbContext(this._dbOptions);
+        AuditLog? auditLog = await db.AuditLogs.FirstOrDefaultAsync(x => x.Id == userId);
+
+        if (auditLog != null)
+        {
+            response.IsSuccess = true;
+            response.Message = SuccessMessages.DefaultSuccess;
+            response.Result = auditLog;
+
+            return response;
+        }
+
+        response.IsSuccess = false;
+        response.Message = ErrorMessages.DefaultError;
         return response;
     }
 }

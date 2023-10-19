@@ -4,7 +4,7 @@ public class GetUserDto
 {
     public UserDto? User { get; set; }
 
-    public string Role { get; set; } = string.Empty;
+    public IList<string> Role { get; set; } = default!;
 
     public bool IsLockedOut { get; set; }
 }

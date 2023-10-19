@@ -1,3 +1,4 @@
+using Gateway_Solution.Extensions;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
@@ -18,6 +19,7 @@ else
     builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 }
 builder.Services.AddOcelot(builder.Configuration);
+builder.Services.SetupAuthentication(builder.Configuration);
 WebApplication app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");

@@ -34,7 +34,7 @@ namespace Notification_API.Controllers
         })
             .ToArray();
 
-        [HttpPost("TestEmail")]
+        [HttpGet("TestEndpoint")]
         public async Task<IActionResult> TestEmail([FromQuery] PaginationParameters parameters)
         {
             ResponseDto<PagedList<AuditLog>> response = await this._auditLogService.GetListOfAuditLogs(parameters);

@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Notification_API.Data;
 using Notification_API.Extensions;
@@ -42,6 +43,18 @@ builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection("S
 //HealthCheck
 builder.Services.AddHealthChecks();
 
+//Versioning
+builder.Services.AddApiVersioning(setup =>
+{
+    setup.DefaultApiVersion = new ApiVersion(1, 0);
+    setup.AssumeDefaultVersionWhenUnspecified = true;
+    setup.ReportApiVersions = true;
+}).AddMvc();
+
+//JWT Bearer setup
+builder.Services.SetupAuthentication(builder.Configuration);
+
+
 WebApplication app = builder.Build();
 
 app.UseSwagger();
@@ -52,6 +65,7 @@ if (string.IsNullOrEmpty(isRunningInDocker) || !isRunningInDocker.ToLower().Equa
     app.UseHttpsRedirection();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapHealthChecks("/healthz");
 app.MapControllers();

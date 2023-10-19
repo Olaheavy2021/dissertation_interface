@@ -44,7 +44,7 @@ public class UserService : IUserService
         {
             IList<string> roles = await this._userManager.GetRolesAsync(user);
             UserDto mappedUser = this._mapper.Map<ApplicationUser, UserDto>(user);
-            var getUserDto = new GetUserDto() { User = mappedUser, Role = roles.FirstOrDefault() ?? string.Empty, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow };
+            var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow };
 
             response.IsSuccess = true;
             response.Message = SuccessMessages.DefaultSuccess;
@@ -215,7 +215,7 @@ public class UserService : IUserService
         this._logger.LogInformation("Account activation or deactivation Email Published for this user {0}", user.UserName ?? string.Empty);
 
         var emailDto = new PublishEmailDto { User = userToReturn, EmailType = emailType };
-        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.AccountLockedOutQueue,
+        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.EmailLoggerQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
     }
 }

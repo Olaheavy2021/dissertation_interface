@@ -42,10 +42,9 @@ public static class TestData
 
     internal static readonly ServiceBusSettings ServiceBusSettings = new()
     {
-        AccountLockedOutQueue = "emailaccountlockedout",
         ServiceBusConnectionString = "Endpoint=sb",
-        RegisterAdminUserQueue = "emailregisteradminuser",
-        ResetPasswordQueue = "emailresetpassword",
+        AuditLoggerQueue = "auditlogger",
+        EmailLoggerQueue = "emaillogger"
     };
 
     internal static readonly UserDto UserDtoResponse = new()

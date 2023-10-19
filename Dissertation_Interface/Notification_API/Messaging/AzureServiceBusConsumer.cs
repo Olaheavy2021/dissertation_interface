@@ -105,7 +105,7 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                     case EmailType.EmailTypeAccountDeactivationEmail:
                         emailBody = await GenerateAccountLockedEmailBody(emailDto);
                         emailType = EmailType.EmailTypeResetPasswordEmail;
-                        subject = EmailSubject.EmailSubjectForResetPassword;
+                        subject = EmailSubject.EmailSubjectForAccountLockedOut;
                         break;
                 }
 
