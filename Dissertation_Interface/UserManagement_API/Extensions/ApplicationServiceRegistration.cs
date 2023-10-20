@@ -14,7 +14,7 @@ using UserManagement_API.Middleware.Correlation;
 using UserManagement_API.Service;
 using UserManagement_API.Service.IService;
 
-namespace UserManagement_API;
+namespace UserManagement_API.Extensions;
 
 public static class ApplicationServiceRegistration
 {

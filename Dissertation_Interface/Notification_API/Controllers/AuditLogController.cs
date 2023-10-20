@@ -5,6 +5,7 @@ using Notification_API.Data.Models;
 using Notification_API.Data.Models.Dto;
 using Notification_API.Services;
 using Shared.Helpers;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Notification_API.Controllers;
 
@@ -20,6 +21,8 @@ public class AuditLogController : ControllerBase
     public AuditLogController(AuditLogService auditLogService) => this._auditLogService = auditLogService;
 
     [HttpGet]
+    [SwaggerOperation(Summary = "Get List of Audit Logs")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Processed", typeof(ResponseDto<PagedList<AuditLog>>))]
     public async Task<IActionResult> GetAuditLogs([FromQuery] PaginationParameters parameters)
     {
         ResponseDto<PagedList<AuditLog>> response = await this._auditLogService.GetListOfAuditLogs(parameters);
@@ -27,6 +30,8 @@ public class AuditLogController : ControllerBase
     }
 
     [HttpGet("{id:long}")]
+    [SwaggerOperation(Summary = "Get Details of a Audit Log")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Processed", typeof(ResponseDto<AuditLog>))]
     public async Task<IActionResult> GetAuditLog(long id)
     {
         ResponseDto<AuditLog> response = await this._auditLogService.GetAuditLog(id);
