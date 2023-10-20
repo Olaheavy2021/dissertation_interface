@@ -12,9 +12,10 @@ public class LoginRequestDtoValidator : AbstractValidator<LoginRequestDto>
             .NotNull().WithMessage(ErrorMessages.RequiredField)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField);
 
-        RuleFor(p => p.UserName)
+        RuleFor(p => p.Email)
             .NotNull().WithMessage(ErrorMessages.RequiredField)
-            .MaximumLength(15)
-            .NotEmpty().WithMessage(ErrorMessages.RequiredField);
+            .NotEmpty().WithMessage(ErrorMessages.RequiredField)
+            .Matches(@"^[a-zA-Z0-9._%+-]+@(student\.shu\.ac\.uk|shu\.ac\.uk|hallam\.shu\.ac\.uk|shu\.com)$")
+            .WithMessage("Invalid email format.");
     }
 }

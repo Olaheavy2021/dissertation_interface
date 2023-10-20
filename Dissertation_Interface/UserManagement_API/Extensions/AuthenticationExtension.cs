@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Shared.DTO;
 
-namespace Notification_API.Extensions;
+namespace UserManagement_API.Extensions;
 
 public static class AuthenticationExtension
 {

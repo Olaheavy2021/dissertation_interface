@@ -11,7 +11,6 @@ var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CO
 
 // Serilog
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
-    .WriteTo.Console()
     .Enrich.FromLogContext()
     .Destructure.UsingAttributes()
     .Enrich.WithCorrelationId()

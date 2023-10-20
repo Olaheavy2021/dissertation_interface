@@ -47,7 +47,7 @@
           "Port": 9001
         }
       ],
-      "UpstreamPathTemplate": "/api/v1/auditlog",
+      "UpstreamPathTemplate": "/api/v1/notification/auditlog",
       "UpstreamHttpMethod": [ "Get" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
@@ -62,7 +62,7 @@
           "Port": 9001
         }
       ],
-      "UpstreamPathTemplate": "/api/v1/auditlog/{id}",
+      "UpstreamPathTemplate": "/api/v1/notification/auditlog/{id}",
       "UpstreamHttpMethod": [ "Get" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"

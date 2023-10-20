@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shared.Settings;
 using UserManagement_API.Data;
 using UserManagement_API.Data.Models;
+using UserManagement_API.Extensions;
 using UserManagement_API.Service;
 using UserManagement_API.Service.IService;
 
@@ -37,25 +38,7 @@ public static class IdentityServiceRegistration
 
         services.AddScoped<IAuthService, AuthService>();
 
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(o =>
-        {
-            o.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero,
-                ValidIssuer = configuration["JwtSettings:Issuer"],
-                ValidAudience = configuration["JwtSettings:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"] ?? string.Empty))
-
-            };
-        });
+        services.SetupAuthentication(configuration);
 
         return services;
 

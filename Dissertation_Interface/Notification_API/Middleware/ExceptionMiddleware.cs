@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Shared.Exceptions;
 using Shared.Middleware;
 
-namespace UserManagement_API.Middleware;
+namespace Notification_API.Middleware;
 
 public class ExceptionMiddleware
 {

@@ -34,7 +34,7 @@ public class RegisterRequestDtoValidator : AbstractValidator<RegistrationRequest
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .NotNull().WithMessage(ErrorMessages.RequiredField)
             .MaximumLength(100).WithMessage(ErrorMessages.MaximumLength100)
-            .Matches(@"^[a-zA-Z0-9._%+-]+@hallam\.shu\.ac\.uk$").WithMessage(ErrorMessages.MustBeHallamEmailFormat)
+            .Matches(@"^[a-zA-Z0-9._%+-]+@(student\.shu\.ac\.uk|shu\.ac\.uk|hallam\.shu\.ac\.uk)$").WithMessage(ErrorMessages.MustBeHallamEmailFormat)
             .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace)
             .EmailAddress();
 

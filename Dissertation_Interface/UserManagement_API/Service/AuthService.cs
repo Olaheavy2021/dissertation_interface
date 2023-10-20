@@ -141,23 +141,24 @@ public class AuthService : IAuthService
         ValidationResult? validationResult = await validator.ValidateAsync(loginRequestDto);
         if (validationResult.Errors.Any())
         {
-            this._logger.LogWarning("Login - Validation errors in admin user registration for {0} - {1}", nameof(ApplicationUser), loginRequestDto.UserName);
+            this._logger.LogWarning("Login - Validation errors in admin user registration for {0} - {1}", nameof(ApplicationUser), loginRequestDto.Email);
             throw new BadRequestException("Invalid Login Request", validationResult);
         }
 
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(loginRequestDto.Email);
+        if (user == null)
+        {
+            this._logger.LogWarning("Login - User not found", loginRequestDto.Email);
+            return response;
+        }
+
+
         //check if the password is correct and sign the user in
         SignInResult result =
-            await this._signInManager.PasswordSignInAsync(loginRequestDto.UserName, loginRequestDto.Password, false,
+            await this._signInManager.PasswordSignInAsync(user.UserName!, loginRequestDto.Password, false,
                     true);
         if (result.Succeeded)
         {
-            ApplicationUser? user = await this._userManager.FindByNameAsync(loginRequestDto.UserName);
-            if (user == null)
-            {
-                this._logger.LogWarning("Login - User not found", loginRequestDto.UserName);
-                return response;
-            }
-
             IList<string> roles = await this._userManager.GetRolesAsync(user);
             //check if user is an admin and is signing in with the default password
             if ((roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleAdmin) || roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleSuperAdmin)) && loginRequestDto.Password.Equals(SystemDefault.DefaultPassword))
@@ -187,7 +188,7 @@ public class AuthService : IAuthService
             response.IsSuccess = true;
             response.Message = "Login Successful";
             response.Result = responseDto;
-            this._logger.LogInformation("Login - User signed in successfully {0}", loginRequestDto.UserName);
+            this._logger.LogInformation("Login - User signed in successfully {0}", loginRequestDto.Email);
             return response;
         }
         //check if the email is confirmed
@@ -195,7 +196,7 @@ public class AuthService : IAuthService
         {
             response.IsSuccess = false;
             response.Message = "Please confirm your email address, then try and login again.";
-            this._logger.LogInformation("Login - Email has not been confirmed {0}", loginRequestDto.UserName);
+            this._logger.LogInformation("Login - Email has not been confirmed {0}", loginRequestDto.Email);
             return response;
         }
 
@@ -204,7 +205,7 @@ public class AuthService : IAuthService
         {
             response.IsSuccess = false;
             response.Message = "Your account is currently locked out. Please contact admin or reset your password.";
-            this._logger.LogInformation("Login - Account has been locked out {0}", loginRequestDto.UserName);
+            this._logger.LogInformation("Login - Account has been locked out {0}", loginRequestDto.Email);
             return response;
         }
 
@@ -322,7 +323,7 @@ public class AuthService : IAuthService
             throw new UnauthorizedException();
 
         ResponseDto<string> response = new() { IsSuccess = false, Message = "Invalid Request", Result = ErrorMessages.DefaultError };
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException(nameof(ApplicationUser), request.Email);
+        ApplicationUser user = await this._userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException(nameof(ApplicationUser), request.Email);
         if (user.EmailConfirmed)
         {
             response.Message = "The email for this user has been confirmed already";

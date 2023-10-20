@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Notification_API.Data;
 using Notification_API.Extensions;
 using Notification_API.Messaging;
+using Notification_API.Middleware;
 using Notification_API.Services;
 using Notification_API.Settings;
 using Serilog;
@@ -14,7 +15,6 @@ var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CO
 
 // Serilog
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
-    .WriteTo.Console()
     .Enrich.FromLogContext()
     .ReadFrom.Configuration(context.Configuration));
 
@@ -56,6 +56,8 @@ builder.Services.SetupAuthentication(builder.Configuration);
 
 
 WebApplication app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI();

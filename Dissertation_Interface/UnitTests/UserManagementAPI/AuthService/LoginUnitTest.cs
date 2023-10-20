@@ -79,7 +79,7 @@ public class LoginUnitTest
         IList<string> role = new List<string> { "Admin" };
 
         this._userManagerMock?.Setup(userManager =>
-            userManager.FindByNameAsync(It.IsAny<string>())
+            userManager.FindByEmailAsync(It.IsAny<string>())
         ).Returns(Task.FromResult(this._applicationUser));
 
         this._userManagerMock?.Setup(userManager =>

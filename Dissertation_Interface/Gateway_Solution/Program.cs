@@ -1,6 +1,13 @@
+using System.Net;
+using System.Net.Mime;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Destructurama;
 using Gateway_Solution.Extensions;
+using Gateway_Solution.Middleware;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -18,10 +25,23 @@ else
 {
     builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 }
+
 builder.Services.AddOcelot(builder.Configuration);
 builder.Services.SetupAuthentication(builder.Configuration);
+
+// Serilog
+builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
+    .Enrich.FromLogContext()
+    .Destructure.UsingAttributes()
+    .Enrich.WithCorrelationId()
+    .ReadFrom.Configuration(context.Configuration));
+
 WebApplication app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
-app.UseOcelot().GetAwaiter().GetResult();
+app.UseSerilogRequestLogging();
+app.UseAuthentication();
+app.UseAuthorization();
+OcelotPipelineConfiguration configuration = OcelotConfigurator.CreateConfiguration();
+app.UseOcelot(configuration).GetAwaiter().GetResult();
 app.Run();

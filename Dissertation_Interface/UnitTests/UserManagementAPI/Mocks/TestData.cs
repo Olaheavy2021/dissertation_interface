@@ -12,7 +12,7 @@ public static class TestData
     private const string LastName = "Test";
     private const string UserId = "05d73022-a466-496d-89e5-1a13e70106f2";
     private const string Email = "unittest@hallam.shu.ac.uk";
-    internal static readonly LoginRequestDto LoginRequest = new() { UserName = UserName, Password = "Unittest10$" };
+    internal static readonly LoginRequestDto LoginRequest = new() { Email = Email, Password = "Unittest10$" };
 
     internal static readonly ApplicationUser User = new()
     {
