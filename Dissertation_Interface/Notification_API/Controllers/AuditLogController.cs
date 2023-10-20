@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Notification_API.Data.Models;
 using Notification_API.Data.Models.Dto;
 using Notification_API.Services;
@@ -26,6 +27,20 @@ public class AuditLogController : ControllerBase
     public async Task<IActionResult> GetAuditLogs([FromQuery] PaginationParameters parameters)
     {
         ResponseDto<PagedList<AuditLog>> response = await this._auditLogService.GetListOfAuditLogs(parameters);
+
+        if (response.Result != null)
+        {
+            var metadata = new
+            {
+                response.Result.TotalCount,
+                response.Result.PageSize,
+                response.Result.CurrentPage,
+                response.Result.TotalPages,
+                response.Result.HasNext,
+                response.Result.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+        }
         return Ok(response);
     }
 

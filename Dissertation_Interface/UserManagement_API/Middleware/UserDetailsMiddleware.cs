@@ -17,7 +17,7 @@ public class UserDetailsMiddleware
     {
         var token = context.Request.Headers["Authorization"].ToString()?.Split("Bearer ")?.LastOrDefault();
 
-        if (!string.IsNullOrEmpty(token))
+        if (!string.IsNullOrEmpty(token) && !context.Request.Path.StartsWithSegments("/swagger") && !token.Contains("Basic"))
         {
             var handler = new JwtSecurityTokenHandler();
 

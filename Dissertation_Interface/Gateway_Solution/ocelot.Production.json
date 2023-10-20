@@ -5,7 +5,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "https://difnotificationapi.azurewebsites.net"
+          "Host": "difnotificationapi.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/api/v1/auditlog",
@@ -19,7 +19,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "https://difnotificationapi.azurewebsites.net"
+          "Host": "difnotificationapi.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/api/v1/auditlog/{id}",
@@ -30,6 +30,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://dissertation_interface-api_gateway-1:5001"
+    "BaseUrl": "https://difgatewaysolution.azurewebsites.net"
   }
 }

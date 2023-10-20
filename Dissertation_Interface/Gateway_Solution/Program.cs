@@ -35,10 +35,13 @@ builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
     .Destructure.UsingAttributes()
     .Enrich.WithCorrelationId()
     .ReadFrom.Configuration(context.Configuration));
+builder.Services.AddHealthChecks();
 
 WebApplication app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "Welcome to the SHU Dissertation API Gateway");
+app.UseRouting();
+app.ConfigureEndpoints();
 app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();

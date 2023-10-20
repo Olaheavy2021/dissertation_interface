@@ -42,6 +42,10 @@ public class MessageBus : IMessageBus
                 auditLoggerDto.EventDescription = EventDescription.ResendEmailConfirmation;
                 auditLoggerDto.TargetEntity = AuditLogTargetEntity.Users;
                 break;
+            case EventType.EditUser:
+                auditLoggerDto.EventDescription = EventDescription.EditUser;
+                auditLoggerDto.TargetEntity = AuditLogTargetEntity.Users;
+                break;
         }
 
         await PublishMessage(auditLoggerDto, ServiceBusQueues.AuditLoggerQueue, connectionString);

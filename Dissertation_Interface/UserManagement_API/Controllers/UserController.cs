@@ -4,26 +4,25 @@ using Newtonsoft.Json;
 using Shared.Helpers;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
-using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;
 using UserManagement_API.Extensions;
 using UserManagement_API.Service.IService;
 
 namespace UserManagement_API.Controllers;
-[Route("api/v{version:apiVersion}/superadmin")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request", typeof(CustomProblemDetails))]
-[Authorize(Roles = "Superadmin")]
-public class SuperAdminController : Controller
+public class UserController : Controller
 {
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
 
-    public SuperAdminController(IAuthService authService, IUserService userService)
+    public UserController(IAuthService authService, IUserService userService)
     {
         this._authService = authService;
         this._userService = userService;
     }
 
+    [Authorize(Roles = "Superadmin")]
     [HttpPost("register-admin")]
     [SwaggerOperation(Summary = "Registration for admin users")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
@@ -34,6 +33,7 @@ public class SuperAdminController : Controller
         return Ok(response);
     }
 
+    [Authorize(Roles = "Superadmin")]
     [HttpPost("resend-confirm-email")]
     [SwaggerOperation(Summary = "Registration for admin users")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
@@ -46,18 +46,20 @@ public class SuperAdminController : Controller
         return Ok(response);
     }
 
-    [HttpGet("user/{id}")]
-    [SwaggerOperation(Summary = "Get an admin user")]
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get the details for a user")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
     [SwaggerResponse(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAdminUser(string id)
+    public async Task<IActionResult> GetUser(string id)
     {
         ResponseDto<GetUserDto> response = await this._userService.GetUser(id);
         return Ok(response);
     }
 
-    [HttpPost("user/deactivate")]
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpPost("deactivate")]
     [SwaggerOperation(Summary = "Lock out or deactivate a user")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<bool>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
@@ -68,7 +70,8 @@ public class SuperAdminController : Controller
         return Ok(response);
     }
 
-    [HttpPost("user/activate")]
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpPost("activate")]
     [SwaggerOperation(Summary = "Activate or unlock a user")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<bool>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
@@ -79,7 +82,8 @@ public class SuperAdminController : Controller
         return Ok(response);
     }
 
-    [HttpGet("admin-users")]
+    [Authorize(Roles = "Superadmin")]
+    [HttpGet("get-admin-users")]
     [SwaggerOperation(Summary = "List of Admin Users")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PagedList<UserListDto>>))]
     public ActionResult GetAdminUsers([FromQuery] PaginationParameters paginationParameters)
@@ -107,12 +111,14 @@ public class SuperAdminController : Controller
         return Ok(users);
     }
 
-    [HttpPut("user")]
-    [SwaggerOperation(Summary = "Edit a user")]
+    [Authorize(Roles = "Superadmin")]
+    [HttpPut("edit-admin-user")]
+    [SwaggerOperation(Summary = "Edit an admin user")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<EditUserRequestDto>))]
     public async Task<IActionResult> EditUser([FromBody] EditUserRequestDto model)
     {
-        ResponseDto<EditUserRequestDto> response = await this._userService.EditUser(model);
+        var email = HttpContext.GetEmail();
+        ResponseDto<EditUserRequestDto> response = await this._userService.EditUser(model, email);
         return Ok(response);
     }
 }

@@ -11,5 +11,5 @@ public interface IUserService
     Task<ResponseDto<bool>> UnlockUser(string? email);
     ResponseDto<PagedList<UserListDto>> GetPaginatedAdminUsers(PaginationParameters paginationParameters);
 
-    Task<ResponseDto<EditUserRequestDto>> EditUser(EditUserRequestDto request);
+    Task<ResponseDto<EditUserRequestDto>> EditUser(EditUserRequestDto request, string? loggedInAdminEmail);
 }

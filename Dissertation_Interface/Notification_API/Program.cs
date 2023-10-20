@@ -28,9 +28,9 @@ WebApplication app = builder.Build();
 
 //Middleware
 app.ConfigureCors();
-app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<SwaggerBasicAuthMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI();

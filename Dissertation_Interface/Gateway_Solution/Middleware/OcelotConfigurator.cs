@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -28,7 +28,7 @@ public static class OcelotConfigurator
                     case (int)HttpStatusCode.Unauthorized:
                         await HandleUnauthorizedResponse(ctx, jsonSerializerSettings);
                         break;
-                    default:
+                    case (int)HttpStatusCode.NotFound:
                         await HandleOtherExceptions(ctx, jsonSerializerSettings);
                         break;
                 }

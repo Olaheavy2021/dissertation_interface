@@ -34,10 +34,10 @@ builder.Services.AddIdentityServices(builder.Configuration);
 WebApplication app = builder.Build();
 
 //Middleware
-app.UseMiddleware<ExceptionMiddleware>();
-app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<SwaggerBasicAuthMiddleware>();
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<UserDetailsMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();

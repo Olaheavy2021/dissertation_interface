@@ -127,8 +127,11 @@ public class UserService : IUserService
         return response;
     }
 
-    public async Task<ResponseDto<EditUserRequestDto>> EditUser(EditUserRequestDto request)
+    public async Task<ResponseDto<EditUserRequestDto>> EditUser(EditUserRequestDto request, string? loggedInAdminEmail)
     {
+        if (string.IsNullOrEmpty(loggedInAdminEmail))
+            throw new UnauthorizedException();
+
         var response = new ResponseDto<EditUserRequestDto>() { IsSuccess = false, Message = ErrorMessages.DefaultError };
         this._logger.LogInformation("Request update user with this email -  {0}", request.Email);
 
@@ -138,6 +141,8 @@ public class UserService : IUserService
         if (validationResult.Errors.Any())
         {
             this._logger.LogWarning("Edit User - Validation errors in whilst editing user for {0} - {1}", nameof(ApplicationUser), request.UserName);
+            await this._messageBus.PublishAuditLog(EventType.EditUser,
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError);
             throw new BadRequestException("Invalid Login Request", validationResult);
         }
 
@@ -146,6 +151,8 @@ public class UserService : IUserService
         if (user == null)
         {
             response.Message = $"User with this userid - {request.UserId} does not exist";
+            await this._messageBus.PublishAuditLog(EventType.EditUser,
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError);
             return response;
         }
 
@@ -160,6 +167,8 @@ public class UserService : IUserService
             {
                 response.IsSuccess = false;
                 response.Message = "Email  already exists for another user";
+                await this._messageBus.PublishAuditLog(EventType.EditUser,
+                    this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError);
                 return response;
             }
         }
@@ -172,6 +181,8 @@ public class UserService : IUserService
             {
                 response.IsSuccess = false;
                 response.Message = "Username already exists for another user";
+                await this._messageBus.PublishAuditLog(EventType.EditUser,
+                    this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError);
                 return response;
             }
         }
@@ -194,6 +205,8 @@ public class UserService : IUserService
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
         response.Result = request;
+        await this._messageBus.PublishAuditLog(EventType.EditUser,
+            this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, SuccessMessages.DefaultSuccess);
         return response;
     }
 
