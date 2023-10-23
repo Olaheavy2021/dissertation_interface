@@ -31,6 +31,7 @@ app.ConfigureCors();
 app.UseMiddleware<SwaggerBasicAuthMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<TokenManagerMiddleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI();

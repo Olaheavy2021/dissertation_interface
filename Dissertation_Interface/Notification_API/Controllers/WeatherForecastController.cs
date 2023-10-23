@@ -3,6 +3,7 @@ using Notification_API.Data.Models;
 using Notification_API.Data.Models.Dto;
 using Notification_API.Services;
 using Notification_API.Services.IServices;
+using Shared.DTO;
 using Shared.Helpers;
 
 namespace Notification_API.Controllers

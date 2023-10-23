@@ -6,6 +6,7 @@ using Notification_API.Messaging;
 using Notification_API.Middleware.Correlation;
 using Notification_API.Services;
 using Notification_API.Settings;
+using Shared.Helpers;
 using Shared.Logging;
 using Shared.Settings;
 
@@ -30,6 +31,17 @@ public static class ServiceCollectionExtension
         services.Configure<ServiceBusSettings>(configuration.GetSection("ServiceBusSettings"));
         services.Configure<SendGridSettings>(configuration.GetSection("SendGridSettings"));
         services.AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>();
+
+        //Configure Redis Cache
+        services.AddStackExchangeRedisCache(option =>
+        {
+            option.Configuration = configuration.GetConnectionString
+                ("RedisCacheConnectionString");
+            option.InstanceName = "master";
+        });
+        services.AddTransient<IRedisCacheHelper, RedisCacheHelper>();
+        services.AddTransient<ITokenManager, TokenManager>();
+        services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
         return services;
     }

@@ -1,4 +1,4 @@
-namespace Notification_API.Data.Models.Dto;
+namespace Shared.DTO;
 
 public class ResponseDto<T>
 {

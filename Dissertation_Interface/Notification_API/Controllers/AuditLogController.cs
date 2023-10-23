@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Notification_API.Data.Models;
 using Notification_API.Data.Models.Dto;
 using Notification_API.Services;
+using Shared.DTO;
 using Shared.Helpers;
 using Swashbuckle.AspNetCore.Annotations;
 

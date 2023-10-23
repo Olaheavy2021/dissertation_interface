@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Shared.Helpers;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Repository;
@@ -78,8 +79,20 @@ public static class ApplicationServiceRegistration
                 new HeaderApiVersionReader("X-Version"),
                 new MediaTypeApiVersionReader("ver"));
         });
+
         //HealthCheck
         services.AddHealthChecks();
+
+        //Configure Redis Cache
+        services.AddStackExchangeRedisCache(option =>
+        {
+            option.Configuration = configuration.GetConnectionString
+                ("RedisCacheConnectionString");
+            option.InstanceName = "master";
+        });
+        services.AddTransient<IRedisCacheHelper, RedisCacheHelper>();
+        services.AddTransient<ITokenManager, TokenManager>();
+        services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
         return services;
     }
 }

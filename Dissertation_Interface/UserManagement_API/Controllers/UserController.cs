@@ -15,11 +15,13 @@ public class UserController : Controller
 {
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
+    private readonly ITokenManager _tokenManager;
 
-    public UserController(IAuthService authService, IUserService userService)
+    public UserController(IAuthService authService, IUserService userService, ITokenManager tokenManager)
     {
         this._authService = authService;
         this._userService = userService;
+        this._tokenManager = tokenManager;
     }
 
     [Authorize(Roles = "Superadmin")]
@@ -119,6 +121,14 @@ public class UserController : Controller
     {
         var email = HttpContext.GetEmail();
         ResponseDto<EditUserRequestDto> response = await this._userService.EditUser(model, email);
+        return Ok(response);
+    }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        Shared.DTO.ResponseDto<string> response = await this._tokenManager.DeactivateCurrentAsync();
         return Ok(response);
     }
 }
