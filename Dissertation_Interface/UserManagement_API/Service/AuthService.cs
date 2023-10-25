@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Constants;
+using Shared.DTO;
 using Shared.Exceptions;
+using Shared.Helpers;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Settings;
@@ -31,12 +33,13 @@ public class AuthService : IAuthService
     private readonly ApplicationUrlSettings _applicationUrlSettings;
     private readonly IMapper _mapper;
     private readonly IMessageBus _messageBus;
+    private readonly ITokenManager _tokenManager;
 
 
 
     public AuthService(IUnitOfWork db, IOptions<ApplicationUrlSettings> applicationUrlSettings, IMessageBus messageBus,
         IOptions<JwtSettings> jwtSettings, SignInManager<ApplicationUser> signInManager,
-        UserManager<ApplicationUser> userManager, IAppLogger<AuthService> logger, IMapper mapper, IOptions<ServiceBusSettings> serviceBusSettings)
+        UserManager<ApplicationUser> userManager, IAppLogger<AuthService> logger, IMapper mapper, IOptions<ServiceBusSettings> serviceBusSettings, ITokenManager tokenManager)
     {
         this._db = db;
         this._userManager = userManager;
@@ -48,6 +51,7 @@ public class AuthService : IAuthService
         this._mapper = mapper;
         this._signInManager = signInManager;
         this._messageBus = messageBus;
+        this._tokenManager = tokenManager;
     }
 
     private async Task<ResponseDto<string>> Register(RegistrationRequestDto registrationRequestDto)
@@ -105,7 +109,7 @@ public class AuthService : IAuthService
 
     public Task<ResponseDto<RegistrationRequestDto>> RegisterStudentOrSupervisor(RegistrationRequestDto registrationRequestDto) => throw new NotImplementedException();
 
-    public async Task<ResponseDto<string>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto)
+    public async Task<ResponseDto<string>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto,  string? loggedInAdminEmail)
     {
         this._logger.LogInformation("Processing admin register request {@AdminRegistrationRequestDto}", registrationRequestDto);
 
@@ -114,6 +118,7 @@ public class AuthService : IAuthService
         ValidationResult? validationResult = await validator.ValidateAsync(registrationRequestDto);
         if (validationResult.Errors.Any())
         {
+
             this._logger.LogWarning("Register Admin - Validation errors while registering admin user - {0} ", registrationRequestDto.Email);
             throw new BadRequestException("Invalid Registration Request", validationResult);
         }
@@ -128,7 +133,19 @@ public class AuthService : IAuthService
             Role = registrationRequestDto.Role.ToLower()
         };
 
-        return await Register(registrationRequest);
+        ResponseDto<string> response = await Register(registrationRequest);
+        if (response.IsSuccess)
+        {
+            await this._messageBus.PublishAuditLog(EventType.RegisterAdminUser,
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, SuccessMessages.DefaultSuccess, registrationRequest.Email);
+        }
+        else
+        {
+            await this._messageBus.PublishAuditLog(EventType.RegisterAdminUser,
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError, registrationRequest.Email);
+        }
+
+        return response;
     }
 
     public async Task<ResponseDto<AuthResponseDto>> Login(LoginRequestDto loginRequestDto)
@@ -151,7 +168,6 @@ public class AuthService : IAuthService
             this._logger.LogWarning("Login - User not found", loginRequestDto.Email);
             return response;
         }
-
 
         //check if the password is correct and sign the user in
         SignInResult result =
@@ -194,8 +210,10 @@ public class AuthService : IAuthService
         //check if the email is confirmed
         if (result.IsNotAllowed)
         {
+            //this means the user is admin user to enter here
+            await PublishEmailConfirmationForAdminUsers(user);
             response.IsSuccess = false;
-            response.Message = "Please confirm your email address, then try and login again.";
+            response.Message = "Please check your email and confirm your email address, then try and login again.";
             this._logger.LogInformation("Login - Email has not been confirmed {0}", loginRequestDto.Email);
             return response;
         }
@@ -329,7 +347,7 @@ public class AuthService : IAuthService
             response.Message = "The email for this user has been confirmed already";
             response.Result = ErrorMessages.DefaultError;
             await this._messageBus.PublishAuditLog(EventType.ResendEmailConfirmation,
-                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError);
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError, request.Email);
             return response;
         }
 
@@ -338,7 +356,7 @@ public class AuthService : IAuthService
         response.Result = SuccessMessages.DefaultSuccess;
         await PublishEmailConfirmationForAdminUsers(user);
         await this._messageBus.PublishAuditLog(EventType.ResendEmailConfirmation,
-            this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, SuccessMessages.DefaultSuccess);
+            this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, SuccessMessages.DefaultSuccess, request.Email);
         return response;
     }
 
@@ -377,6 +395,12 @@ public class AuthService : IAuthService
 
         return response;
 
+    }
+
+    public async Task<ResponseDto<string>> Logout()
+    {
+        ResponseDto<string> response = await this._tokenManager.DeactivateCurrentAsync();
+        return response;
     }
 
     private async Task<JwtSecurityToken> GenerateJwtToken(ApplicationUser user)

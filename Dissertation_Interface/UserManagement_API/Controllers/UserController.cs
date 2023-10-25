@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Shared.DTO;
 using Shared.Helpers;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
@@ -31,7 +32,8 @@ public class UserController : Controller
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> RegisterAdmin([FromBody] AdminRegistrationRequestDto model)
     {
-        ResponseDto<string> response = await this._authService.RegisterAdmin(model);
+        var email = HttpContext.GetEmail();
+        ResponseDto<string> response = await this._authService.RegisterAdmin(model, email);
         return Ok(response);
     }
 
@@ -68,7 +70,8 @@ public class UserController : Controller
     [SwaggerResponse(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> LockOutUser([FromBody] EmailRequestDto model)
     {
-        ResponseDto<bool> response = await this._userService.LockOutUser(model.Email);
+        var adminEmail = HttpContext.GetEmail();
+        ResponseDto<bool> response = await this._userService.LockOutUser(model.Email, adminEmail);
         return Ok(response);
     }
 
@@ -80,7 +83,8 @@ public class UserController : Controller
     [SwaggerResponse(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UnlockUser([FromBody] EmailRequestDto model)
     {
-        ResponseDto<bool> response = await this._userService.UnlockUser(model.Email);
+        var adminEmail = HttpContext.GetEmail();
+        ResponseDto<bool> response = await this._userService.UnlockUser(model.Email, adminEmail);
         return Ok(response);
     }
 
@@ -121,14 +125,6 @@ public class UserController : Controller
     {
         var email = HttpContext.GetEmail();
         ResponseDto<EditUserRequestDto> response = await this._userService.EditUser(model, email);
-        return Ok(response);
-    }
-
-    [Authorize]
-    [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
-    {
-        Shared.DTO.ResponseDto<string> response = await this._tokenManager.DeactivateCurrentAsync();
         return Ok(response);
     }
 }

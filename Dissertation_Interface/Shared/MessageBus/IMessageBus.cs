@@ -4,6 +4,6 @@ public interface IMessageBus
 {
     Task PublishMessage(object message, string topicQueueName, string connectionString);
 
-    Task PublishAuditLog(string eventType, string connectionString, string loggedInAdminEmail,
-        string outcome);
+    Task PublishAuditLog(string eventType, string connectionString, string? loggedInAdminEmail,
+        string outcome, string entityIdentifier);
 }

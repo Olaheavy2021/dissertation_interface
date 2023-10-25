@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.DTO;
+using Shared.Helpers;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
 using UserManagement_API.Data.Models.Dto;
@@ -64,6 +67,14 @@ public class AuthController : Controller
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto model)
     {
         ResponseDto<RefreshTokenDto> response = await this._authService.GetRefreshToken(model);
+        return Ok(response);
+    }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        ResponseDto<string> response = await this._authService.Logout();
         return Ok(response);
     }
 }

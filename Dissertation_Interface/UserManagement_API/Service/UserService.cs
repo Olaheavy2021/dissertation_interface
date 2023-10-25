@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Shared.Constants;
+using Shared.DTO;
 using Shared.Exceptions;
 using Shared.Helpers;
 using Shared.Logging;
@@ -71,7 +72,7 @@ public class UserService : IUserService
         return response;
     }
 
-    public async Task<ResponseDto<bool>> LockOutUser(string? email)
+    public async Task<ResponseDto<bool>> LockOutUser(string email, string? loggedInAdminEmail)
     {
         var response = new ResponseDto<bool> { IsSuccess = false, Result = false, Message = "An error occurred whilst locking out the user" };
         this._logger.LogInformation("Request to lock out this user with this email -  {0}", email);
@@ -83,6 +84,8 @@ public class UserService : IUserService
         {
             response.IsSuccess = false;
             response.Message = "Lock out failed. This user is a system default user";
+            await this._messageBus.PublishAuditLog(EventType.LockOutUser, this._serviceBusSettings.ServiceBusConnectionString,
+                loggedInAdminEmail, ErrorMessages.DefaultError, email);
             return response;
         }
 
@@ -94,13 +97,15 @@ public class UserService : IUserService
         response.IsSuccess = lockDate.Succeeded;
         response.Result = lockDate.Succeeded;
         response.Message = "User locked out successfully";
+        await this._messageBus.PublishAuditLog(EventType.LockOutUser, this._serviceBusSettings.ServiceBusConnectionString,
+            loggedInAdminEmail, SuccessMessages.DefaultSuccess, email);
         await this._redis.RemoveCacheDataAsync(user.Id);
         await PublishAccountDeactivationOrActivationEmail(user, EmailType.EmailTypeAccountDeactivationEmail);
         this._logger.LogInformation("User lock out processed with this response - {0}", lockDate.Succeeded);
         return response;
     }
 
-    public async Task<ResponseDto<bool>> UnlockUser(string? email)
+    public async Task<ResponseDto<bool>> UnlockUser(string email, string? loggedInAdminEmail)
     {
         var response = new ResponseDto<bool> { IsSuccess = false, Result = false, Message = "An error occurred whilst unlocking the user" };
         this._logger.LogInformation("Request to unlock user with this email -  {0}", email);
@@ -108,13 +113,19 @@ public class UserService : IUserService
         if (user == null) return response;
 
         IdentityResult setLockoutEndDate = await this._userManager.SetLockoutEndDateAsync(user, DateTime.Now - TimeSpan.FromMinutes(1));
-        user.IsLockedOutByAdmin = false;
-        await this._userManager.UpdateAsync(user);
+
+        if (user.IsLockedOutByAdmin)
+        {
+            user.IsLockedOutByAdmin = false;
+            await this._userManager.UpdateAsync(user);
+        }
 
         response.IsSuccess = setLockoutEndDate.Succeeded;
         response.Result = setLockoutEndDate.Succeeded;
         response.Message = "User unlocked successfully";
         await this._redis.RemoveCacheDataAsync(user.Id);
+        await this._messageBus.PublishAuditLog(EventType.UnlockUser, this._serviceBusSettings.ServiceBusConnectionString,
+            loggedInAdminEmail, SuccessMessages.DefaultSuccess, email);
         await PublishAccountDeactivationOrActivationEmail(user, EmailType.EmailTypeAccountActivationEmail);
         this._logger.LogInformation("User unlock processed with this response - {0}", setLockoutEndDate.Succeeded);
 
@@ -156,7 +167,7 @@ public class UserService : IUserService
         {
             this._logger.LogWarning("Edit User - Validation errors in whilst editing user for {0} - {1}", nameof(ApplicationUser), request.UserName);
             await this._messageBus.PublishAuditLog(EventType.EditUser,
-                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError);
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError, request.Email);
             throw new BadRequestException("Invalid Login Request", validationResult);
         }
 
@@ -166,7 +177,7 @@ public class UserService : IUserService
         {
             response.Message = $"User with this userid - {request.UserId} does not exist";
             await this._messageBus.PublishAuditLog(EventType.EditUser,
-                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError);
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError, request.Email);
             return response;
         }
 
@@ -182,7 +193,7 @@ public class UserService : IUserService
                 response.IsSuccess = false;
                 response.Message = "Email  already exists for another user";
                 await this._messageBus.PublishAuditLog(EventType.EditUser,
-                    this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError);
+                    this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError, request.Email);
                 return response;
             }
         }
@@ -196,7 +207,7 @@ public class UserService : IUserService
                 response.IsSuccess = false;
                 response.Message = "Username already exists for another user";
                 await this._messageBus.PublishAuditLog(EventType.EditUser,
-                    this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError);
+                    this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError,request.Email);
                 return response;
             }
         }
@@ -221,7 +232,7 @@ public class UserService : IUserService
         response.Message = SuccessMessages.DefaultSuccess;
         response.Result = request;
         await this._messageBus.PublishAuditLog(EventType.EditUser,
-            this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, SuccessMessages.DefaultSuccess);
+            this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, SuccessMessages.DefaultSuccess, request.Email);
         return response;
     }
 

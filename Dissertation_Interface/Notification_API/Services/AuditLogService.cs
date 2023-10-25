@@ -24,7 +24,7 @@ public class AuditLogService : IAuditLogService
         {
             EventTimeStamp = request.EventTimeStamp,
             EventDescription = request.EventDescription,
-            Email = request.Email,
+            Email = request.AdminEmail,
             EventType = request.EventType,
             Outcome = request.Outcome,
             TargetEntity = request.TargetEntity

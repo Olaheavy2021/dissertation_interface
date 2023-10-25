@@ -3,6 +3,7 @@ using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
 using Shared.Constants;
 using Shared.DTO;
+using Shared.Helpers;
 
 namespace Shared.MessageBus;
 
@@ -25,13 +26,13 @@ public class MessageBus : IMessageBus
         await client.DisposeAsync();
     }
 
-    public async Task PublishAuditLog(string eventType, string connectionString, string loggedInAdminEmail,
-        string outcome)
+    public async Task PublishAuditLog(string eventType, string? connectionString, string? loggedInAdminEmail,
+        string outcome, string entityIdentifier)
     {
         var auditLoggerDto = new AuditLogDto
         {
             EventTimeStamp = DateTime.UtcNow,
-            Email = loggedInAdminEmail,
+            AdminEmail = loggedInAdminEmail,
             Outcome = outcome,
             EventType = eventType
         };
@@ -39,11 +40,23 @@ public class MessageBus : IMessageBus
         switch (eventType)
         {
             case EventType.ResendEmailConfirmation:
-                auditLoggerDto.EventDescription = EventDescription.ResendEmailConfirmation;
+                auditLoggerDto.EventDescription = StringHelpers.ReplaceEmail(EventDescription.ResendEmailConfirmation, auditLoggerDto.EntityIdentifier);
                 auditLoggerDto.TargetEntity = AuditLogTargetEntity.Users;
                 break;
             case EventType.EditUser:
-                auditLoggerDto.EventDescription = EventDescription.EditUser;
+                auditLoggerDto.EventDescription = StringHelpers.ReplaceEmail(EventDescription.EditUser, auditLoggerDto.EntityIdentifier);
+                auditLoggerDto.TargetEntity = AuditLogTargetEntity.Users;
+                break;
+            case EventType.LockOutUser:
+                auditLoggerDto.EventDescription = StringHelpers.ReplaceEmail(EventDescription.LockOutUser, auditLoggerDto.EntityIdentifier);
+                auditLoggerDto.TargetEntity = AuditLogTargetEntity.Users;
+                break;
+            case EventType.UnlockUser:
+                auditLoggerDto.EventDescription = StringHelpers.ReplaceEmail(EventDescription.UnlockUser, auditLoggerDto.EntityIdentifier);
+                auditLoggerDto.TargetEntity = AuditLogTargetEntity.Users;
+                break;
+            case EventType.RegisterAdminUser:
+                auditLoggerDto.EventDescription = StringHelpers.ReplaceEmail(EventDescription.RegisterAdminUser, auditLoggerDto.EntityIdentifier);
                 auditLoggerDto.TargetEntity = AuditLogTargetEntity.Users;
                 break;
         }

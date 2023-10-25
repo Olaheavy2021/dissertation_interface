@@ -6,7 +6,9 @@ public class AuditLogDto
 
     public string EventType { get; set; } = string.Empty;
 
-    public string Email { get; set; } = string.Empty;
+    public string? AdminEmail { get; set; } = string.Empty;
+
+    public string EntityIdentifier { get; set; } = string.Empty;
 
     public string Outcome { get; set; } = string.Empty;
 

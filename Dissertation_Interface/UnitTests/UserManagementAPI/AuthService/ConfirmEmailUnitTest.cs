@@ -2,6 +2,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Moq;
+using Shared.DTO;
+using Shared.Helpers;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Settings;
@@ -24,6 +26,7 @@ public class ConfirmEmailUnitTest
     private Mock<IAppLogger<UserManagement_API.Service.AuthService>>? _logger;
     private Mock<IMapper>? _mapperMock;
     private Mock<IOptions<ServiceBusSettings>>? _serviceBusSettings;
+    private Mock<ITokenManager>? _tokenManager;
     private ApplicationUser? _applicationUser = new();
     private ConfirmEmailRequestDto _confirmEmailRequest = new();
     private UserDto _userDto = new();
@@ -41,6 +44,7 @@ public class ConfirmEmailUnitTest
         this._serviceBusSettings = new Mock<IOptions<ServiceBusSettings>>();
         this._signInManagerMock = new Mock<FakeSignInManager>();
         this._userManagerMock = new Mock<FakeUserManager>();
+        this._tokenManager = new Mock<ITokenManager>();
         #endregion
 
         #region TestData
@@ -82,7 +86,7 @@ public class ConfirmEmailUnitTest
         var authService = new UserManagement_API.Service.AuthService(
             this._unitOfWork?.Object!, this._applicationUrlSettings?.Object!, this._messageBus?.Object!, this._jwtSettings!.Object,
             this._signInManagerMock?.Object!, this._userManagerMock?.Object!, this._logger?.Object!, this._mapperMock!.Object,
-            this._serviceBusSettings?.Object!
+            this._serviceBusSettings?.Object!, this._tokenManager?.Object!
         );
 
         ResponseDto<ConfirmEmailResponseDto> result = await authService.ConfirmEmail(this._confirmEmailRequest);
@@ -124,7 +128,7 @@ public class ConfirmEmailUnitTest
         var authService = new UserManagement_API.Service.AuthService(
             this._unitOfWork?.Object!, this._applicationUrlSettings?.Object!, this._messageBus?.Object!, this._jwtSettings!.Object,
             this._signInManagerMock?.Object!, this._userManagerMock?.Object!, this._logger?.Object!, this._mapperMock!.Object,
-            this._serviceBusSettings?.Object!
+            this._serviceBusSettings?.Object!, this._tokenManager?.Object!
         );
 
         ResponseDto<ConfirmEmailResponseDto> result = await authService.ConfirmEmail(this._confirmEmailRequest);
@@ -156,7 +160,7 @@ public class ConfirmEmailUnitTest
         var authService = new UserManagement_API.Service.AuthService(
             this._unitOfWork?.Object!, this._applicationUrlSettings?.Object!, this._messageBus?.Object!, this._jwtSettings!.Object,
             this._signInManagerMock?.Object!, this._userManagerMock?.Object!, this._logger?.Object!, this._mapperMock!.Object,
-            this._serviceBusSettings?.Object!
+            this._serviceBusSettings?.Object!, this._tokenManager?.Object!
         );
         ResponseDto<ConfirmEmailResponseDto> result = await authService.ConfirmEmail(this._confirmEmailRequest);
         #endregion
