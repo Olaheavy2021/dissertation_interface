@@ -6,4 +6,11 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Events\" />
+      <Folder Include="Extensions\" />
+      <Folder Include="Helpers\Enums\" />
+      <Folder Include="Persistence\" />
+    </ItemGroup>
+
 </Project>
