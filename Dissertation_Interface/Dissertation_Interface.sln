@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34018.315
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dissertation_API", "Dissertation_API\Dissertation_API.csproj", "{B8EB6C77-BCD5-40E6-B7C3-2378A41EEB80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dissertation.Api", "Dissertation.Api\Dissertation.Api.csproj", "{B8EB6C77-BCD5-40E6-B7C3-2378A41EEB80}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notification_API", "Notification_API\Notification_API.csproj", "{BB800D8A-ECC3-492F-8E3E-24B8215F565A}"
 EndProject
@@ -14,6 +14,20 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement_API", "UserManagement_API\UserManagement_API.csproj", "{0243602A-699A-4BC0-8208-AE34919DBDF5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{F5DDBF66-6255-4A57-A7E3-EBF868E7DAB5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dissertation", "Dissertation", "{FC638737-58A1-40B5-9E66-B6832FD82054}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateway", "ApiGateway", "{D0FCE848-EE0E-4B82-A17E-3D680CD0CD60}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notification", "Notification", "{9172CB7D-1C88-42E8-9FE9-BC4161549218}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManagement", "{29A45F9A-DE0F-4911-994B-0626C63CC3CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissertation.Application", "Dissertation.Application\Dissertation.Application.csproj", "{A8F51AF5-5343-4F36-BEDB-DB3AB5901CC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissertation.Domain", "Dissertation.Domain\Dissertation.Domain.csproj", "{61C4EDCB-7814-41B9-9E0B-19370115CAF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissertation.Infrastructure", "Dissertation.Infrastructure\Dissertation.Infrastructure.csproj", "{BF73BBBD-92C1-4FF3-A6CC-6DC08C8A6DA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,11 +59,32 @@ Global
 		{F5DDBF66-6255-4A57-A7E3-EBF868E7DAB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5DDBF66-6255-4A57-A7E3-EBF868E7DAB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5DDBF66-6255-4A57-A7E3-EBF868E7DAB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8F51AF5-5343-4F36-BEDB-DB3AB5901CC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8F51AF5-5343-4F36-BEDB-DB3AB5901CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8F51AF5-5343-4F36-BEDB-DB3AB5901CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8F51AF5-5343-4F36-BEDB-DB3AB5901CC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61C4EDCB-7814-41B9-9E0B-19370115CAF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61C4EDCB-7814-41B9-9E0B-19370115CAF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61C4EDCB-7814-41B9-9E0B-19370115CAF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61C4EDCB-7814-41B9-9E0B-19370115CAF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF73BBBD-92C1-4FF3-A6CC-6DC08C8A6DA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF73BBBD-92C1-4FF3-A6CC-6DC08C8A6DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF73BBBD-92C1-4FF3-A6CC-6DC08C8A6DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF73BBBD-92C1-4FF3-A6CC-6DC08C8A6DA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D81B5EDD-8169-4081-BA3F-FE710C89EE43}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B8EB6C77-BCD5-40E6-B7C3-2378A41EEB80} = {FC638737-58A1-40B5-9E66-B6832FD82054}
+		{FD414BEF-C6F4-4606-B8E6-1EFF9169A97C} = {D0FCE848-EE0E-4B82-A17E-3D680CD0CD60}
+		{BB800D8A-ECC3-492F-8E3E-24B8215F565A} = {9172CB7D-1C88-42E8-9FE9-BC4161549218}
+		{0243602A-699A-4BC0-8208-AE34919DBDF5} = {29A45F9A-DE0F-4911-994B-0626C63CC3CC}
+		{A8F51AF5-5343-4F36-BEDB-DB3AB5901CC4} = {FC638737-58A1-40B5-9E66-B6832FD82054}
+		{61C4EDCB-7814-41B9-9E0B-19370115CAF5} = {FC638737-58A1-40B5-9E66-B6832FD82054}
+		{BF73BBBD-92C1-4FF3-A6CC-6DC08C8A6DA7} = {FC638737-58A1-40B5-9E66-B6832FD82054}
 	EndGlobalSection
 EndGlobal

@@ -59,7 +59,7 @@ services:
     dissertation_api: 
       build:
         context: .
-        dockerfile: Dissertation_API/Dockerfile
+        dockerfile: Dissertation.Api/Dockerfile
       restart: on-failure
       ports: 
         - "8000:8000"
@@ -69,7 +69,7 @@ services:
       networks:
         - dissertation_app_network
       env_file:
-        - Dissertation_API/.env.dissertation
+        - Dissertation.Api/.env.dissertation
       volumes:
         - ~/.aspnet/https:/https
 

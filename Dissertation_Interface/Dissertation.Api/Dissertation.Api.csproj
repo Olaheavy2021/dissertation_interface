@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>c85b7286-4a44-48dd-aadc-528d964881e3</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <RootNamespace>Dissertation_API</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
