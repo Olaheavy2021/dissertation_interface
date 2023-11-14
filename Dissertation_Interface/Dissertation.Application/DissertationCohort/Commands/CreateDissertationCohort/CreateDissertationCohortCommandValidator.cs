@@ -16,12 +16,16 @@ public class CreateDissertationCohortCommandValidator : AbstractValidator<Create
             .NotEmpty().WithMessage("End Date is required");
         RuleFor(x => x.SupervisionChoiceDeadline)
             .NotEmpty().WithMessage("Supervision Deadline is required");
-        RuleFor(x => x.StartDate).GreaterThan(x => x.EndDate)
-            .WithMessage("StartDate should be an earlier date than the End Date");
-        RuleFor(x => x.EndDate).LessThan(x => x.StartDate)
-            .WithMessage("End should be a later date to the Start Date");
+        RuleFor(x => x.StartDate).LessThan(x => x.EndDate)
+            .WithMessage("Start Date should be an earlier date than the End Date");
+        RuleFor(x => x.EndDate).GreaterThan(x => x.StartDate)
+            .WithMessage("End Date should be a later date to the Start Date");
+        RuleFor(x => x.SupervisionChoiceDeadline)
+            .NotEmpty().WithMessage("Supervision Deadline is required")
+            .Must((model, deadline) => deadline > model.StartDate && deadline < model.EndDate)
+            .WithMessage("Supervision Choice Deadline must be between the Start Date and End Date");
         RuleFor(q => q)
-            .MustAsync(IsStartDateWithinAcademicSession).WithMessage("Start Date does not fall within the current academic year or ")
+            .MustAsync(IsStartDateWithinAcademicSession).WithMessage("Start Date does not fall within the current academic year")
             .OverridePropertyName("StartDate");
         RuleFor(q => q)
             .MustAsync(IsEndDateWithinAcademicSession).WithMessage("End Date does not fall within the current academic year")
@@ -41,7 +45,7 @@ public class CreateDissertationCohortCommandValidator : AbstractValidator<Create
             return false;
         }
 
-        if (request.StartDate < academicYear.StartDate || request.StartDate > academicYear.EndDate)
+        if (request.StartDate.Date < academicYear.StartDate.Date || request.StartDate.Date > academicYear.EndDate.Date)
         {
             return false;
         }
@@ -59,7 +63,7 @@ public class CreateDissertationCohortCommandValidator : AbstractValidator<Create
             return false;
         }
 
-        if (request.EndDate < academicYear.StartDate || request.EndDate > academicYear.EndDate)
+        if (request.EndDate.Date < academicYear.StartDate.Date || request.EndDate.Date > academicYear.EndDate.Date)
         {
             return false;
         }

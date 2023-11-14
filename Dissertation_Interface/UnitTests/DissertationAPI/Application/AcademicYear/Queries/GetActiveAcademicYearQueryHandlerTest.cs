@@ -9,7 +9,7 @@ using Shared.Exceptions;
 using Shared.Logging;
 using UnitTests.DissertationAPI.Mocks;
 
-namespace UnitTests.DissertationAPI.Application.AcademicYear.Queries.GetActiveAcademicYear;
+namespace UnitTests.DissertationAPI.Application.AcademicYear.Queries;
 
 public class GetActiveAcademicYearQueryHandlerTest
 {

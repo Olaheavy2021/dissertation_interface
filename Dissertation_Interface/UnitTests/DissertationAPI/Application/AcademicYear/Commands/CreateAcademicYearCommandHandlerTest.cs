@@ -10,7 +10,7 @@ using Shared.DTO;
 using Shared.Logging;
 using UnitTests.DissertationAPI.Mocks;
 
-namespace UnitTests.DissertationAPI.Application.AcademicYear.Commands.CreateAcademicYear;
+namespace UnitTests.DissertationAPI.Application.AcademicYear.Commands;
 
 public class CreateAcademicYearCommandHandlerTest
 {

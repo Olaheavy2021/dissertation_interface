@@ -16,10 +16,10 @@ public class UpdateDissertationCohortCommandValidator : AbstractValidator<Update
             .NotEmpty().WithMessage("End Date is required");
         RuleFor(x => x.SupervisionChoiceDeadline)
             .NotEmpty().WithMessage("Supervision Deadline is required");
-        RuleFor(x => x.StartDate).GreaterThan(x => x.EndDate)
-            .WithMessage("StartDate should be an earlier date than the End Date");
-        RuleFor(x => x.EndDate).LessThan(x => x.StartDate)
-            .WithMessage("End should be a later date to the Start Date");
+        RuleFor(x => x.StartDate).LessThan(x => x.EndDate)
+            .WithMessage("Start Date should be an earlier date than the End Date");
+        RuleFor(x => x.EndDate).GreaterThan(x => x.StartDate)
+            .WithMessage("End Date should be a later date to the Start Date");
         RuleFor(q => q)
             .MustAsync(IsStartDateWithinAcademicSession).WithMessage("Start Date does not fall within the current academic year or ")
             .OverridePropertyName("StartDate");

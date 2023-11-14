@@ -28,9 +28,4 @@
       <ProjectReference Include="..\UserManagement_API\UserManagement_API.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="DissertationAPI\Application\DissertationCohort\Commands\" />
-      <Folder Include="DissertationAPI\Application\DissertationCohort\Queries\" />
-    </ItemGroup>
-
 </Project>

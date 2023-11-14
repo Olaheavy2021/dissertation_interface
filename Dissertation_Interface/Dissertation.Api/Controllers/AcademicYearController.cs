@@ -31,7 +31,7 @@ public class AcademicYearController : Controller
 
     [HttpPost]
     [SwaggerOperation(Summary = "Create Academic Year")]
-    [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<ResponseDto<GetAcademicYear>>))]
+    [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<GetAcademicYear>))]
     public async Task<IActionResult> CreateAcademicYear([FromBody]CreateAcademicYearRequest request)
     {
         var command = new CreateAcademicYearCommand(request.StartDate, request.EndDate);
@@ -41,7 +41,7 @@ public class AcademicYearController : Controller
 
     [HttpGet("{academicYearId:long}")]
     [SwaggerOperation(Summary = "Get Academic Year By Id")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<ResponseDto<GetAcademicYear>>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetAcademicYear>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> GetAcademicYearById([FromRoute] long academicYearId)
     {
@@ -52,7 +52,7 @@ public class AcademicYearController : Controller
 
     [HttpGet("active")]
     [SwaggerOperation(Summary = "Get Academic Year By Id")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<ResponseDto<string>>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetAcademicYear>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> GetActiveAcademicYear()
     {
@@ -63,12 +63,12 @@ public class AcademicYearController : Controller
 
     [HttpGet]
     [SwaggerOperation(Summary = "Get List of Academic Year")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<ResponseDto<string>>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedAcademicYearListDto>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> GetListOfAcademicYear([FromQuery]AcademicYearPaginationParameters paginationParameters)
     {
         var query = new GetListOfAcademicYearQuery(paginationParameters);
-        ResponseDto<PagedList<GetAcademicYear>> response = await this._sender.Send(query);
+        ResponseDto<PaginatedAcademicYearListDto> response = await this._sender.Send(query);
         if (response.Result != null)
         {
             var metadata = new

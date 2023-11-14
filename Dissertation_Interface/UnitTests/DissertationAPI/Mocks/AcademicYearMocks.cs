@@ -42,7 +42,11 @@ public static class AcademicYearMocks
 
     }
 
-    public static AcademicYear GetFirstOrDefaultResponse() => AcademicYear.Create(DateTime.Now, DateTime.Now, DissertationConfigStatus.Active);
+    public static AcademicYear GetFirstOrDefaultResponse()
+    {
+        CreateAcademicYearRequest response = GetSuccessfulRequest();
+        return AcademicYear.Create(response.StartDate, response.EndDate, DissertationConfigStatus.Active);
+    }
 
     public static PagedList<AcademicYear> GetPaginatedResponse()
     {

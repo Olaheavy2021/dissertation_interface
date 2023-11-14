@@ -6,4 +6,4 @@ using Shared.Helpers;
 
 namespace Dissertation.Application.DissertationCohort.Queries.GetListOfDissertationCohort;
 
-public sealed record GetListOfDissertationCohortQuery(DissertationCohortPaginationParameters Parameters) : IRequest<ResponseDto<PagedList<GetDissertationCohort>>>;
+public sealed record GetListOfDissertationCohortQuery(DissertationCohortPaginationParameters Parameters) : IRequest< ResponseDto<PaginatedDissertationCohortListDto>>;

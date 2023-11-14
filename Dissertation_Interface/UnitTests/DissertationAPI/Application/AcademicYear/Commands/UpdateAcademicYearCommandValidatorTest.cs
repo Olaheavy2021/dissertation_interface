@@ -1,9 +1,8 @@
-﻿using Dissertation.Application.AcademicYear.Commands.CreateAcademicYear;
-using Dissertation.Application.AcademicYear.Commands.UpdateAcademicYear;
+﻿using Dissertation.Application.AcademicYear.Commands.UpdateAcademicYear;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using Moq;
 
-namespace UnitTests.DissertationAPI.Application.AcademicYear.Commands.UpdateAcademicYear;
+namespace UnitTests.DissertationAPI.Application.AcademicYear.Commands;
 
 public class UpdateAcademicYearCommandValidatorTest
 {

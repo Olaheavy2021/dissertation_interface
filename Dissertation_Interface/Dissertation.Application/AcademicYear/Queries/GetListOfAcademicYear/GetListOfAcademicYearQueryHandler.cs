@@ -8,7 +8,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.AcademicYear.Queries.GetListOfAcademicYear;
 
-public class GetListOfAcademicYearQueryHandler : IRequestHandler<GetListOfAcademicYearQuery, ResponseDto<PagedList<GetAcademicYear>>>
+public class GetListOfAcademicYearQueryHandler : IRequestHandler<GetListOfAcademicYearQuery, ResponseDto<PaginatedAcademicYearListDto>>
 {
     private readonly IAppLogger<GetListOfAcademicYearQueryHandler> _logger;
     private readonly IUnitOfWork _db;
@@ -18,10 +18,10 @@ public class GetListOfAcademicYearQueryHandler : IRequestHandler<GetListOfAcadem
         this._db = db;
         this._logger = logger;
     }
-    public Task<ResponseDto<PagedList<GetAcademicYear>>> Handle(GetListOfAcademicYearQuery request,
+    public Task<ResponseDto<PaginatedAcademicYearListDto>> Handle(GetListOfAcademicYearQuery request,
         CancellationToken cancellationToken)
     {
-        var response = new ResponseDto<PagedList<GetAcademicYear>>();
+        var response = new ResponseDto<PaginatedAcademicYearListDto>();
         this._logger.LogInformation("Attempting to retrieve list of AcademicYear");
         PagedList<Domain.Entities.AcademicYear> academicYears =  this._db.AcademicYearRepository.GetListOfAcademicYears(request.Parameters);
 
@@ -34,7 +34,16 @@ public class GetListOfAcademicYearQueryHandler : IRequestHandler<GetListOfAcadem
 
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
-        response.Result = mappedAcademicYears;
+        response.Result = new PaginatedAcademicYearListDto
+        {
+            Data = mappedAcademicYears,
+            TotalCount = mappedAcademicYears.TotalCount,
+            PageSize = mappedAcademicYears.PageSize,
+            CurrentPage = mappedAcademicYears.CurrentPage,
+            TotalPages = mappedAcademicYears.TotalPages,
+            HasNext = mappedAcademicYears.HasNext,
+            HasPrevious = mappedAcademicYears.HasPrevious
+        };
 
         return Task.FromResult(response);
     }

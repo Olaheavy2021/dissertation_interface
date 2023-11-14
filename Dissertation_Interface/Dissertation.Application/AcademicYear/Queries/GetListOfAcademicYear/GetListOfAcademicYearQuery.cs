@@ -6,4 +6,4 @@ using Shared.Helpers;
 
 namespace Dissertation.Application.AcademicYear.Queries.GetListOfAcademicYear;
 
-public sealed record GetListOfAcademicYearQuery(AcademicYearPaginationParameters Parameters) : IRequest<ResponseDto<PagedList<GetAcademicYear>>>;
+public sealed record GetListOfAcademicYearQuery(AcademicYearPaginationParameters Parameters) : IRequest<ResponseDto<PaginatedAcademicYearListDto>>;

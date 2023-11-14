@@ -10,7 +10,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.DissertationCohort.Queries.GetListOfDissertationCohort;
 
-public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOfDissertationCohortQuery, ResponseDto<PagedList<GetDissertationCohort>>>
+public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOfDissertationCohortQuery,ResponseDto<PaginatedDissertationCohortListDto>>
 {
     private readonly IAppLogger<GetListOfDissertationCohortQueryHandler> _logger;
     private readonly IUnitOfWork _db;
@@ -21,10 +21,10 @@ public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOf
         this._logger = logger;
     }
 
-    public Task<ResponseDto<PagedList<GetDissertationCohort>>> Handle(GetListOfDissertationCohortQuery request,
+    public Task<ResponseDto<PaginatedDissertationCohortListDto>> Handle(GetListOfDissertationCohortQuery request,
         CancellationToken cancellationToken)
     {
-        var response = new ResponseDto<PagedList<GetDissertationCohort>>();
+        var response = new ResponseDto<PaginatedDissertationCohortListDto>();
         this._logger.LogInformation("Attempting to retrieve list of Dissertation Cohort");
         PagedList<Domain.Entities.DissertationCohort> dissertationCohort =  this._db.DissertationCohortRepository.GetListOfDissertationCohort(request.Parameters);
 
@@ -37,7 +37,16 @@ public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOf
 
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
-        response.Result = mappedDissertationCohort;
+        response.Result = new PaginatedDissertationCohortListDto
+        {
+            Data = mappedDissertationCohort,
+            TotalCount = mappedDissertationCohort.TotalCount,
+            PageSize = mappedDissertationCohort.PageSize,
+            CurrentPage = mappedDissertationCohort.CurrentPage,
+            TotalPages = mappedDissertationCohort.TotalPages,
+            HasNext = mappedDissertationCohort.HasNext,
+            HasPrevious = mappedDissertationCohort.HasPrevious
+        };
 
         return Task.FromResult(response);
     }

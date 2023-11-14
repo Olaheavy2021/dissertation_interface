@@ -44,5 +44,4 @@ public class DissertationCohortRepository: GenericRepository<DissertationCohort>
                 .OrderBy(x => x.StartDate), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
-
 }

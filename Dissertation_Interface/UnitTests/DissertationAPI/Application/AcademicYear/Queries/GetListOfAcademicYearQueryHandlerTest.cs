@@ -9,7 +9,7 @@ using Shared.Helpers;
 using Shared.Logging;
 using UnitTests.DissertationAPI.Mocks;
 
-namespace UnitTests.DissertationAPI.Application.AcademicYear.Queries.GetListOfAcademicYear;
+namespace UnitTests.DissertationAPI.Application.AcademicYear.Queries;
 
 public class GetListOfAcademicYearQueryHandlerTest
 {
@@ -36,11 +36,11 @@ public class GetListOfAcademicYearQueryHandlerTest
             .Setup(x => x.AcademicYearRepository.GetListOfAcademicYears(It.IsAny<AcademicYearPaginationParameters>()))
             .Returns(AcademicYearMocks.GetPaginatedResponse());
 
-        ResponseDto<PagedList<GetAcademicYear>> response =
+        ResponseDto<PaginatedAcademicYearListDto> response =
             await this._getListOfAcademicYearQueryHandler.Handle(query, this._cancellationToken);
 
         response.Should().NotBeNull();
-        response.Result.Should().BeOfType<PagedList<GetAcademicYear>>();
+        response.Result.Should().BeOfType<PaginatedAcademicYearListDto>();
         response.IsSuccess.Should().BeTrue();
     }
 }
