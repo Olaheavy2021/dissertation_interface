@@ -25,9 +25,8 @@ public class UserService : IUserService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMessageBus _messageBus;
     private readonly ServiceBusSettings _serviceBusSettings;
-    private readonly IRedisCacheHelper _redis;
 
-    public UserService(IUnitOfWork db, IAppLogger<UserService> logger, IMapper mapper, UserManager<ApplicationUser> userManager, IMessageBus messageBus, IOptions<ServiceBusSettings> serviceBusSettings, IRedisCacheHelper redis)
+    public UserService(IUnitOfWork db, IAppLogger<UserService> logger, IMapper mapper, UserManager<ApplicationUser> userManager, IMessageBus messageBus, IOptions<ServiceBusSettings> serviceBusSettings)
     {
         this._db = db;
         this._mapper = mapper;
@@ -35,21 +34,12 @@ public class UserService : IUserService
         this._userManager = userManager;
         this._messageBus = messageBus;
         this._serviceBusSettings = serviceBusSettings.Value;
-        this._redis = redis;
     }
 
     public async Task<ResponseDto<GetUserDto>> GetUser(string userId)
     {
         var response = new ResponseDto<GetUserDto>();
-        GetUserDto? cacheData = await this._redis.GetCacheDataAsync<GetUserDto>(userId);
-        if (cacheData != null)
-        {
-            response.IsSuccess = true;
-            response.Message = SuccessMessages.DefaultSuccess;
-            response.Result = cacheData;
-            this._logger.LogInformation("Fetching details of this user with userId from the cache - {0}", userId);
-            return response;
-        }
+
         ApplicationUser? user = await this._db.ApplicationUserRepository.GetFirstOrDefaultAsync(a => a.Id == userId);
         this._logger.LogInformation("Fetching details of this user with userId from the database - {0}", userId);
         if (user != null)
@@ -61,7 +51,6 @@ public class UserService : IUserService
             response.IsSuccess = true;
             response.Message = SuccessMessages.DefaultSuccess;
             response.Result = getUserDto;
-            await this._redis.SetCacheDataAsync(userId, getUserDto, 60);
             this._logger.LogInformation("User Details returned successfully for userId - {0}", userId);
             return response;
         }
@@ -99,7 +88,6 @@ public class UserService : IUserService
         response.Message = "User locked out successfully";
         await this._messageBus.PublishAuditLog(EventType.LockOutUser, this._serviceBusSettings.ServiceBusConnectionString,
             loggedInAdminEmail, SuccessMessages.DefaultSuccess, email);
-        await this._redis.RemoveCacheDataAsync(user.Id);
         await PublishAccountDeactivationOrActivationEmail(user, EmailType.EmailTypeAccountDeactivationEmail);
         this._logger.LogInformation("User lock out processed with this response - {0}", lockDate.Succeeded);
         return response;
@@ -123,7 +111,6 @@ public class UserService : IUserService
         response.IsSuccess = setLockoutEndDate.Succeeded;
         response.Result = setLockoutEndDate.Succeeded;
         response.Message = "User unlocked successfully";
-        await this._redis.RemoveCacheDataAsync(user.Id);
         await this._messageBus.PublishAuditLog(EventType.UnlockUser, this._serviceBusSettings.ServiceBusConnectionString,
             loggedInAdminEmail, SuccessMessages.DefaultSuccess, email);
         await PublishAccountDeactivationOrActivationEmail(user, EmailType.EmailTypeAccountActivationEmail);
@@ -133,9 +120,9 @@ public class UserService : IUserService
 
     }
 
-    public ResponseDto<PagedList<UserListDto>> GetPaginatedAdminUsers(PaginationParameters paginationParameters)
+    public ResponseDto<PaginatedUserListDto> GetPaginatedAdminUsers(UserPaginationParameters paginationParameters)
     {
-        var response = new ResponseDto<PagedList<UserListDto>>();
+        var response = new ResponseDto<PaginatedUserListDto>();
         PagedList<ApplicationUser> users = this._db.ApplicationUserRepository.GetPaginatedAdminUsers(paginationParameters);
 
         var userDtos = new PagedList<UserListDto>(
@@ -147,7 +134,16 @@ public class UserService : IUserService
 
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
-        response.Result = userDtos;
+        response.Result = new PaginatedUserListDto
+        {
+            Data = userDtos,
+            TotalCount = userDtos.TotalCount,
+            PageSize = userDtos.PageSize,
+            CurrentPage = userDtos.CurrentPage,
+            TotalPages = userDtos.TotalPages,
+            HasNext = userDtos.HasNext,
+            HasPrevious = userDtos.HasPrevious
+        };
 
         return response;
     }
@@ -227,7 +223,6 @@ public class UserService : IUserService
 
         await this._userManager.UpdateAsync(user);
         this._logger.LogInformation("User updated successfully -  {0}", request.Email);
-        await this._redis.RemoveCacheDataAsync(user.Id);
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
         response.Result = request;

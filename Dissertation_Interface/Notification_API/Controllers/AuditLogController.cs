@@ -25,7 +25,7 @@ public class AuditLogController : ControllerBase
     [HttpGet]
     [SwaggerOperation(Summary = "Get List of Audit Logs")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Processed", typeof(ResponseDto<PagedList<AuditLog>>))]
-    public async Task<IActionResult> GetAuditLogs([FromQuery] PaginationParameters parameters)
+    public async Task<IActionResult> GetAuditLogs([FromQuery] AuditLogPaginationParameters parameters)
     {
         ResponseDto<PagedList<AuditLog>> response = await this._auditLogService.GetListOfAuditLogs(parameters);
 

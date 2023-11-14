@@ -10,7 +10,6 @@ using Microsoft.IdentityModel.Tokens;
 using Shared.Constants;
 using Shared.DTO;
 using Shared.Exceptions;
-using Shared.Helpers;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Settings;
@@ -33,13 +32,10 @@ public class AuthService : IAuthService
     private readonly ApplicationUrlSettings _applicationUrlSettings;
     private readonly IMapper _mapper;
     private readonly IMessageBus _messageBus;
-    private readonly ITokenManager _tokenManager;
-
-
 
     public AuthService(IUnitOfWork db, IOptions<ApplicationUrlSettings> applicationUrlSettings, IMessageBus messageBus,
         IOptions<JwtSettings> jwtSettings, SignInManager<ApplicationUser> signInManager,
-        UserManager<ApplicationUser> userManager, IAppLogger<AuthService> logger, IMapper mapper, IOptions<ServiceBusSettings> serviceBusSettings, ITokenManager tokenManager)
+        UserManager<ApplicationUser> userManager, IAppLogger<AuthService> logger, IMapper mapper, IOptions<ServiceBusSettings> serviceBusSettings)
     {
         this._db = db;
         this._userManager = userManager;
@@ -51,7 +47,6 @@ public class AuthService : IAuthService
         this._mapper = mapper;
         this._signInManager = signInManager;
         this._messageBus = messageBus;
-        this._tokenManager = tokenManager;
     }
 
     private async Task<ResponseDto<string>> Register(RegistrationRequestDto registrationRequestDto)
@@ -272,6 +267,16 @@ public class AuthService : IAuthService
         if (user == null)
             return response;
 
+        IList<string> roles = await this._userManager.GetRolesAsync(user);
+        if (request.Password.Equals(SystemDefault.DefaultPassword) && (roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleAdmin) || roles.FirstOrDefault()!.ToLower().Equals(Roles.RoleSuperAdmin)))
+        {
+            response.Message = "Please choose a more complex password";
+            response.IsSuccess = false;
+
+            return response;
+        }
+
+
         IdentityResult result = await this._userManager.ResetPasswordAsync(user, request.Token, request.Password);
         if (result.Succeeded)
         {
@@ -300,7 +305,7 @@ public class AuthService : IAuthService
         var isEmailConfirmed = await this._userManager.IsEmailConfirmedAsync(user);
         if (isEmailConfirmed)
         {
-            response.Message = "The email for this account has been confirmed already. Please sign in";
+            response.Message = "The email for this account has been confirmed already. Please reset your password then sign in.";
             response.IsSuccess = false;
 
             return response;
@@ -310,7 +315,7 @@ public class AuthService : IAuthService
         if (result.Succeeded)
         {
             this._logger.LogInformation("Email has been confirmed for this user {0}", request.UserName);
-            response.Message = "Your email has been confirmed. Please sign in.";
+            response.Message = "Your email has been confirmed. Please reset your password then sign in.";
             response.IsSuccess = true;
             UserDto? userToReturn = this._mapper.Map<UserDto>(user);
             IList<string> roles = await this._userManager.GetRolesAsync(user);
@@ -325,12 +330,13 @@ public class AuthService : IAuthService
             {
                 var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
                 responseDto.PasswordResetToken = code;
+                await PublishPasswordResetEmail(user, code);
             }
             response.Result = responseDto;
             return response;
         }
 
-        response.Message = result.Errors.FirstOrDefault()?.Description;
+        response.Message = result.Errors.FirstOrDefault()?.Description + " .Please contact the admin.";
         this._logger.LogInformation("Email confirmation failed for this user {0} - {1}", request.UserName, response.Message ?? "Undefined Identity Error");
         return response;
     }
@@ -397,12 +403,6 @@ public class AuthService : IAuthService
 
     }
 
-    public async Task<ResponseDto<string>> Logout()
-    {
-        ResponseDto<string> response = await this._tokenManager.DeactivateCurrentAsync();
-        return response;
-    }
-
     private async Task<JwtSecurityToken> GenerateJwtToken(ApplicationUser user)
     {
         IList<Claim> userClaims = await this._userManager.GetClaimsAsync(user);
@@ -456,6 +456,18 @@ public class AuthService : IAuthService
     private async Task PublishPasswordResetEmail(ApplicationUser user)
     {
         var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
+        var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebResetPasswordRoute}?username={user.UserName}&activationToken={code}";
+        UserDto? userToReturn = this._mapper.Map<UserDto>(user);
+        this._logger.LogInformation("Password Reset Email Published for this user {0}", user.UserName ?? string.Empty);
+
+
+        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeResetPasswordEmail };
+        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.EmailLoggerQueue,
+            this._serviceBusSettings.ServiceBusConnectionString);
+    }
+
+    private async Task PublishPasswordResetEmail(ApplicationUser user, string code)
+    {
         var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebResetPasswordRoute}?username={user.UserName}&activationToken={code}";
         UserDto? userToReturn = this._mapper.Map<UserDto>(user);
         this._logger.LogInformation("Password Reset Email Published for this user {0}", user.UserName ?? string.Empty);

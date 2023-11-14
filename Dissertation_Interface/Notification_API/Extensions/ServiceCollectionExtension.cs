@@ -39,8 +39,6 @@ public static class ServiceCollectionExtension
                 ("RedisCacheConnectionString");
             option.InstanceName = "master";
         });
-        services.AddTransient<IRedisCacheHelper, RedisCacheHelper>();
-        services.AddTransient<ITokenManager, TokenManager>();
         services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
         return services;

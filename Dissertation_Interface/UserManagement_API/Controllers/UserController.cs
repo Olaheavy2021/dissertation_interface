@@ -16,13 +16,11 @@ public class UserController : Controller
 {
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
-    private readonly ITokenManager _tokenManager;
 
-    public UserController(IAuthService authService, IUserService userService, ITokenManager tokenManager)
+    public UserController(IAuthService authService, IUserService userService)
     {
         this._authService = authService;
         this._userService = userService;
-        this._tokenManager = tokenManager;
     }
 
     [Authorize(Roles = "Superadmin")]
@@ -92,13 +90,13 @@ public class UserController : Controller
     [HttpGet("get-admin-users")]
     [SwaggerOperation(Summary = "List of Admin Users")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PagedList<UserListDto>>))]
-    public ActionResult GetAdminUsers([FromQuery] PaginationParameters paginationParameters)
+    public ActionResult GetAdminUsers([FromQuery] UserPaginationParameters paginationParameters)
     {
         var adminUserId = HttpContext.GetUserId();
         if (!string.IsNullOrEmpty(adminUserId))
             paginationParameters.LoggedInAdminId = adminUserId;
 
-        ResponseDto<PagedList<UserListDto>> users = this._userService.GetPaginatedAdminUsers(paginationParameters);
+        ResponseDto<PaginatedUserListDto> users = this._userService.GetPaginatedAdminUsers(paginationParameters);
 
         if (users.Result != null)
         {

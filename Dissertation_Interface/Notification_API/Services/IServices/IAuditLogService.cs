@@ -9,5 +9,6 @@ public interface IAuditLogService
 {
     Task<EmailResponseDto> SaveAuditLog(AuditLogDto request);
 
-    Task<ResponseDto<PagedList<AuditLog>>> GetListOfAuditLogs(PaginationParameters paginationParameters);
+    Task<ResponseDto<PagedList<AuditLog>>> GetListOfAuditLogs(AuditLogPaginationParameters paginationParameters);
+
 }

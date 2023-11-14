@@ -40,24 +40,24 @@ public class AuditLogService : IAuditLogService
         return response;
     }
 
-    public async Task<ResponseDto<PagedList<AuditLog>>> GetListOfAuditLogs(PaginationParameters paginationParameters)
+    public async Task<ResponseDto<PagedList<AuditLog>>> GetListOfAuditLogs(AuditLogPaginationParameters paginationParameters)
     {
         var parametersList = new List<SqlParameter>();
         var sqlQuery = new StringBuilder("SELECT * FROM AuditLogs");
 
         // Apply search
-        if (!string.IsNullOrEmpty(paginationParameters.SearchQuery))
+        if (!string.IsNullOrEmpty(paginationParameters.SearchByEmail))
         {
             sqlQuery.Append(" WHERE Email LIKE @search");
-            parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchQuery}%"));
+            parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByEmail}%"));
         }
 
         // Apply filter
-        if (!string.IsNullOrEmpty(paginationParameters.FilterBy))
+        if (!string.IsNullOrEmpty(paginationParameters.FilterByEventType))
         {
             var whereOrAnd = sqlQuery.ToString().Contains("WHERE") ? "AND" : "WHERE";
             sqlQuery.Append(" {whereOrAnd} EventType = @filter");
-            parametersList.Add(new SqlParameter("@filter", paginationParameters.FilterBy));
+            parametersList.Add(new SqlParameter("@filter", paginationParameters.FilterByEventType));
         }
 
         await using var db = new NotificationDbContext(this._dbOptions);

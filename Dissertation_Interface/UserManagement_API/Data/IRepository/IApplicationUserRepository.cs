@@ -7,7 +7,7 @@ namespace UserManagement_API.Data.IRepository;
 
 public interface IApplicationUserRepository : IGenericRepository<ApplicationUser>
 {
-    PagedList<ApplicationUser> GetPaginatedAdminUsers(PaginationParameters paginationParameters);
+    PagedList<ApplicationUser> GetPaginatedAdminUsers(UserPaginationParameters paginationParameters);
 
     Task<bool> DoesUserNameExist(string username, CancellationToken token);
 

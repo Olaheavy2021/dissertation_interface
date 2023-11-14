@@ -12,13 +12,11 @@ public class UserDetailsMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<UserDetailsMiddleware> _logger;
-    private readonly ITokenManager _tokenManager;
 
-    public UserDetailsMiddleware(RequestDelegate next, ILogger<UserDetailsMiddleware> logger, ITokenManager tokenManager)
+    public UserDetailsMiddleware(RequestDelegate next, ILogger<UserDetailsMiddleware> logger)
     {
         this._next = next;
         this._logger = logger;
-        this._tokenManager = tokenManager;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -27,25 +25,6 @@ public class UserDetailsMiddleware
 
         if (!string.IsNullOrEmpty(token) && !context.Request.Path.StartsWithSegments("/swagger") && !token.Contains("Basic"))
         {
-            if (!await this._tokenManager.IsCurrentActiveToken())
-            {
-                var converter = new JsonStringEnumConverter(JsonNamingPolicy.CamelCase);
-                var jsonSerializerSettings = new JsonSerializerOptions()
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                    Converters = { converter }
-                };
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                context.Response.ContentType = MediaTypeNames.Application.Json;
-                var result = new ApplicationProblemDetails((int)HttpStatusCode.Unauthorized)
-                {
-                    Message = "Jwt token has been deactivated."
-                };
-                this._logger.LogWarning("JWT token has been deactivated for this user, invalid attempt to access resources");
-                await context.Response.WriteAsync(JsonSerializer.Serialize(result, jsonSerializerSettings));
-                return;
-            }
             var handler = new JwtSecurityTokenHandler();
 
             if (handler.ReadToken(token) is JwtSecurityToken jsonToken)

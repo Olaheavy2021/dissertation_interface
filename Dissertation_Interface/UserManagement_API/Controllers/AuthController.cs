@@ -69,12 +69,4 @@ public class AuthController : Controller
         ResponseDto<RefreshTokenDto> response = await this._authService.GetRefreshToken(model);
         return Ok(response);
     }
-
-    [Authorize]
-    [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
-    {
-        ResponseDto<string> response = await this._authService.Logout();
-        return Ok(response);
-    }
 }

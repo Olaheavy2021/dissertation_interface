@@ -12,7 +12,7 @@ public interface IGenericRepository<T> where T : class
     Task<T?> GetFirstOrDefaultAsync(
         Expression<Func<T, bool>> predicate,
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-        params Expression<Func<T, object>>[]? includes);
+        params Expression<Func<T, object>>?[]? includes);
     Task<IReadOnlyList<T>> GetAllAsync();
     Task<IReadOnlyList<T>> GetAllAsync(
         Expression<Func<T, bool>>? predicate = null,

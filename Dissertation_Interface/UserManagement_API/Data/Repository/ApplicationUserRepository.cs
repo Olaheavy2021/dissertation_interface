@@ -16,7 +16,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
 
     }
 
-    public PagedList<ApplicationUser> GetPaginatedAdminUsers(PaginationParameters paginationParameters)
+    public PagedList<ApplicationUser> GetPaginatedAdminUsers(UserPaginationParameters paginationParameters)
     {
         string[] roleNames = { "SuperAdmin", "Admin" };
         var sqlQuery = new StringBuilder("SELECT U.*, R.Name " +
@@ -30,10 +30,10 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
             .Select((roleName, index) => new SqlParameter($"@p{index}", roleName))
             .Concat(new[] { new SqlParameter("@currentUserId", paginationParameters.LoggedInAdminId) }).ToList();
 
-        if (!string.IsNullOrEmpty(paginationParameters.SearchQuery))
+        if (!string.IsNullOrEmpty(paginationParameters.SearchByUserName))
         {
             sqlQuery.Append(" AND U.UserName LIKE @search");
-            parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchQuery}%"));
+            parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByUserName}%"));
         }
 
         // FormattedQuery prepares the placeholders for role names.

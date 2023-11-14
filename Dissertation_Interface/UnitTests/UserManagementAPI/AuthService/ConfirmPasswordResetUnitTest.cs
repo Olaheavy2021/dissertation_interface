@@ -24,7 +24,6 @@ public class ConfirmPasswordResetUnitTest
     private Mock<IOptions<JwtSettings>>? _jwtSettings;
     private Mock<IAppLogger<UserManagement_API.Service.AuthService>>? _logger;
     private Mock<IMapper>? _mapperMock;
-    private Mock<ITokenManager>? _tokenManager;
     private Mock<IOptions<ServiceBusSettings>>? _serviceBusSettings;
     private ApplicationUser? _applicationUser = new();
     private ConfirmPasswordResetDto _confirmPasswordResetRequest = new();
@@ -45,7 +44,6 @@ public class ConfirmPasswordResetUnitTest
         this._serviceBusSettings = new Mock<IOptions<ServiceBusSettings>>();
         this._signInManagerMock = new Mock<FakeSignInManager>();
         this._userManagerMock = new Mock<FakeUserManager>();
-        this._tokenManager = new Mock<ITokenManager>();
         #endregion
 
         #region TestData
@@ -72,7 +70,7 @@ public class ConfirmPasswordResetUnitTest
         var authService = new UserManagement_API.Service.AuthService(
             this._unitOfWork?.Object!, this._applicationUrlSettings?.Object!, this._messageBus?.Object!, this._jwtSettings!.Object,
             this._signInManagerMock?.Object!, this._userManagerMock?.Object!, this._logger?.Object!, this._mapperMock!.Object,
-            this._serviceBusSettings?.Object!, this._tokenManager?.Object!
+            this._serviceBusSettings?.Object!
         );
 
         ResponseDto<string> result = await authService.ConfirmPasswordReset(this._confirmPasswordResetRequest);
@@ -105,7 +103,7 @@ public class ConfirmPasswordResetUnitTest
         var authService = new UserManagement_API.Service.AuthService(
             this._unitOfWork?.Object!, this._applicationUrlSettings?.Object!, this._messageBus?.Object!, this._jwtSettings!.Object,
             this._signInManagerMock?.Object!, this._userManagerMock?.Object!, this._logger?.Object!, this._mapperMock!.Object,
-            this._serviceBusSettings?.Object!, this._tokenManager?.Object!
+            this._serviceBusSettings?.Object!
         );
 
         ResponseDto<string> result = await authService.ConfirmPasswordReset(this._confirmPasswordResetRequest);

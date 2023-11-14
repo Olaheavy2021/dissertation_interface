@@ -1,4 +1,8 @@
-﻿namespace Dissertation_API.Extensions;
+﻿using Dissertation.Application.Extensions;
+using Dissertation.Application.Mapping;
+using Dissertation.Infrastructure.Extensions;
+
+namespace Dissertation_API.Extensions;
 
 public static class ProgramExtension
 {
@@ -10,6 +14,8 @@ public static class ProgramExtension
             .ConfigureRedis(config)
             .AddAuth(config)
             .AddConfigurationProps(config)
+            .AddApplication()
+            .AddPersistenceInfrastructure(config)
             .AddCors();
 
     public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder builder, IConfiguration config) =>

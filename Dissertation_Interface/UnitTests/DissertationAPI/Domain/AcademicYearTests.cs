@@ -1,0 +1,25 @@
+﻿using Dissertation.Application.DTO;
+using Dissertation.Domain.Entities;
+using Dissertation.Domain.Enums;
+using FluentAssertions;
+using UnitTests.DissertationAPI.Mocks;
+
+namespace UnitTests.DissertationAPI.Domain;
+
+public class AcademicYearTests
+{
+    [Test]
+    public void CreateAcademicYear_Returns_Valid_Data()
+    {
+        //Arrange
+        CreateAcademicYearRequest request = AcademicYearMocks.GetSuccessfulRequest();
+
+        //Act
+        var result = AcademicYear.Create(request.StartDate, request.EndDate, DissertationConfigStatus.Active);
+
+        //Assert
+        result.StartDate.Should().Be(request.StartDate.Date);
+        result.EndDate.Should().Be(request.EndDate.Date);
+        result.Status.Should().Be( DissertationConfigStatus.Active);
+    }
+}

@@ -1,5 +1,11 @@
-﻿using Dissertation_API.Middleware.Correlation;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Asp.Versioning;
+using Dissertation_API.Middleware.Correlation;
+using Dissertation.Application.Mapping;
+using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
@@ -13,11 +19,10 @@ public static class ServiceCollectionExtension
 {
     internal static IServiceCollection AddServices(this IServiceCollection services) =>
         services
-            .AddTransient<IRedisCacheHelper, RedisCacheHelper>()
-            .AddTransient<ITokenManager, TokenManager>()
             .AddTransient<IHttpContextAccessor, HttpContextAccessor>()
             .AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>()
             .AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
+
     internal static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(option =>
@@ -91,6 +96,29 @@ public static class ServiceCollectionExtension
                 ("RedisCacheConnectionString");
             option.InstanceName = "master";
         });
+
+    internal static IMvcBuilder ConfigureMvc(this IServiceCollection services) =>
+        services.AddControllers(options =>
+            {
+                options.OutputFormatters.RemoveType<StringOutputFormatter>();
+                options.ModelValidatorProviders.Clear();
+            })
+            .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true)
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            });
+
+    public static void ConfigureApiVersioning(this IServiceCollection services) =>
+        services.AddApiVersioning(setup =>
+        {
+            setup.DefaultApiVersion = new ApiVersion(1, 0);
+            setup.AssumeDefaultVersionWhenUnspecified = true;
+            setup.ReportApiVersions = true;
+        }).AddMvc();
 
     internal static IServiceCollection AddConfigurationProps(this IServiceCollection services, IConfiguration config) => services.Configure<JwtSettings>(config.GetSection("JwtSettings"));
 }

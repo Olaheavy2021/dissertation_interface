@@ -21,7 +21,7 @@ public static class ApplicationServiceRegistration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Appsettings Configuration
+        // AppSettings Configuration
         services.Configure<ApplicationUrlSettings>(configuration.GetSection("ApplicationUrlSettings"));
         services.Configure<ServiceBusSettings>(configuration.GetSection("ServiceBusSettings"));
 
@@ -90,8 +90,6 @@ public static class ApplicationServiceRegistration
                 ("RedisCacheConnectionString");
             option.InstanceName = "master";
         });
-        services.AddTransient<IRedisCacheHelper, RedisCacheHelper>();
-        services.AddTransient<ITokenManager, TokenManager>();
         services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
         return services;
     }
