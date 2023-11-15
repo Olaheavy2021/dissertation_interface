@@ -27,7 +27,8 @@ public class GetDissertationCohortByIdQueryHandler: IRequestHandler<GetDissertat
     {
         var response = new ResponseDto<GetDissertationCohort>();
         this._logger.LogInformation("Attempting to retrieve an Dissertation Cohort by ID {DissertationCohortID}", request.DissertationCohortId);
-        Domain.Entities.DissertationCohort? dissertationCohort = await this._db.DissertationCohortRepository.GetAsync(a => a.Id == request.DissertationCohortId);
+        Domain.Entities.DissertationCohort? dissertationCohort = await this._db.DissertationCohortRepository.GetAsync(a => a.Id == request.DissertationCohortId, null, a => a.AcademicYear);
+        this._logger.LogInformation("This is the dissertation cohort {@DissertationCohort}", dissertationCohort);
         if (dissertationCohort is null)
         {
             this._logger.LogError("No Dissertation Cohort found with ID");

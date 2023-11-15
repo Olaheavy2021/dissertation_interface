@@ -2,12 +2,13 @@
 using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
+using MediatR;
 using Shared.DTO;
 using Shared.Logging;
 
 namespace Dissertation.Application.DissertationCohort.Commands.CreateDissertationCohort;
 
-public class CreateDissertationCohortCommandHandler
+public class CreateDissertationCohortCommandHandler : IRequestHandler<CreateDissertationCohortCommand, ResponseDto<GetDissertationCohort>>
 {
     private readonly IAppLogger<CreateDissertationCohortCommandHandler> _logger;
     private readonly IUnitOfWork _db;

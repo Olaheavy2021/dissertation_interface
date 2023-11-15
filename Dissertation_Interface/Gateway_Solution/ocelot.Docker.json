@@ -58,6 +58,66 @@
         "AuthenticationProviderKey": "Bearer"
       }
     },
+    {
+      "DownstreamPathTemplate": "/api/v1/DissertationCohort",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/DissertationCohort",
+      "UpstreamHttpMethod": [ "Post" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/DissertationCohort/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/DissertationCohort/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/DissertationCohort",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/DissertationCohort",
+      "UpstreamHttpMethod": [ "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/DissertationCohort/enable/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/DissertationCohort/enable/{id}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
     //"NotificationAPI": "https://localhost:9000",
     {
       "DownstreamPathTemplate": "/WeatherForecast",

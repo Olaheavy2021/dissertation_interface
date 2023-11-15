@@ -9,4 +9,6 @@ public interface IDissertationCohortRepository : IGenericRepository<Dissertation
 {
     PagedList<DissertationCohort> GetListOfDissertationCohort(
         DissertationCohortPaginationParameters paginationParameters);
+
+    Task<DissertationCohort?> GetActiveDissertationCohort(long id);
 }

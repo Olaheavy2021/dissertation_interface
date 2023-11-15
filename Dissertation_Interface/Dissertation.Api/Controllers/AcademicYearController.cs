@@ -6,13 +6,11 @@ using Dissertation.Application.AcademicYear.Queries.GetListOfAcademicYear;
 using Dissertation.Application.DTO;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Pagination;
-using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.DTO;
-using Shared.Helpers;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -86,6 +84,9 @@ public class AcademicYearController : Controller
     }
 
     [HttpPut("{academicYearId:long}")]
+    [SwaggerOperation(Summary = "Update Academic Year")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetDissertationCohort>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> UpdateAcademicYear([FromBody] CreateAcademicYearRequest request, [FromRoute]long academicYearId)
     {
         var command = new UpdateAcademicYearCommand(request.StartDate, request.EndDate, academicYearId);

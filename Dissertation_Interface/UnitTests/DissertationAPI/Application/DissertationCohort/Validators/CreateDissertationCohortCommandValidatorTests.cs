@@ -27,6 +27,11 @@ public class CreateDissertationCohortCommandValidatorTests
                 It.IsAny<Expression<Func<Dissertation.Domain.Entities.AcademicYear, object>>[]>()))
             .ReturnsAsync(academicYear);
 
+        this._unitOfWork
+            .Setup(x => x.DissertationCohortRepository.GetAllAsync(It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, bool>>>(),  It.IsAny<Func<IQueryable<Dissertation.Domain.Entities.DissertationCohort>, IOrderedQueryable<Dissertation.Domain.Entities.DissertationCohort>>>(),
+                It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, object>>[]>()))
+            .ReturnsAsync(DissertationCohortMocks.GetPaginatedResponse);
+
         CreateDissertationCohortRequest request = DissertationCohortMocks.GetSuccessfulRequest(academicYear.StartDate, academicYear.EndDate);
         CreateDissertationCohortCommand command = new(request.StartDate, request.EndDate, request.SupervisionChoiceDeadline, request.AcademicYearId);
 
@@ -43,6 +48,11 @@ public class CreateDissertationCohortCommandValidatorTests
             .Setup(x => x.AcademicYearRepository.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<Dissertation.Domain.Entities.AcademicYear, bool>>>(),  It.IsAny<Func<IQueryable<Dissertation.Domain.Entities.AcademicYear>, IOrderedQueryable<Dissertation.Domain.Entities.AcademicYear>>>(),
                 It.IsAny<Expression<Func<Dissertation.Domain.Entities.AcademicYear, object>>[]>()))
             .ReturnsAsync((Dissertation.Domain.Entities.AcademicYear)null!);
+
+        this._unitOfWork
+            .Setup(x => x.DissertationCohortRepository.GetAllAsync(It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, bool>>>(),  It.IsAny<Func<IQueryable<Dissertation.Domain.Entities.DissertationCohort>, IOrderedQueryable<Dissertation.Domain.Entities.DissertationCohort>>>(),
+                It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, object>>[]>()))
+            .ReturnsAsync(DissertationCohortMocks.GetPaginatedResponse);
 
         CreateDissertationCohortRequest request = DissertationCohortMocks.GetSuccessfulRequest(academicYear.StartDate, academicYear.EndDate);
         CreateDissertationCohortCommand command = new(request.StartDate, request.EndDate, request.SupervisionChoiceDeadline, request.AcademicYearId);

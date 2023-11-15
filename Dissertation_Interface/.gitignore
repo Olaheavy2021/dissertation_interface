@@ -375,6 +375,8 @@ FodyWeavers.xsd
 UserManagement_API/appsettings.Production.json
 Notification_API/appsettings.Production.json
 Gateway_Solution/appsettings.Production.json
+Dissertation.Api/appsettings.Production.json
+Dissertation.Api/Properties/ServiceDependencies/DIFDissertationAPI - Web Deploy/profile.arm.json
 UserManagement_API/Properties/ServiceDependencies/DIFUserManagementAPI - Web Deploy/profile.arm.json
 Notification_API/Properties/ServiceDependencies/DIFUserManagementAPI - Web Deploy/profile.arm.json
 Gateway_Solution/Properties/ServiceDependencies/DIFGatewaySolution - Web Deploy/profile.arm.json

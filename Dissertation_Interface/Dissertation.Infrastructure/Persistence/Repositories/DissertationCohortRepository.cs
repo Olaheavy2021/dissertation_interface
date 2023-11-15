@@ -41,7 +41,10 @@ public class DissertationCohortRepository: GenericRepository<DissertationCohort>
         return PagedList<DissertationCohort>.ToPagedList(
             this.Context.Set<DissertationCohort>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
+                .Include(x => x.AcademicYear)
                 .OrderBy(x => x.StartDate), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
+
+    public async Task<DissertationCohort?> GetActiveDissertationCohort(long id) => await this.Context.Set<DissertationCohort>().FirstOrDefaultAsync(a => a.Status == DissertationConfigStatus.Active);
 }

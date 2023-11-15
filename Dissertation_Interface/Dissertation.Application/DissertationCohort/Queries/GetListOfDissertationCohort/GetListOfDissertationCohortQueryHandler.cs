@@ -14,11 +14,13 @@ public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOf
 {
     private readonly IAppLogger<GetListOfDissertationCohortQueryHandler> _logger;
     private readonly IUnitOfWork _db;
+    private readonly IMapper _mapper;
 
-    public GetListOfDissertationCohortQueryHandler(IAppLogger<GetListOfDissertationCohortQueryHandler> logger, IUnitOfWork db)
+    public GetListOfDissertationCohortQueryHandler(IAppLogger<GetListOfDissertationCohortQueryHandler> logger, IUnitOfWork db, IMapper mapper)
     {
         this._db = db;
         this._logger = logger;
+        this._mapper = mapper;
     }
 
     public Task<ResponseDto<PaginatedDissertationCohortListDto>> Handle(GetListOfDissertationCohortQuery request,
@@ -51,8 +53,13 @@ public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOf
         return Task.FromResult(response);
     }
 
-    private static GetDissertationCohort MapToDissertationCohortDto(Domain.Entities.DissertationCohort dissertationCohort) =>
-        new()
+
+
+    private  GetDissertationCohort MapToDissertationCohortDto(
+        Domain.Entities.DissertationCohort dissertationCohort)
+    {
+        GetAcademicYear mappedAcademicYear = this._mapper.Map<GetAcademicYear>(dissertationCohort.AcademicYear);
+        return new GetDissertationCohort
         {
             Id = dissertationCohort.Id,
             Status = dissertationCohort.Status,
@@ -62,6 +69,9 @@ public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOf
             CreatedBy = dissertationCohort.CreatedBy,
             UpdatedAt = dissertationCohort.UpdatedAt,
             UpdatedBy = dissertationCohort.UpdatedBy,
-            SupervisionChoiceDeadline = dissertationCohort.SupervisionChoiceDeadline
+            SupervisionChoiceDeadline = dissertationCohort.SupervisionChoiceDeadline,
+            AcademicYear = mappedAcademicYear
         };
+    }
+
 }

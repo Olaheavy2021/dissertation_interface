@@ -240,7 +240,7 @@ public class UserService : IUserService
             FirstName = applicationUser.FirstName,
             LastName = applicationUser.LastName,
             IsLockedOut = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow,
-            EmailConfirmed = applicationUser.EmailConfirmed
+            EmailConfirmed = applicationUser.EmailConfirmed,
         };
 
     private async Task PublishAccountDeactivationOrActivationEmail(ApplicationUser user, string emailType)

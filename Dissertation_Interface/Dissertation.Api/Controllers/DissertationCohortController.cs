@@ -1,4 +1,5 @@
 ﻿using Dissertation.Application.DissertationCohort.Commands.CreateDissertationCohort;
+using Dissertation.Application.DissertationCohort.Commands.EnableDissertationCohort;
 using Dissertation.Application.DissertationCohort.Commands.UpdateDissertationCohort;
 using Dissertation.Application.DissertationCohort.Queries.GetActiveDissertationCohort;
 using Dissertation.Application.DissertationCohort.Queries.GetById;
@@ -84,9 +85,22 @@ public class DissertationCohortController : Controller
     }
 
     [HttpPut("{dissertationCohortId:long}")]
+    [SwaggerOperation(Summary = "Update Dissertation Cohort")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetDissertationCohort>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> UpdateDissertationCohort([FromBody] CreateDissertationCohortRequest request, [FromRoute]long dissertationCohortId)
     {
         var command = new UpdateDissertationCohortCommand(request.StartDate, request.EndDate, request.SupervisionChoiceDeadline,request.AcademicYearId, dissertationCohortId);
+        ResponseDto<GetDissertationCohort> response = await this._sender.Send(command);
+        return Ok(response);
+    }
+
+    [HttpPost("enable/{dissertationCohortId:long}")]
+    [SwaggerOperation(Summary = "Enable Dissertation Cohort")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetDissertationCohort>))]
+    public async Task<IActionResult> EnableDissertationCohort([FromRoute]long dissertationCohortId)
+    {
+        var command = new EnableDissertationCohortCommand(dissertationCohortId);
         ResponseDto<GetDissertationCohort> response = await this._sender.Send(command);
         return Ok(response);
     }

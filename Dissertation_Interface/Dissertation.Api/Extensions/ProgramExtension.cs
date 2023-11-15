@@ -11,7 +11,6 @@ public static class ProgramExtension
             .AddSwagger()
             .AddServices()
             .ConfigureHealthChecks()
-            .ConfigureRedis(config)
             .AddAuth(config)
             .AddConfigurationProps(config)
             .AddApplication()

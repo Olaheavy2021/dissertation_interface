@@ -89,14 +89,6 @@ public static class ServiceCollectionExtension
         return services;
     }
 
-    internal static IServiceCollection ConfigureRedis(this IServiceCollection services, IConfiguration config) =>
-        services.AddStackExchangeRedisCache(option =>
-        {
-            option.Configuration = config.GetConnectionString
-                ("RedisCacheConnectionString");
-            option.InstanceName = "master";
-        });
-
     internal static IMvcBuilder ConfigureMvc(this IServiceCollection services) =>
         services.AddControllers(options =>
             {

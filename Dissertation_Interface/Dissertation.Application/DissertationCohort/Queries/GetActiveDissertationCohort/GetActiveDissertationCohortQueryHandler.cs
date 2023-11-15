@@ -27,7 +27,7 @@ public class GetActiveDissertationCohortQueryHandler : IRequestHandler<GetActive
     {
         var response = new ResponseDto<GetDissertationCohort>();
         this._logger.LogInformation("Attempting to retrieve the active Dissertation Cohort");
-        Domain.Entities.DissertationCohort? dissertationCohort = await this._db.DissertationCohortRepository.GetFirstOrDefaultAsync(a => a.Status == DissertationConfigStatus.Active);
+        Domain.Entities.DissertationCohort? dissertationCohort = await this._db.DissertationCohortRepository.GetFirstOrDefaultAsync(a => a.Status == DissertationConfigStatus.Active, null, a => a.AcademicYear);
         if (dissertationCohort is null)
         {
             this._logger.LogError("No active Dissertation Cohort found");

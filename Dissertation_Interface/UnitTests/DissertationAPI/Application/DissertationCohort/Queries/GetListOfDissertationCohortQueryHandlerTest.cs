@@ -6,6 +6,7 @@ using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Pagination;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentAssertions;
+using MapsterMapper;
 using Moq;
 using Shared.DTO;
 using Shared.Helpers;
@@ -24,7 +25,8 @@ public class GetListOfDissertationCohortQueryHandlerTest
     public GetListOfDissertationCohortQueryHandlerTest() =>
         this._getListOfDissertationCohortQueryHandler = new GetListOfDissertationCohortQueryHandler(
             this._logger.Object,
-            this._unitOfWork.Object
+            this._unitOfWork.Object,
+            new Mapper()
         );
 
     [Test]
