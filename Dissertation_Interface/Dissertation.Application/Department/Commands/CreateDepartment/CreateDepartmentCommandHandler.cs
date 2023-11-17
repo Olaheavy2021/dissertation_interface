@@ -37,6 +37,5 @@ public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCo
         response.IsSuccess = true;
         this._logger.LogInformation("Department created for this {name}", request.Name);
         return response;
-
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Dissertation.Application.DTO.Response;
 
-public class GetDepartment
+public class GetCourse
 {
     public long Id { get; set; }
 
@@ -18,4 +18,5 @@ public class GetDepartment
 
     public DateTime? UpdatedAt { get; set; }
 
+    public GetDepartment Department { get; set; }
 }

@@ -36,9 +36,13 @@ builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
     .Enrich.WithCorrelationId()
     .ReadFrom.Configuration(context.Configuration));
 builder.Services.AddHealthChecks();
+builder.Services.AddCors();
 
 WebApplication app = builder.Build();
 
+app.UseCors(policy => policy.AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 app.MapGet("/", () => "Welcome to the SHU Dissertation API Gateway");
 app.UseRouting();
 app.ConfigureEndpoints();

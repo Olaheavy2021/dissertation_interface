@@ -7,9 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Course\Commands\" />
-      <Folder Include="Course\Queries\" />
-      <Folder Include="Department\Commands\UpdateDepartment\" />
       <Folder Include="Enum\" />
       <Folder Include="Responses\" />
     </ItemGroup> 

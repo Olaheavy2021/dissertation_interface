@@ -53,8 +53,6 @@ public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOf
         return Task.FromResult(response);
     }
 
-
-
     private  GetDissertationCohort MapToDissertationCohortDto(
         Domain.Entities.DissertationCohort dissertationCohort)
     {
