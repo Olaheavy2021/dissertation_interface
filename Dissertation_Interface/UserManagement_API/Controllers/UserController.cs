@@ -54,9 +54,33 @@ public class UserController : Controller
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
     [SwaggerResponse(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetUser(string id)
+    public async Task<IActionResult> GetUser([FromRoute] string id)
     {
         ResponseDto<GetUserDto> response = await this._userService.GetUser(id);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpGet("get-by-email/{email}")]
+    [SwaggerOperation(Summary = "Get the details for a user by email")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetUserByEmail([FromRoute] string email)
+    {
+        ResponseDto<GetUserDto> response = await this._userService.GetUserByEmail(email);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpGet("get-by-username/{username}")]
+    [SwaggerOperation(Summary = "Get the details for a user by username")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetUserByUserName([FromRoute] string username)
+    {
+        ResponseDto<GetUserDto> response = await this._userService.GetUserByUserName(username);
         return Ok(response);
     }
 

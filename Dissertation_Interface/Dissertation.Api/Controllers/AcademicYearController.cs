@@ -20,7 +20,7 @@ namespace Dissertation_API.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
 [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request", typeof(CustomProblemDetails))]
-[SwaggerResponse(StatusCodes.Status401Unauthorized, "Request Unsuccessful", typeof(ResponseDto<string>))]
+[SwaggerResponse(StatusCodes.Status401Unauthorized, "Unauthorized Request", typeof(ResponseDto<string>))]
 public class AcademicYearController : Controller
 {
     private readonly ISender _sender;
@@ -49,7 +49,7 @@ public class AcademicYearController : Controller
     }
 
     [HttpGet("active")]
-    [SwaggerOperation(Summary = "Get Academic Year By Id")]
+    [SwaggerOperation(Summary = "Get Active Academic Year")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetAcademicYear>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> GetActiveAcademicYear()
@@ -85,7 +85,7 @@ public class AcademicYearController : Controller
 
     [HttpPut("{academicYearId:long}")]
     [SwaggerOperation(Summary = "Update Academic Year")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetDissertationCohort>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetAcademicYear>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> UpdateAcademicYear([FromBody] CreateAcademicYearRequest request, [FromRoute]long academicYearId)
     {

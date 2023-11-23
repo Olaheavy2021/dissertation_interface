@@ -1,3 +1,5 @@
+using Shared.DTO;
+
 namespace UserManagement_API.Data.Models.Dto;
 
 public class UserListDto : UserDto
@@ -22,5 +24,7 @@ public class UserListDto : UserDto
 
             return "Inactive";
         }
+
+        set{}
     }
 }

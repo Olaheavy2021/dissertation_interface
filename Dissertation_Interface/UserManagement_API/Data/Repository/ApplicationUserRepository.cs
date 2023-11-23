@@ -42,7 +42,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
         return PagedList<ApplicationUser>.ToPagedList(
             this.Context.Set<ApplicationUser>()
                 .FromSqlRaw(formattedQuery, parametersList.ToArray<object>())
-                .OrderBy(x => x.UserName), paginationParameters.PageNumber,
+                .OrderBy(x => x.CreatedOn), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
 

@@ -61,6 +61,56 @@ public class UserService : IUserService
         return response;
     }
 
+    public async Task<ResponseDto<GetUserDto>> GetUserByEmail(string email)
+    {
+        var response = new ResponseDto<GetUserDto>();
+
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(email);
+        this._logger.LogInformation("Fetching details of this user with email from the database - {0}", email);
+        if (user != null)
+        {
+            IList<string> roles = await this._userManager.GetRolesAsync(user);
+            UserDto mappedUser = this._mapper.Map<ApplicationUser, UserDto>(user);
+            var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow };
+
+            response.IsSuccess = true;
+            response.Message = SuccessMessages.DefaultSuccess;
+            response.Result = getUserDto;
+            this._logger.LogInformation("User Details returned successfully for email - {0}", email);
+            return response;
+        }
+
+        response.IsSuccess = false;
+        response.Message = "No user found";
+        this._logger.LogInformation("User Details not found for email - {0}", email);
+        return response;
+    }
+
+    public async Task<ResponseDto<GetUserDto>> GetUserByUserName(string userName)
+    {
+        var response = new ResponseDto<GetUserDto>();
+
+        ApplicationUser? user = await this._userManager.FindByNameAsync(userName);
+        this._logger.LogInformation("Fetching details of this user with username from the database - {0}", userName);
+        if (user != null)
+        {
+            IList<string> roles = await this._userManager.GetRolesAsync(user);
+            UserDto mappedUser = this._mapper.Map<ApplicationUser, UserDto>(user);
+            var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow };
+
+            response.IsSuccess = true;
+            response.Message = SuccessMessages.DefaultSuccess;
+            response.Result = getUserDto;
+            this._logger.LogInformation("User Details returned successfully for username - {0}", userName);
+            return response;
+        }
+
+        response.IsSuccess = false;
+        response.Message = "No user found";
+        this._logger.LogInformation("User Details not found for username - {0}", userName);
+        return response;
+    }
+
     public async Task<ResponseDto<bool>> LockOutUser(string email, string? loggedInAdminEmail)
     {
         var response = new ResponseDto<bool> { IsSuccess = false, Result = false, Message = "An error occurred whilst locking out the user" };
@@ -241,6 +291,7 @@ public class UserService : IUserService
             LastName = applicationUser.LastName,
             IsLockedOut = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow,
             EmailConfirmed = applicationUser.EmailConfirmed,
+            Status  = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow ? "Deactivated" : (applicationUser.EmailConfirmed ? "Active" : "Inactive")
         };
 
     private async Task PublishAccountDeactivationOrActivationEmail(ApplicationUser user, string emailType)

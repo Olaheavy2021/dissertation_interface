@@ -9,6 +9,7 @@
     <ItemGroup>
       <Folder Include="Enum\" />
       <Folder Include="Responses\" />
+      <Folder Include="SupervisorInvite\Queries\GetListOfSupervisorInvite\" />
     </ItemGroup> 
 
     <ItemGroup>

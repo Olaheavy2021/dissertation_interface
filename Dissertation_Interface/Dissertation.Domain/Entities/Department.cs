@@ -10,13 +10,12 @@ public class Department : AuditableEntity<long>
     public DissertationConfigStatus Status { get; set; }
 
     private Department(
-        string name,
-        DissertationConfigStatus status)
+        string name)
     {
         Name = name;
-        Status = status;
+        Status = DissertationConfigStatus.Active;
     }
 
-    public static Department Create(string name, DissertationConfigStatus status) =>
-        new(name, status);
+    public static Department Create(string name) =>
+        new(name);
 }

@@ -70,7 +70,8 @@ public class AuthService : IAuthService
             NormalizedEmail = registrationRequestDto.Email.ToUpper(),
             FirstName = registrationRequestDto.FirstName,
             LastName = registrationRequestDto.LastName,
-            NormalizedUserName = registrationRequestDto.UserName.ToUpper()
+            NormalizedUserName = registrationRequestDto.UserName.ToUpper(),
+            CreatedOn = DateTime.UtcNow
         };
         IdentityResult registrationResult = await this._userManager.CreateAsync(user, registrationRequestDto.Password);
         if (registrationResult.Succeeded)
@@ -330,7 +331,6 @@ public class AuthService : IAuthService
             {
                 var code = await this._userManager.GeneratePasswordResetTokenAsync(user);
                 responseDto.PasswordResetToken = code;
-                await PublishPasswordResetEmail(user, code);
             }
             response.Result = responseDto;
             return response;

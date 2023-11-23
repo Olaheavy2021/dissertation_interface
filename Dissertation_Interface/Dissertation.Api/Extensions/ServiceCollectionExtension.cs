@@ -2,14 +2,15 @@
 using System.Text.Json.Serialization;
 using Asp.Versioning;
 using Dissertation_API.Middleware.Correlation;
-using Dissertation.Application.Mapping;
-using Mapster;
+using Dissertation.Application.Utility;
+using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Services;
+using Dissertation.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
-using Shared.Helpers;
 using Shared.Logging;
 using Shared.Settings;
 
@@ -21,6 +22,9 @@ public static class ServiceCollectionExtension
         services
             .AddTransient<IHttpContextAccessor, HttpContextAccessor>()
             .AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>()
+            .AddScoped<IRequestHelper, RequestHelper>()
+            .AddScoped<IUserApiService, UserApiService>()
+            .AddScoped<BackendApiAuthenticationHttpClientHandler>()
             .AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
 
     internal static IServiceCollection AddSwagger(this IServiceCollection services)
@@ -112,5 +116,19 @@ public static class ServiceCollectionExtension
             setup.ReportApiVersions = true;
         }).AddMvc();
 
-    internal static IServiceCollection AddConfigurationProps(this IServiceCollection services, IConfiguration config) => services.Configure<JwtSettings>(config.GetSection("JwtSettings"));
+    internal static IServiceCollection AddConfigurationProps(this IServiceCollection services, IConfiguration config)
+    {
+        services.Configure<JwtSettings>(config.GetSection(JwtSettings.SectionName));
+        services.Configure<ServiceUrlSettings>(config.GetSection(ServiceUrlSettings.SectionName));
+        return services;
+    }
+
+
+    internal static IServiceCollection AddDissertationHttpClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddHttpClient("DissertationApiClient", u => u.BaseAddress =
+            new Uri(configuration["ServiceUrls:UserApi"] ?? throw new InvalidOperationException())).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
+        return services;
+    }
 }

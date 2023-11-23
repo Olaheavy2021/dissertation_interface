@@ -57,6 +57,7 @@ public class GetListOfDepartmentQueryHandler : IRequestHandler<GetListOfDepartme
            UpdatedBy = department.UpdatedBy,
            UpdatedAt = department.UpdatedAt,
            CreatedBy = department.CreatedBy,
-           CreatedAt = department.CreatedAt
+           CreatedAt = department.CreatedAt,
+           Name = department.Name
         };
 }

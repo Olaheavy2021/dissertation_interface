@@ -34,7 +34,7 @@ public class DissertationCohortRepository: GenericRepository<DissertationCohort>
         {
             var status = (DissertationConfigStatus)Enum.Parse(typeof(DissertationConfigStatus), paginationParameters.FilterByStatus);
             var whereOrAnd = sqlQuery.ToString().Contains("WHERE") ? "AND" : "WHERE";
-            sqlQuery.Append(" {whereOrAnd} Status = @filter");
+            sqlQuery.Append($" {whereOrAnd} Status = @filter");
             parametersList.Add(new SqlParameter("@filter", status));
         }
 
@@ -42,7 +42,7 @@ public class DissertationCohortRepository: GenericRepository<DissertationCohort>
             this.Context.Set<DissertationCohort>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
                 .Include(x => x.AcademicYear)
-                .OrderBy(x => x.StartDate), paginationParameters.PageNumber,
+                .OrderBy(x => x.CreatedAt), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
 

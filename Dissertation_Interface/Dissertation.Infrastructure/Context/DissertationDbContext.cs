@@ -20,6 +20,10 @@ public class DissertationDbContext : DbContext
 
     public DbSet<Course> Courses { get; set; }
 
+    public DbSet<Supervisor> Supervisors { get; set; }
+
+    public DbSet<SupervisorInvite> SupervisorInvites { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder) => ModelBuilderConfiguration.Configure(modelBuilder);
 
     public override int SaveChanges()

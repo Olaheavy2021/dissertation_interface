@@ -3,5 +3,6 @@
 public enum DissertationConfigStatus
 {
     Active,
-    InActive
+    InActive,
+    Expired
 }

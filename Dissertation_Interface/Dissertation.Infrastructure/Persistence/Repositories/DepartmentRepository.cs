@@ -34,14 +34,14 @@ public class DepartmentRepository : GenericRepository<Department>, IDepartmentRe
         {
             var status = (DissertationConfigStatus)Enum.Parse(typeof(DissertationConfigStatus), paginationParameters.FilterByStatus);
             var whereOrAnd = sqlQuery.ToString().Contains("WHERE") ? "AND" : "WHERE";
-            sqlQuery.Append(" {whereOrAnd} Status = @filter");
+            sqlQuery.Append($" {whereOrAnd} Status = @filter");
             parametersList.Add(new SqlParameter("@filter", status));
         }
 
         return PagedList<Department>.ToPagedList(
             this.Context.Set<Department>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
-                .OrderBy(x => x.Name), paginationParameters.PageNumber,
+                .OrderBy(x => x.CreatedAt), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
 }

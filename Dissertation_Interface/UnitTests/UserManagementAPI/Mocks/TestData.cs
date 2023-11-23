@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Shared.DTO;
 using Shared.Settings;
 using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;

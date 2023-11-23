@@ -13,4 +13,6 @@ public class ApplicationUser : IdentityUser
     public DateTime RefreshTokenExpiryTime { get; set; }
 
     public bool IsLockedOutByAdmin { get; set; }
+
+    public DateTime CreatedOn { get; set; }
 }

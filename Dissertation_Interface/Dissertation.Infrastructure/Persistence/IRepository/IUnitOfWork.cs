@@ -9,6 +9,10 @@ public interface IUnitOfWork
     IDepartmentRepository DepartmentRepository { get; }
 
     ICourseRepository CourseRepository { get; }
+
+    ISupervisorInviteRepository SupervisorInviteRepository { get; }
+
+    ISupervisorRepository SupervisorRepository { get; }
     Task BeginTransactionAsync();
     Task<int> SaveAsync();
     Task<int> SaveAsync(CancellationToken cancellationToken);

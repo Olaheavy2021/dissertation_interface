@@ -25,8 +25,7 @@ public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCo
     {
         this._logger.LogInformation("Attempting to Create Department for this {name}", request.Name);
         var response = new ResponseDto<GetDepartment>();
-        var department = Domain.Entities.Department.Create(request.Name,
-            DissertationConfigStatus.Active);
+        var department = Domain.Entities.Department.Create(request.Name);
 
         await this._db.DepartmentRepository.AddAsync(department);
         await this._db.SaveAsync(cancellationToken);

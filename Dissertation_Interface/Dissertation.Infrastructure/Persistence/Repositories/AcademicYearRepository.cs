@@ -43,14 +43,14 @@ public class AcademicYearRepository : GenericRepository<AcademicYear>, IAcademic
         {
             var status = (DissertationConfigStatus)Enum.Parse(typeof(DissertationConfigStatus), paginationParameters.FilterByStatus);
             var whereOrAnd = sqlQuery.ToString().Contains("WHERE") ? "AND" : "WHERE";
-            sqlQuery.Append(" {whereOrAnd} Status = @filter");
+            sqlQuery.Append($" {whereOrAnd} Status = @filter");
             parametersList.Add(new SqlParameter("@filter", status));
         }
 
         return PagedList<AcademicYear>.ToPagedList(
             this.Context.Set<AcademicYear>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
-                .OrderBy(x => x.StartDate), paginationParameters.PageNumber,
+                .OrderBy(x => x.CreatedAt), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
 }

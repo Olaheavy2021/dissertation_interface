@@ -6,4 +6,5 @@ public static class EmailType
     public const string EmailTypeResetPasswordEmail = "resetpasswordemail";
     public const string EmailTypeAccountDeactivationEmail = "accountdeactivationemail";
     public const string EmailTypeAccountActivationEmail = "accountactivationemail";
+    public const string EmailTypeSupervisorInviteEmail = "supervisorinviteemail";
 }

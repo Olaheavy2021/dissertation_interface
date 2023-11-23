@@ -2,6 +2,126 @@
   "Routes": [
     //"DissertationAPI": "https://localhost:8000",
     {
+      "DownstreamPathTemplate": "/api/v1/Course/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Course/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Course/disable/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Course/disable/{id}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Course/enable/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Course/enable/{id}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Course",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Course",
+      "UpstreamHttpMethod": [ "Post", "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Department/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Department/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Department/disable/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Department/disable/{id}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Department/enable/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Department/enable/{id}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Department",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Department",
+      "UpstreamHttpMethod": [ "Post", "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/WeatherForecast",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

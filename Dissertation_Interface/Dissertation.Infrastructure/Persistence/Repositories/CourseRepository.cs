@@ -33,7 +33,7 @@ public class CourseRepository : GenericRepository<Course>, ICourseRepository
         if (!string.IsNullOrEmpty(paginationParameters.FilterByDepartment))
         {
             var whereOrAnd = sqlQuery.ToString().Contains("WHERE") ? "AND" : "WHERE";
-            sqlQuery.Append(" {whereOrAnd} Status = @filter");
+            sqlQuery.Append($" {whereOrAnd} DepartmentId = @filter");
             parametersList.Add(new SqlParameter("@filter", paginationParameters.FilterByDepartment));
         }
 
@@ -41,7 +41,7 @@ public class CourseRepository : GenericRepository<Course>, ICourseRepository
             this.Context.Set<Course>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
                 .Include(c => c.Department)
-                .OrderBy(x => x.Name), paginationParameters.PageNumber,
+                .OrderBy(x => x.CreatedAt), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
 }

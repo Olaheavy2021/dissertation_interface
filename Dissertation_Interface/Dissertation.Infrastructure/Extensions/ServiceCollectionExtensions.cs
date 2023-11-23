@@ -20,7 +20,4 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
-
-
-
 }

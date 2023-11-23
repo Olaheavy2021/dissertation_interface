@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Moq;
 using Shared.DTO;
-using Shared.Helpers;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Settings;

@@ -26,7 +26,7 @@ public class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQuery, Res
     {
         var response = new ResponseDto<GetCourse>();
         this._logger.LogInformation("Attempting to retrieve a Course by ID {CourseID}", request.CourseId);
-        Domain.Entities.Course? course = await this._db.CourseRepository.GetAsync(a => a.Id == request.CourseId);
+        Domain.Entities.Course? course = await this._db.CourseRepository.GetAsync(a => a.Id == request.CourseId, null, a => a.Department);
         if (course is null)
         {
             this._logger.LogError("No Course found with ID");

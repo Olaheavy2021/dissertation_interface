@@ -1,3 +1,5 @@
+using Shared.DTO;
+
 namespace UserManagement_API.Data.Models.Dto;
 
 public class ConfirmEmailResponseDto

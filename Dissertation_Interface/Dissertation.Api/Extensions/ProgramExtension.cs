@@ -1,5 +1,6 @@
 ﻿using Dissertation.Application.Extensions;
 using Dissertation.Application.Mapping;
+using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Extensions;
 
 namespace Dissertation_API.Extensions;
@@ -15,6 +16,7 @@ public static class ProgramExtension
             .AddConfigurationProps(config)
             .AddApplication()
             .AddPersistenceInfrastructure(config)
+            .AddDissertationHttpClient(config)
             .AddCors();
 
     public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder builder, IConfiguration config) =>
