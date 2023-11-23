@@ -46,7 +46,7 @@ public class DeleteSupervisorInviteCommandHandler : IRequestHandler<DeleteSuperv
             return response;
         }
 
-        await this._db.SupervisorInviteRepository.RemoveAsync(x => x.Id == request.Id);
+        this._db.SupervisorInviteRepository.Remove(supervisorInvite);
         await this._db.SaveAsync(cancellationToken);
 
         GetSupervisorInvite mappedSupervisionInvite = this._mapper.Map<GetSupervisorInvite>(supervisorInvite);

@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Shared.Logging;
+using Shared.MessageBus;
 using Shared.Settings;
 
 namespace Dissertation_API.Extensions;
@@ -25,6 +26,7 @@ public static class ServiceCollectionExtension
             .AddScoped<IRequestHelper, RequestHelper>()
             .AddScoped<IUserApiService, UserApiService>()
             .AddScoped<BackendApiAuthenticationHttpClientHandler>()
+            .AddScoped<IMessageBus, MessageBus>()
             .AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
 
     internal static IServiceCollection AddSwagger(this IServiceCollection services)
@@ -120,6 +122,8 @@ public static class ServiceCollectionExtension
     {
         services.Configure<JwtSettings>(config.GetSection(JwtSettings.SectionName));
         services.Configure<ServiceUrlSettings>(config.GetSection(ServiceUrlSettings.SectionName));
+        services.Configure<ApplicationUrlSettings>(config.GetSection(ApplicationUrlSettings.SectionName));
+        services.Configure<ServiceBusSettings>(config.GetSection(ServiceBusSettings.SectionName));
         return services;
     }
 

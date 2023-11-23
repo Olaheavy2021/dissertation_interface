@@ -13,6 +13,7 @@ using Shared.Exceptions;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Settings;
+using StackExchange.Redis;
 using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;
@@ -103,7 +104,64 @@ public class AuthService : IAuthService
         return response;
     }
 
-    public Task<ResponseDto<RegistrationRequestDto>> RegisterStudentOrSupervisor(RegistrationRequestDto registrationRequestDto) => throw new NotImplementedException();
+    public async Task<ResponseDto<string>> RegisterSupervisor(StudentOrSupervisorRegistrationDto registrationRequestDto)
+    {
+        this._logger.LogInformation("Processing supervisor register request {@StudentOrSupervisorRegistrationDto}", registrationRequestDto);
+        var response = new ResponseDto<string>();
+
+        //check if the user exists already and is an admin
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(registrationRequestDto.Email);
+
+        if (user != null)
+        {
+            IList<string> roles = await this._userManager.GetRolesAsync(user);
+            if (roles.Contains(Roles.RoleAdmin) || roles.Contains(Roles.RoleSuperAdmin))
+            {
+                IdentityResult result = await this._userManager.AddToRoleAsync(user, Roles.RoleSupervisor);
+                if (result.Succeeded)
+                {
+                    response.IsSuccess = true;
+                    response.Message = SuccessMessages.DefaultSuccess;
+                    response.Result = SuccessMessages.DefaultSuccess;
+                    return response;
+                }
+
+                response.IsSuccess = false;
+                response.Message = result.Errors.FirstOrDefault()?.Description;
+                response.Result = ErrorMessages.DefaultError;
+                return response;
+            }
+
+            response.IsSuccess = false;
+            response.Message = "This user with email already exist as a student";
+            response.Result = ErrorMessages.DefaultError;
+            return response;
+        }
+
+        var registrationRequest = new RegistrationRequestDto()
+        {
+            Password = registrationRequestDto.Password,
+            FirstName = registrationRequestDto.FirstName,
+            LastName = registrationRequestDto.LastName,
+            UserName = registrationRequestDto.UserName,
+            Email = registrationRequestDto.Email,
+            Role = Roles.RoleSupervisor
+        };
+
+        if (response.IsSuccess)
+        {
+            //change this to synchronous
+            await this._messageBus.PublishAuditLog(EventType.RegisterSupervisor,
+                this._serviceBusSettings.ServiceBusConnectionString, EventType.System, SuccessMessages.DefaultSuccess, registrationRequest.Email);
+        }
+        else
+        {
+            await this._messageBus.PublishAuditLog(EventType.RegisterSupervisor,
+                this._serviceBusSettings.ServiceBusConnectionString, EventType.System, ErrorMessages.DefaultError, registrationRequest.Email);
+        }
+
+        return response;
+    }
 
     public async Task<ResponseDto<string>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto,  string? loggedInAdminEmail)
     {
@@ -114,7 +172,6 @@ public class AuthService : IAuthService
         ValidationResult? validationResult = await validator.ValidateAsync(registrationRequestDto);
         if (validationResult.Errors.Any())
         {
-
             this._logger.LogWarning("Register Admin - Validation errors while registering admin user - {0} ", registrationRequestDto.Email);
             throw new BadRequestException("Invalid Registration Request", validationResult);
         }
@@ -466,17 +523,6 @@ public class AuthService : IAuthService
             this._serviceBusSettings.ServiceBusConnectionString);
     }
 
-    private async Task PublishPasswordResetEmail(ApplicationUser user, string code)
-    {
-        var callbackUrl = $"{this._applicationUrlSettings.WebClientUrl}/{this._applicationUrlSettings.WebResetPasswordRoute}?username={user.UserName}&activationToken={code}";
-        UserDto? userToReturn = this._mapper.Map<UserDto>(user);
-        this._logger.LogInformation("Password Reset Email Published for this user {0}", user.UserName ?? string.Empty);
-
-
-        var emailDto = new PublishEmailDto { User = userToReturn, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeResetPasswordEmail };
-        await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.EmailLoggerQueue,
-            this._serviceBusSettings.ServiceBusConnectionString);
-    }
     private ClaimsPrincipal GetPrincipalFromExpiredToken(string? token)
     {
         var tokenValidationParameters = new TokenValidationParameters

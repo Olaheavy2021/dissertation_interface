@@ -33,6 +33,7 @@ public class GetSupervisionInviteByIdQueryHandler
         }
 
         GetSupervisorInvite mappedSupervisorInvite = this._mapper.Map<GetSupervisorInvite>(supervisorInvite);
+        mappedSupervisorInvite.UpdateStatus();
 
         this._logger.LogInformation("Successfully retrieved a Supervisor Invite by ID {SupervisionInviteID}", request.Id);
         response.IsSuccess = true;

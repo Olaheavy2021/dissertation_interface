@@ -11,4 +11,8 @@ public static class EventType
     public const string UnlockUser = "UnlockUser";
 
     public const string RegisterAdminUser = "RegisterAdminUser";
+
+    public const string RegisterSupervisor = "RegisterSupervisor";
+
+    public const string System = "System";
 }
