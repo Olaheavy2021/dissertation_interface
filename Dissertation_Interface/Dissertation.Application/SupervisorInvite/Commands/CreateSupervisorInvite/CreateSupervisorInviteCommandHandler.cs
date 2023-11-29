@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using Shared.Constants;
 using Shared.DTO;
+using Shared.Helpers;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Settings;
@@ -38,11 +39,10 @@ public class CreateSupervisorInviteCommandHandler : IRequestHandler<CreateSuperv
         var response = new ResponseDto<GetSupervisorInvite>();
         var invitationCode = InviteCodeGenerator.GenerateCode(8);
         var supervisionInvite = Domain.Entities.SupervisorInvite.Create(
-            request.LastName,
-            request.FirstName,
-            request.StaffId,
-            request.Email,
-            request.Department,
+           StringHelpers.CapitalizeFirstLetterAndLowercaseRest(request.LastName),
+           StringHelpers.CapitalizeFirstLetterAndLowercaseRest(request.FirstName) ,
+            request.StaffId.ToLower(),
+            request.Email.ToLower(),
             invitationCode
         );
 
@@ -75,7 +75,7 @@ public class CreateSupervisorInviteCommandHandler : IRequestHandler<CreateSuperv
             LastName = request.LastName,
             Email = request.Email
         };
-        var emailDto = new PublishEmailDto { User = userDto, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeResetPasswordEmail };
+        var emailDto = new PublishEmailDto { User = userDto, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeSupervisorInviteEmail };
         await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.EmailLoggerQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
     }

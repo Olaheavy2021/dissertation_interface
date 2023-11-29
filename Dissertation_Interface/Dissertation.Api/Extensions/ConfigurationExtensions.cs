@@ -1,4 +1,4 @@
-﻿using Dissertation_API.Middleware;
+using Dissertation_API.Middleware;
 using Dissertation_API.Middleware.Correlation;
 
 namespace Dissertation_API.Extensions;

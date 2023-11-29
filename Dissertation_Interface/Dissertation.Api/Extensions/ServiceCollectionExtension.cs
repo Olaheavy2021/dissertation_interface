@@ -1,11 +1,11 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
-using Dissertation_API.Middleware.Correlation;
 using Dissertation.Application.Utility;
 using Dissertation.Domain.Interfaces;
-using Dissertation.Domain.Services;
+using Dissertation.Infrastructure.ExternalServices;
 using Dissertation.Infrastructure.Helpers;
+using Dissertation_API.Middleware.Correlation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.OpenApi.Any;
@@ -106,7 +106,6 @@ public static class ServiceCollectionExtension
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
             });
 

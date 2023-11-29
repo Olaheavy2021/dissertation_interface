@@ -7,9 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Enum\" />
       <Folder Include="Responses\" />
-      <Folder Include="SupervisorInvite\Queries\GetListOfSupervisorInvite\" />
+      <Folder Include="StudentInvite\Commands\CreateStudentInvite\" />
+      <Folder Include="StudentInvite\Queries\" />
+      <Folder Include="Supervisor\Queries\" />
     </ItemGroup> 
 
     <ItemGroup>

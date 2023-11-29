@@ -1,7 +1,7 @@
-using Dissertation_API.Extensions;
 using Dissertation.Application.Mapping;
 using Dissertation.Infrastructure.Context;
 using Dissertation.Infrastructure.Extensions;
+using Dissertation_API.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

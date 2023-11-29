@@ -1,4 +1,5 @@
-﻿using Dissertation.Domain.DomainHelper;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Dissertation.Domain.DomainHelper;
 
 namespace Dissertation.Domain.Entities;
 
@@ -12,8 +13,6 @@ public class SupervisorInvite :  AuditableEntity<long>
 
     public string Email { get; set; }
 
-    public string Department { get; set; }
-
     public string InvitationCode { get; set; }
 
     public DateTime ExpiryDate { get; set; }
@@ -23,7 +22,6 @@ public class SupervisorInvite :  AuditableEntity<long>
         string firstName,
         string staffId,
         string email,
-        string department,
         string invitationCode
     )
     {
@@ -31,7 +29,6 @@ public class SupervisorInvite :  AuditableEntity<long>
         FirstName = firstName;
         StaffId = staffId;
         Email = email;
-        Department = department;
         InvitationCode = invitationCode;
         ExpiryDate = DateTime.Today.Add(TimeSpan.FromDays(7)).Date;
     }
@@ -41,8 +38,7 @@ public class SupervisorInvite :  AuditableEntity<long>
         string firstName,
         string staffId,
         string email,
-        string department,
         string invitationCode
         ) =>
-        new(lastName, firstName, staffId, email, department, invitationCode);
+        new(lastName, firstName, staffId, email, invitationCode);
 }

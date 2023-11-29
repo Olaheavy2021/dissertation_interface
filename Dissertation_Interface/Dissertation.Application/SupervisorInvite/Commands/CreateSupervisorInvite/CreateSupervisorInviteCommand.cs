@@ -8,6 +8,5 @@ public sealed record CreateSupervisorInviteCommand(
     string LastName,
     string FirstName,
     string StaffId,
-    string Email,
-    string Department
+    string Email
     ) : IRequest<ResponseDto<GetSupervisorInvite>>;

@@ -1,5 +1,5 @@
-﻿using Dissertation.Application.AcademicYear.Queries.GetListOfAcademicYear;
-using Dissertation.Application.DTO.Response;
+﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -60,7 +60,6 @@ public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOf
         return new GetDissertationCohort
         {
             Id = dissertationCohort.Id,
-            Status = dissertationCohort.Status,
             StartDate = dissertationCohort.StartDate,
             CreatedAt = dissertationCohort.CreatedAt,
             EndDate = dissertationCohort.EndDate,
@@ -68,8 +67,10 @@ public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOf
             UpdatedAt = dissertationCohort.UpdatedAt,
             UpdatedBy = dissertationCohort.UpdatedBy,
             SupervisionChoiceDeadline = dissertationCohort.SupervisionChoiceDeadline,
-            AcademicYear = mappedAcademicYear
+            AcademicYear = mappedAcademicYear,
+            Status = dissertationCohort.StartDate.Date <= DateTime.UtcNow.Date && dissertationCohort.EndDate.Date >= DateTime.UtcNow.Date
+                ? DissertationConfigStatus.Active
+                : DissertationConfigStatus.InActive
         };
     }
-
 }

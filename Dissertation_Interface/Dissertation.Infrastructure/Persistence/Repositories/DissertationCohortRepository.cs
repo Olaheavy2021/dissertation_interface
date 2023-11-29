@@ -29,22 +29,14 @@ public class DissertationCohortRepository: GenericRepository<DissertationCohort>
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByStartYear}%"));
         }
 
-        // Apply filter
-        if (!string.IsNullOrEmpty(paginationParameters.FilterByStatus) && Enum.IsDefined(typeof(DissertationConfigStatus), paginationParameters.FilterByStatus))
-        {
-            var status = (DissertationConfigStatus)Enum.Parse(typeof(DissertationConfigStatus), paginationParameters.FilterByStatus);
-            var whereOrAnd = sqlQuery.ToString().Contains("WHERE") ? "AND" : "WHERE";
-            sqlQuery.Append($" {whereOrAnd} Status = @filter");
-            parametersList.Add(new SqlParameter("@filter", status));
-        }
-
         return PagedList<DissertationCohort>.ToPagedList(
             this.Context.Set<DissertationCohort>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
                 .Include(x => x.AcademicYear)
-                .OrderBy(x => x.CreatedAt), paginationParameters.PageNumber,
+                .OrderByDescending(x => x.CreatedAt), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
 
-    public async Task<DissertationCohort?> GetActiveDissertationCohort(long id) => await this.Context.Set<DissertationCohort>().FirstOrDefaultAsync(a => a.Status == DissertationConfigStatus.Active);
+    public async Task<DissertationCohort?> GetActiveDissertationCohort() =>
+        await this.Context.Set<DissertationCohort>().FirstOrDefaultAsync(cohort => cohort.StartDate.Date <= DateTime.UtcNow.Date && cohort.EndDate.Date >= DateTime.UtcNow.Date );
 }

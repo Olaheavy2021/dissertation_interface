@@ -28,7 +28,7 @@ public class RegisterRequestDtoValidator : AbstractValidator<RegistrationRequest
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .NotNull().WithMessage(ErrorMessages.RequiredField)
             .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50)
-            .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace); ;
+            .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace);
 
         RuleFor(p => p.Email)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)

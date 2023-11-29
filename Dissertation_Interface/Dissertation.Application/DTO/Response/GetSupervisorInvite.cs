@@ -14,13 +14,9 @@ public class GetSupervisorInvite
 
     public string Email { get; set; } = default!;
 
-    public string Department { get; set; } = default!;
-
-    public string InvitationCode { get; set; } = default!;
-
     public  DissertationConfigStatus Status { get; set; }
 
     public DateTime ExpiryDate { get; set; }
 
-    public void UpdateStatus() => Status = DateTime.UtcNow.Date > ExpiryDate ? DissertationConfigStatus.Expired : DissertationConfigStatus.Active;
+    public void UpdateStatus() => Status = DateTime.UtcNow.Date > ExpiryDate.Date ? DissertationConfigStatus.Expired : DissertationConfigStatus.Active;
 }

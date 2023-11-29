@@ -34,7 +34,7 @@ public class GetListOfDissertationCohortQueryHandlerTest
     {
         var parameters = new DissertationCohortPaginationParameters()
         {
-            PageSize = 10, PageNumber = 1, SearchByStartYear = 2022, FilterByStatus = "Active"
+            PageSize = 10, PageNumber = 1, SearchByStartYear = 2022
         };
         GetListOfDissertationCohortQuery query = new(parameters);
         this._unitOfWork

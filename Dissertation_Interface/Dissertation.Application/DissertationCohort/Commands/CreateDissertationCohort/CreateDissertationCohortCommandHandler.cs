@@ -27,14 +27,15 @@ public class CreateDissertationCohortCommandHandler : IRequestHandler<CreateDiss
         this._logger.LogInformation("Attempting to Create Dissertation Cohort for this {startDate}", request.StartDate);
         var response = new ResponseDto<GetDissertationCohort>();
         var dissertationCohort = Domain.Entities.DissertationCohort.Create(
-            request.EndDate, request.StartDate, request.SupervisionChoiceDeadline, request.AcademicYearId,
-            DissertationConfigStatus.InActive
+            request.EndDate, request.StartDate, request.SupervisionChoiceDeadline, request.AcademicYearId
         );
 
         await this._db.DissertationCohortRepository.AddAsync(dissertationCohort);
 
         await this._db.SaveAsync(cancellationToken);
+
         GetDissertationCohort mappedDissertationCohort = this._mapper.Map<GetDissertationCohort>(dissertationCohort);
+        mappedDissertationCohort.UpdateStatus();
 
         response.Message = "Dissertation Cohort initiated successfully";
         response.Result = mappedDissertationCohort;

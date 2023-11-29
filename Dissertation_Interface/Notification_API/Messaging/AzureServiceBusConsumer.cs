@@ -107,6 +107,11 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                         emailType = EmailType.EmailTypeResetPasswordEmail;
                         subject = EmailSubject.EmailSubjectForAccountLockedOut;
                         break;
+                    case EmailType.EmailTypeSupervisorInviteEmail:
+                        emailBody = await GenerateSupervisorEmailBody(emailDto);
+                        emailType = EmailType.EmailTypeSupervisorInviteEmail;
+                        subject = EmailSubject.EmailSubjectForSupervisorInvite;
+                        break;
                 }
 
                 var logEmailDto = new LogEmailRequestDto
@@ -288,6 +293,40 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
             $"{DateTime.Now:dddd, d MMMM yyyy}",
             request.User?.FirstName,
             adminEmail
+        );
+
+        return messageBody;
+    }
+    private async Task<string> GenerateSupervisorEmailBody(PublishEmailDto request)
+    {
+        var pathToFile = this._env.WebRootPath
+                         + Path.DirectorySeparatorChar
+                         + "Templates"
+                         + Path.DirectorySeparatorChar
+                         + "EmailTemplates"
+                         + Path.DirectorySeparatorChar
+                         + "Supervisor_Invitation.html";
+
+        var builder = new BodyBuilder();
+
+        using StreamReader sourceReader = File.OpenText(pathToFile);
+        builder.HtmlBody = await sourceReader.ReadToEndAsync();
+
+        //{0} : Subject
+        const string subject = EmailSubject.EmailSubjectForSupervisorInvite;
+        //{1} : Date
+        //{2} : FirstName
+        var adminEmail = this._sendgridSettings.AdminEmail;
+        //{3} : AdminEmail
+
+        //{4} :Callback URL
+
+        var messageBody = string.Format(builder.HtmlBody,
+            subject,
+            $"{DateTime.Now:dddd, d MMMM yyyy}",
+            request.User?.FirstName,
+            adminEmail,
+            request.CallbackUrl
         );
 
         return messageBody;

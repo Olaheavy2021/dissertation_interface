@@ -1,4 +1,6 @@
-﻿namespace Shared.DTO;
+﻿using Shared.Enums;
+
+namespace Shared.DTO;
 
 public class UserDto
 {
@@ -7,4 +9,5 @@ public class UserDto
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string? UserName { get; set; } = string.Empty;
+    public UserStatus Status { get; set; }
 }

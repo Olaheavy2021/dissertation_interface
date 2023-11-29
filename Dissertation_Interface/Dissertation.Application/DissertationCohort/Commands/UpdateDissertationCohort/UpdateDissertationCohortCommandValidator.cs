@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Enums;
+﻿using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 
@@ -12,76 +12,77 @@ public class UpdateDissertationCohortCommandValidator : AbstractValidator<Update
     {
         this._db = db;
         RuleFor(x => x.StartDate).NotEmpty().WithMessage("Start Date is required");
-        RuleFor(x => x.EndDate)
-            .NotEmpty().WithMessage("End Date is required");
-        RuleFor(x => x.SupervisionChoiceDeadline)
-            .NotEmpty().WithMessage("Supervision Deadline is required");
         RuleFor(x => x.StartDate).LessThan(x => x.EndDate)
             .WithMessage("Start Date should be an earlier date than the End Date");
+        RuleFor(x => x)
+            .MustAsync(IsStartDateValid)
+            .WithMessage("Start Month for a Cohort cannot be modified to a different month")
+            .OverridePropertyName("StartDate");
+        RuleFor(x => x.EndDate)
+            .NotEmpty().WithMessage("End Date is required");
         RuleFor(x => x.EndDate).GreaterThan(x => x.StartDate)
             .WithMessage("End Date should be a later date to the Start Date");
-        RuleFor(q => q)
-            .MustAsync(IsStartDateWithinAcademicSession).WithMessage("Start Date does not fall within the current academic year or ")
-            .OverridePropertyName("StartDate");
-        RuleFor(q => q)
-            .MustAsync(IsEndDateWithinAcademicSession).WithMessage("End Date does not fall within the current academic year")
+        RuleFor(x => x)
+            .MustAsync(IsEndDateValid)
+            .WithMessage("End Date for a Cohort cannot be modified to a different month")
             .OverridePropertyName("EndDate");
-        RuleFor(q => q)
-            .MustAsync(IsAcademicYearActive).WithMessage("Academic year is not active")
-            .OverridePropertyName("AcademicYearId");
+        RuleFor(x => x.SupervisionChoiceDeadline)
+            .NotEmpty().WithMessage("Supervision Deadline is required");
+        RuleFor(x => x.SupervisionChoiceDeadline)
+            .Must((model, deadline) => deadline > model.StartDate && deadline < model.EndDate)
+            .WithMessage("Supervision Choice Deadline must be between the Start Date and End Date");
     }
 
-    private async Task<bool> IsStartDateWithinAcademicSession(UpdateDissertationCohortCommand request, CancellationToken token)
+    private async Task<bool> IsStartDateValid(UpdateDissertationCohortCommand request, CancellationToken token)
     {
-        Domain.Entities.AcademicYear? academicYear =
-            await this._db.AcademicYearRepository.GetFirstOrDefaultAsync(a => a.Id == request.AcademicYearId);
+       //must be either September and the start year of the session for the first one
+       //must be either May and the end year of the session for the second one
 
-        if (academicYear == null)
-        {
-            return false;
-        }
+       Domain.Entities.DissertationCohort? dissertationCohort =
+           await this._db.DissertationCohortRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id,includes: x => x.AcademicYear);
 
-        if (request.StartDate < academicYear.StartDate || request.StartDate > academicYear.EndDate)
-        {
-            return false;
-        }
+       if (dissertationCohort != null)
+       {
+           if (dissertationCohort.StartDate.Month == MonthConstants.MonthConstantSeptember)
+           {
+               return request.StartDate.Date.Month == MonthConstants.MonthConstantSeptember && request.StartDate.Year == dissertationCohort.AcademicYear.StartDate.Year && request.StartDate >= dissertationCohort.AcademicYear.StartDate;
+           }
 
-        return true;
+           if (dissertationCohort.StartDate.Month == MonthConstants.MonthConstantMay)
+           {
+               return request.StartDate.Date.Month == MonthConstants.MonthConstantMay  && request.StartDate.Year == dissertationCohort.AcademicYear.EndDate.Year;
+           }
+
+           return false;
+       }
+
+       return false;
     }
 
-    private async Task<bool> IsEndDateWithinAcademicSession(UpdateDissertationCohortCommand request, CancellationToken token)
+
+    private async Task<bool> IsEndDateValid(UpdateDissertationCohortCommand request, CancellationToken token)
     {
-        Domain.Entities.AcademicYear? academicYear =
-            await this._db.AcademicYearRepository.GetFirstOrDefaultAsync(a => a.Id == request.AcademicYearId);
+        //must be either January and the end year of the session for the first one
+        //must be either August and the end year of the session for the second one
 
-        if (academicYear == null)
+        Domain.Entities.DissertationCohort? dissertationCohort =
+            await this._db.DissertationCohortRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id,includes: x => x.AcademicYear);
+
+        if (dissertationCohort != null)
         {
+            if (dissertationCohort.EndDate.Month == MonthConstants.MonthConstantJanuary)
+            {
+                return request.EndDate.Date.Month == MonthConstants.MonthConstantJanuary && request.EndDate.Year == dissertationCohort.AcademicYear.EndDate.Year && request.EndDate.Date <= dissertationCohort.AcademicYear.EndDate.Date;
+            }
+
+            if (dissertationCohort.EndDate.Month == MonthConstants.MonthConstantAugust)
+            {
+                return request.EndDate.Date.Month == MonthConstants.MonthConstantAugust  && request.EndDate.Year == dissertationCohort.AcademicYear.EndDate.Year && request.EndDate.Date <= dissertationCohort.AcademicYear.EndDate.Date;
+            }
+
             return false;
-        }
-
-        if (request.EndDate < academicYear.StartDate || request.EndDate > academicYear.EndDate)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    private async Task<bool> IsAcademicYearActive(UpdateDissertationCohortCommand request, CancellationToken token)
-    {
-        Domain.Entities.AcademicYear? academicYear =
-            await this._db.AcademicYearRepository.GetFirstOrDefaultAsync(a => a.Id == request.AcademicYearId);
-        if (academicYear == null)
-        {
-            return false;
-        }
-
-        if (academicYear.Status.Equals(DissertationConfigStatus.Active))
-        {
-            return true;
         }
 
         return false;
     }
-
 }

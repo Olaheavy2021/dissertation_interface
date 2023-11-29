@@ -14,7 +14,12 @@ public class BackendApiAuthenticationHttpClientHandler : DelegatingHandler
     {
         var token =  this._accessor.HttpContext?.Items["AccessToken"] as string;
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        if (!string.IsNullOrEmpty(token))
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            return await base.SendAsync(request, cancellationToken);
+        }
 
         return await base.SendAsync(request, cancellationToken);
     }

@@ -29,7 +29,7 @@ public class GetListOfAcademicYearQueryHandlerTest
     {
         var parameters = new AcademicYearPaginationParameters()
         {
-            PageSize = 10, PageNumber = 1, SearchByYear = 2023, FilterByStatus = "Active"
+            PageSize = 10, PageNumber = 1, SearchByYear = 2023
         };
         GetListOfAcademicYearQuery query = new(parameters);
         this._unitOfWork

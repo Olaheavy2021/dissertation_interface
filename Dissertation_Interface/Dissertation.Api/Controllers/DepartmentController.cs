@@ -1,9 +1,10 @@
-﻿using Dissertation.Application.Course.Commands.CreateCourse;
+using Dissertation.Application.Course.Commands.CreateCourse;
 using Dissertation.Application.Department.Commands.CreateDepartment;
 using Dissertation.Application.Department.Commands.DisableDepartment;
 using Dissertation.Application.Department.Commands.EnableDepartment;
 using Dissertation.Application.Department.Commands.UpdateDepartment;
 using Dissertation.Application.Department.Queries.GetById;
+using Dissertation.Application.Department.Queries.GetListOfActiveDepartment;
 using Dissertation.Application.Department.Queries.GetListOfDepartment;
 using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;
@@ -70,6 +71,16 @@ public class DepartmentController : Controller
         return Ok(result);
     }
 
+    [HttpGet("active")]
+    [SwaggerOperation(Summary = "Get List Of Active Departments")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<IEnumerable<GetDepartment>>))]
+    public async Task<IActionResult> GetListOfActiveDepartments()
+    {
+        var query = new GetListOfActiveDepartmentQuery();
+        ResponseDto<IEnumerable<GetDepartment>> result = await this._sender.Send(query);
+        return Ok(result);
+    }
+
     [HttpGet]
     [SwaggerOperation(Summary = "Get List of Department")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedDepartmentListDto>))]
@@ -98,7 +109,7 @@ public class DepartmentController : Controller
     [SwaggerOperation(Summary = "Update Department")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetDepartment>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
-    public async Task<IActionResult> UpdateDepartment([FromBody] CreateDepartmentRequest request, [FromRoute]long departmentId)
+    public async Task<IActionResult> UpdateDepartment([FromBody] CreateDepartmentRequest request, [FromRoute] long departmentId)
     {
         var query = new UpdateDepartmentCommand(request.Name, departmentId);
         ResponseDto<GetDepartment> response = await this._sender.Send(query);

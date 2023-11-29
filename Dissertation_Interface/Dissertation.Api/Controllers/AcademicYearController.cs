@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.AcademicYear.Commands.CreateAcademicYear;
+using Dissertation.Application.AcademicYear.Commands.CreateAcademicYear;
 using Dissertation.Application.AcademicYear.Commands.UpdateAcademicYear;
 using Dissertation.Application.AcademicYear.Queries.GetActiveAcademicYear;
 using Dissertation.Application.AcademicYear.Queries.GetById;
@@ -30,7 +30,7 @@ public class AcademicYearController : Controller
     [HttpPost]
     [SwaggerOperation(Summary = "Create Academic Year")]
     [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<GetAcademicYear>))]
-    public async Task<IActionResult> CreateAcademicYear([FromBody]CreateAcademicYearRequest request)
+    public async Task<IActionResult> CreateAcademicYear([FromBody] CreateAcademicYearRequest request)
     {
         var command = new CreateAcademicYearCommand(request.StartDate, request.EndDate);
         ResponseDto<GetAcademicYear> result = await this._sender.Send(command);
@@ -63,7 +63,7 @@ public class AcademicYearController : Controller
     [SwaggerOperation(Summary = "Get List of Academic Year")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedAcademicYearListDto>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
-    public async Task<IActionResult> GetListOfAcademicYear([FromQuery]AcademicYearPaginationParameters paginationParameters)
+    public async Task<IActionResult> GetListOfAcademicYear([FromQuery] AcademicYearPaginationParameters paginationParameters)
     {
         var query = new GetListOfAcademicYearQuery(paginationParameters);
         ResponseDto<PaginatedAcademicYearListDto> response = await this._sender.Send(query);
@@ -87,7 +87,7 @@ public class AcademicYearController : Controller
     [SwaggerOperation(Summary = "Update Academic Year")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetAcademicYear>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
-    public async Task<IActionResult> UpdateAcademicYear([FromBody] CreateAcademicYearRequest request, [FromRoute]long academicYearId)
+    public async Task<IActionResult> UpdateAcademicYear([FromBody] CreateAcademicYearRequest request, [FromRoute] long academicYearId)
     {
         var command = new UpdateAcademicYearCommand(request.StartDate, request.EndDate, academicYearId);
         ResponseDto<GetAcademicYear> response = await this._sender.Send(command);

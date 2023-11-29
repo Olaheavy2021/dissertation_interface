@@ -149,4 +149,13 @@ public class UserController : Controller
         ResponseDto<EditUserRequestDto> response = await this._userService.EditUser(model, email);
         return Ok(response);
     }
+
+    [HttpPost("register-supervisor")]
+    [SwaggerOperation(Summary = "Register Supervisor")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    public async Task<IActionResult> RegisterSupervisor([FromBody] StudentOrSupervisorRegistrationDto model)
+    {
+        ResponseDto<string> response = await this._authService.RegisterSupervisor(model);
+        return Ok(response);
+    }
 }

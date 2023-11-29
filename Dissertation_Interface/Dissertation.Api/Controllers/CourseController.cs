@@ -1,8 +1,9 @@
-﻿using Dissertation.Application.Course.Commands.CreateCourse;
+using Dissertation.Application.Course.Commands.CreateCourse;
 using Dissertation.Application.Course.Commands.DisableCourse;
 using Dissertation.Application.Course.Commands.EnableCourse;
 using Dissertation.Application.Course.Commands.UpdateCourse;
 using Dissertation.Application.Course.Queries.GetById;
+using Dissertation.Application.Course.Queries.GetListOfActiveCourse;
 using Dissertation.Application.Course.Queries.GetListOfCourse;
 using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;
@@ -97,10 +98,20 @@ public class CourseController : Controller
     [SwaggerOperation(Summary = "Update Course")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetCourse>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
-    public async Task<IActionResult> UpdateCourse([FromBody] CreateCourseRequest request, [FromRoute]long courseId)
+    public async Task<IActionResult> UpdateCourse([FromBody] CreateCourseRequest request, [FromRoute] long courseId)
     {
         var query = new UpdateCourseCommand(courseId, request.Name, request.DepartmentId);
         ResponseDto<GetCourse> response = await this._sender.Send(query);
         return Ok(response);
+    }
+
+    [HttpGet("active")]
+    [SwaggerOperation(Summary = "Get List Of Active Courses")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<IEnumerable<GetCourse>>))]
+    public async Task<IActionResult> GetListOfActiveCourses()
+    {
+        var query = new GetListOfActiveCoursesQuery();
+        ResponseDto<IEnumerable<GetCourse>> result = await this._sender.Send(query);
+        return Ok(result);
     }
 }

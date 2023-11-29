@@ -42,9 +42,6 @@ namespace Dissertation.Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -148,9 +145,6 @@ namespace Dissertation.Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("SupervisionChoiceDeadline")
                         .HasColumnType("datetime2");
 
@@ -181,16 +175,14 @@ namespace Dissertation.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Department")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("DepartmentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ProfilePicture")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StudentAllocation")
-                        .HasColumnType("int");
+                    b.Property<string>("ResearchArea")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -203,6 +195,8 @@ namespace Dissertation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Supervisors");
                 });
@@ -219,10 +213,6 @@ namespace Dissertation.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Department")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -279,6 +269,17 @@ namespace Dissertation.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("AcademicYear");
+                });
+
+            modelBuilder.Entity("Dissertation.Domain.Entities.Supervisor", b =>
+                {
+                    b.HasOne("Dissertation.Domain.Entities.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
                 });
 #pragma warning restore 612, 618
         }

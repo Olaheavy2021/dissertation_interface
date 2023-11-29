@@ -12,8 +12,6 @@ public class DissertationCohort: AuditableEntity<long>
 
     public DateTime SupervisionChoiceDeadline { get; set; }
 
-    public DissertationConfigStatus Status { get; set; }
-
     public long AcademicYearId { get; set; }
 
     [ForeignKey("AcademicYearId")]
@@ -23,16 +21,14 @@ public class DissertationCohort: AuditableEntity<long>
         DateTime startDate,
         DateTime endDate,
         DateTime supervisionChoiceDeadline,
-        long academicYearId,
-        DissertationConfigStatus status)
+        long academicYearId)
     {
         EndDate = endDate.Date;
         StartDate = startDate.Date;
-        Status = status;
         SupervisionChoiceDeadline = supervisionChoiceDeadline;
         AcademicYearId = academicYearId;
     }
 
-    public static DissertationCohort Create(DateTime endDate, DateTime startDate, DateTime supervisionChoiceDeadline,  long academicYearId, DissertationConfigStatus status) =>
-        new(startDate, endDate, supervisionChoiceDeadline, academicYearId, status);
+    public static DissertationCohort Create(DateTime endDate, DateTime startDate, DateTime supervisionChoiceDeadline,  long academicYearId) =>
+        new(startDate, endDate, supervisionChoiceDeadline, academicYearId);
 }

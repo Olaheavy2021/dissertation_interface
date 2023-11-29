@@ -1,4 +1,5 @@
 ﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
 using Shared.Constants;
@@ -52,12 +53,14 @@ public class GetListOfAcademicYearQueryHandler : IRequestHandler<GetListOfAcadem
         new()
         {
             Id = academicYear.Id,
-            Status = academicYear.Status,
             StartDate = academicYear.StartDate,
             CreatedAt = academicYear.CreatedAt,
             EndDate = academicYear.EndDate,
             CreatedBy = academicYear.CreatedBy,
             UpdatedAt = academicYear.UpdatedAt,
-            UpdatedBy = academicYear.UpdatedBy
+            UpdatedBy = academicYear.UpdatedBy,
+            Status = academicYear.StartDate.Date <= DateTime.UtcNow.Date && academicYear.EndDate.Date >= DateTime.UtcNow.Date
+                ? DissertationConfigStatus.Active
+                : DissertationConfigStatus.InActive
         };
 }

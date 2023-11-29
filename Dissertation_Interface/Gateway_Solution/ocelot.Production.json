@@ -1,6 +1,56 @@
 ﻿{
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/v1/Supervisor/register",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor/register",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SupervisorInvite/confirm-invite",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/SupervisorInvite/confirm-invite",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SupervisorInvite",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/SupervisorInvite",
+      "UpstreamHttpMethod": [ "Post", "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SupervisorInvite/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/SupervisorInvite/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/Course/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -203,20 +253,6 @@
       ],
       "UpstreamPathTemplate": "/api/v1/DissertationCohort",
       "UpstreamHttpMethod": [ "Get" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/v1/DissertationCohort/enable/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "difdissertationapi.azurewebsites.net"
-        }
-      ],
-      "UpstreamPathTemplate": "/api/v1/DissertationCohort/enable/{id}",
-      "UpstreamHttpMethod": [ "Post" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }

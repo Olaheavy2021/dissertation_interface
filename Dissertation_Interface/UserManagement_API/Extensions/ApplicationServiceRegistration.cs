@@ -1,5 +1,8 @@
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -91,6 +94,19 @@ public static class ApplicationServiceRegistration
             option.InstanceName = "master";
         });
         services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+
+        services.AddControllers(options =>
+            {
+                options.OutputFormatters.RemoveType<StringOutputFormatter>();
+                options.ModelValidatorProviders.Clear();
+            })
+            .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true)
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            });
         return services;
     }
 }

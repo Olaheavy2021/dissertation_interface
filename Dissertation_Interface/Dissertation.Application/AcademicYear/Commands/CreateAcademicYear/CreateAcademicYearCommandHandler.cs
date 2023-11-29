@@ -25,21 +25,13 @@ public class CreateAcademicYearCommandHandler : IRequestHandler<CreateAcademicYe
     {
         this._logger.LogInformation("Attempting to Create Academic year for this {startDate}", request.StartDate);
         var response = new ResponseDto<GetAcademicYear>();
-        var academicYear = Domain.Entities.AcademicYear.Create(request.StartDate, request.EndDate,
-            DissertationConfigStatus.Active);
+        var academicYear = Domain.Entities.AcademicYear.Create(request.StartDate, request.EndDate);
 
         await this._db.AcademicYearRepository.AddAsync(academicYear);
-
-        //check the active academic year and set it to inactive
-        Domain.Entities.AcademicYear? activeAcademicYear = await this._db.AcademicYearRepository.GetFirstOrDefaultAsync(a =>
-            a.Status == DissertationConfigStatus.Active);
-        if (activeAcademicYear != null)
-        {
-            activeAcademicYear.Status = DissertationConfigStatus.InActive;
-            this._db.AcademicYearRepository.Update(activeAcademicYear);
-        }
         await this._db.SaveAsync(cancellationToken);
+
         GetAcademicYear mappedAcademicYear = this._mapper.Map<GetAcademicYear>(academicYear);
+        mappedAcademicYear.UpdateStatus();
 
         response.Message = "Academic year initiated successfully";
         response.Result = mappedAcademicYear;

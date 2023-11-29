@@ -9,11 +9,11 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Constants;
 using Shared.DTO;
+using Shared.Enums;
 using Shared.Exceptions;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Settings;
-using StackExchange.Redis;
 using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;
@@ -88,7 +88,7 @@ public class AuthService : IAuthService
 
                 response.Message = "User Registration was Successful.";
                 response.IsSuccess = true;
-                response.Result = SuccessMessages.DefaultSuccess;
+                response.Result = user.Id;
                 this._logger.LogInformation("Register - User with this email registered successfully {0}", registrationRequestDto.Email);
             }
             else
@@ -106,7 +106,7 @@ public class AuthService : IAuthService
 
     public async Task<ResponseDto<string>> RegisterSupervisor(StudentOrSupervisorRegistrationDto registrationRequestDto)
     {
-        this._logger.LogInformation("Processing supervisor register request {@StudentOrSupervisorRegistrationDto}", registrationRequestDto);
+        this._logger.LogInformation("Processing supervisor registration request");
         var response = new ResponseDto<string>();
 
         //check if the user exists already and is an admin
@@ -114,27 +114,32 @@ public class AuthService : IAuthService
 
         if (user != null)
         {
+            this._logger.LogInformation("Processing supervisor registration request - User already exists");
             IList<string> roles = await this._userManager.GetRolesAsync(user);
-            if (roles.Contains(Roles.RoleAdmin) || roles.Contains(Roles.RoleSuperAdmin))
+            if (roles.Any(role => role.Equals(Roles.RoleAdmin, StringComparison.OrdinalIgnoreCase))
+                || roles.Any(role => role.Equals(Roles.RoleSuperAdmin, StringComparison.OrdinalIgnoreCase)))
             {
                 IdentityResult result = await this._userManager.AddToRoleAsync(user, Roles.RoleSupervisor);
                 if (result.Succeeded)
                 {
                     response.IsSuccess = true;
                     response.Message = SuccessMessages.DefaultSuccess;
-                    response.Result = SuccessMessages.DefaultSuccess;
+                    response.Result = user.Id;
+                    //publish audit log for supervisor registration
                     return response;
                 }
 
                 response.IsSuccess = false;
                 response.Message = result.Errors.FirstOrDefault()?.Description;
                 response.Result = ErrorMessages.DefaultError;
+                //publish audit log for supervisor registration
                 return response;
             }
 
             response.IsSuccess = false;
-            response.Message = "This user with email already exist as a student";
+            response.Message = "This user with email already exists";
             response.Result = ErrorMessages.DefaultError;
+            //publish audit log for supervisor registration
             return response;
         }
 
@@ -147,20 +152,40 @@ public class AuthService : IAuthService
             Email = registrationRequestDto.Email,
             Role = Roles.RoleSupervisor
         };
+        ResponseDto<string> registrationResponse = await Register(registrationRequest);
 
-        if (response.IsSuccess)
+        if (registrationResponse.IsSuccess)
         {
-            //change this to synchronous
-            await this._messageBus.PublishAuditLog(EventType.RegisterSupervisor,
-                this._serviceBusSettings.ServiceBusConnectionString, EventType.System, SuccessMessages.DefaultSuccess, registrationRequest.Email);
+            //confirm email and return the userId
+           await ConfirmUserEmail(registrationRequest.Email);
+           response.IsSuccess = true;
+           response.Result = registrationResponse.Result;
+           response.Message = SuccessMessages.DefaultSuccess;
+
+           //publish audit log for supervisor registration
         }
         else
         {
-            await this._messageBus.PublishAuditLog(EventType.RegisterSupervisor,
-                this._serviceBusSettings.ServiceBusConnectionString, EventType.System, ErrorMessages.DefaultError, registrationRequest.Email);
+            response.IsSuccess = registrationResponse.IsSuccess;
+            response.Result = ErrorMessages.DefaultError;
+            response.Message = registrationResponse.Message;
+
+            //publish audit log for supervisor registration
         }
 
         return response;
+    }
+
+    private async Task<ApplicationUser?> ConfirmUserEmail(string email)
+    {
+        //fetch the user
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(email);
+        if (user == null) return user;
+
+        user.EmailConfirmed = true;
+        await this._userManager.UpdateAsync(user);
+
+        return user;
     }
 
     public async Task<ResponseDto<string>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto,  string? loggedInAdminEmail)
@@ -246,6 +271,10 @@ public class AuthService : IAuthService
 
             //return the appropriate response
             UserDto? userToReturn = this._mapper.Map<UserDto>(user);
+            userToReturn.Status = user.LockoutEnd >= DateTimeOffset.UtcNow
+                ? UserStatus.Deactivated
+                : user.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive;
+
             var responseDto = new AuthResponseDto
             {
                 User = userToReturn,

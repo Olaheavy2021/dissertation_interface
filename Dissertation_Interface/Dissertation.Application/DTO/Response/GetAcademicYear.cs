@@ -18,4 +18,9 @@ public class GetAcademicYear
     public string? UpdatedBy { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+
+    public void UpdateStatus() => Status = StartDate.Date <= DateTime.UtcNow.Date && EndDate.Date >= DateTime.UtcNow.Date
+        ? DissertationConfigStatus.Active
+        : DissertationConfigStatus.InActive;
+
 }

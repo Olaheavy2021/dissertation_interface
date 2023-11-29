@@ -41,7 +41,7 @@ public class CourseRepository : GenericRepository<Course>, ICourseRepository
             this.Context.Set<Course>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
                 .Include(c => c.Department)
-                .OrderBy(x => x.CreatedAt), paginationParameters.PageNumber,
+                .OrderByDescending(x => x.CreatedAt), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
 }

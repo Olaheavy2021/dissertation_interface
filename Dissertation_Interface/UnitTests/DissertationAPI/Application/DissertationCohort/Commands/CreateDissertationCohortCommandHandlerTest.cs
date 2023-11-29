@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Dissertation.Application.DissertationCohort.Commands.CreateDissertationCohort;
 using Dissertation.Application.DissertationCohort.Commands.UpdateDissertationCohort;
 using Dissertation.Application.DTO.Request;
@@ -31,7 +31,7 @@ public class CreateDissertationCohortCommandHandlerTest
     public async Task Returns_Newly_Created_AcademicYear()
     {
         this._unitOfWork
-            .Setup(x => x.DissertationCohortRepository.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, bool>>>(),  It.IsAny<Func<IQueryable<Dissertation.Domain.Entities.DissertationCohort>, IOrderedQueryable<Dissertation.Domain.Entities.DissertationCohort>>>(),
+            .Setup(x => x.DissertationCohortRepository.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, bool>>>(), It.IsAny<Func<IQueryable<Dissertation.Domain.Entities.DissertationCohort>, IOrderedQueryable<Dissertation.Domain.Entities.DissertationCohort>>>(),
                 It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, object>>[]>()))
             .ReturnsAsync(DissertationCohortMocks.GetFirstOrDefaultResponse());
 

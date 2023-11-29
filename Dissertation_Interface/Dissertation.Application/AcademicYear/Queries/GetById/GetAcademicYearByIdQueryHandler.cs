@@ -34,6 +34,7 @@ public class GetAcademicYearByIdQueryHandler : IRequestHandler<GetAcademicYearBy
         }
 
         GetAcademicYear mappedAcademicYear = this._mapper.Map<GetAcademicYear>(academicYear);
+        mappedAcademicYear.UpdateStatus();
 
         this._logger.LogInformation("Successfully retrieved an Academic Year by ID {AcademicYearId}", academicYear.Id);
         response.IsSuccess = true;

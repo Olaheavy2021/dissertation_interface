@@ -43,6 +43,8 @@ public class UpdateDissertationCohortCommandHandler : IRequestHandler<UpdateDiss
         await this._db.SaveAsync(cancellationToken);
 
         GetDissertationCohort mappedDissertationCohort = this._mapper.Map<GetDissertationCohort>(dissertationCohort);
+        mappedDissertationCohort.UpdateStatus();
+
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
         response.Result = mappedDissertationCohort;

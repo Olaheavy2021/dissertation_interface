@@ -1,15 +1,15 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Dissertation.Domain.Interfaces;
+using Dissertation.Infrastructure.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Shared.DTO;
-using Shared.Helpers;
+using Shared.Enums;
 using Shared.Settings;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace Dissertation.Domain.Services;
+namespace Dissertation.Infrastructure.ExternalServices;
 
 public class UserApiService : IUserApiService
 {
@@ -35,17 +35,22 @@ public class UserApiService : IUserApiService
 
     public async  Task<ResponseDto<GetUserDto>> GetUserByEmail(string email)
     {
-        var url = $"{this._serviceUrlSettings.UserApi}/user/get-by-email/{email}";
-        var response = await this._requestHelper.GetAsync(url, null, mediaType: Shared.Enums.MediaType.Json);
+        var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.GetUserByEmailRoute}{email}";
+        var response = await this._requestHelper.GetAsync(url, null, mediaType: MediaType.Json);
         return JsonSerializer.Deserialize<ResponseDto<GetUserDto>>(response, this._jsonSerializerOptions)!;
     }
 
     public async Task<ResponseDto<GetUserDto>> GetUserByUserName(string username)
     {
-        var url = $"{this._serviceUrlSettings.UserApi}/user/get-by-username/{username}";
-        var response = await this._requestHelper.GetAsync(url, null, mediaType: Shared.Enums.MediaType.Json);
+        var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.GetUserByUserNameRoute}{username}";
+        var response = await this._requestHelper.GetAsync(url, null, mediaType: MediaType.Json);
         return JsonSerializer.Deserialize<ResponseDto<GetUserDto>>(response, this._jsonSerializerOptions)!;
     }
 
-    public Task<IEnumerable<GetUserDto>> RegisterUser() => throw new NotImplementedException();
+    public async Task<ResponseDto<string>> RegisterSupervisor(StudentOrSupervisorRegistrationDto model)
+    {
+         var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.RegisterSupervisorRoute}";
+         var response = await this._requestHelper.PostAsync(url, model, mediaType: MediaType.Json);
+         return JsonSerializer.Deserialize<ResponseDto<string>>(response, this._jsonSerializerOptions)!;
+    }
 }

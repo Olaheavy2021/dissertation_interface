@@ -45,7 +45,7 @@ public static class AcademicYearMocks
     public static AcademicYear GetFirstOrDefaultResponse()
     {
         CreateAcademicYearRequest response = GetSuccessfulRequest();
-        return AcademicYear.Create(response.StartDate, response.EndDate, DissertationConfigStatus.Active);
+        return AcademicYear.Create(response.StartDate, response.EndDate);
     }
 
     public static PagedList<AcademicYear> GetPaginatedResponse()

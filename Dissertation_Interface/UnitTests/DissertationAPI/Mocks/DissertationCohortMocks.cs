@@ -1,7 +1,6 @@
 ﻿using Bogus;
 using Dissertation.Application.DTO.Request;
 using Dissertation.Domain.Entities;
-using Dissertation.Domain.Enums;
 using Shared.Helpers;
 
 namespace UnitTests.DissertationAPI.Mocks;
@@ -36,7 +35,7 @@ public class DissertationCohortMocks
         AcademicYear academicYear = AcademicYearMocks.GetFirstOrDefaultResponse();
         CreateDissertationCohortRequest request = GetSuccessfulRequest(academicYear.StartDate, academicYear.EndDate);
         return DissertationCohort.Create(request.EndDate, request.StartDate, request.SupervisionChoiceDeadline,
-            request.AcademicYearId, DissertationConfigStatus.Active);
+            request.AcademicYearId);
     }
 
     public static PagedList<DissertationCohort> GetPaginatedResponse()

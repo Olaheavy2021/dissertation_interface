@@ -41,7 +41,7 @@ public class DepartmentRepository : GenericRepository<Department>, IDepartmentRe
         return PagedList<Department>.ToPagedList(
             this.Context.Set<Department>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
-                .OrderBy(x => x.CreatedAt), paginationParameters.PageNumber,
+                .OrderByDescending(x => x.CreatedAt), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
 }

@@ -36,6 +36,7 @@ public class GetDissertationCohortByIdQueryHandler: IRequestHandler<GetDissertat
         }
 
         GetDissertationCohort mappedDissertationCohort = this._mapper.Map<GetDissertationCohort>(dissertationCohort);
+        mappedDissertationCohort.UpdateStatus();
 
         this._logger.LogInformation("Successfully retrieved an DissertationCohort by ID {DissertationCohort}", dissertationCohort.Id);
         response.IsSuccess = true;

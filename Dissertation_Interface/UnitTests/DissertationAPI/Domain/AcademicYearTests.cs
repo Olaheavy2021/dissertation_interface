@@ -15,11 +15,10 @@ public class AcademicYearTests
         CreateAcademicYearRequest request = AcademicYearMocks.GetSuccessfulRequest();
 
         //Act
-        var result = AcademicYear.Create(request.StartDate, request.EndDate, DissertationConfigStatus.Active);
+        var result = AcademicYear.Create(request.StartDate, request.EndDate);
 
         //Assert
         result.StartDate.Should().Be(request.StartDate.Date);
         result.EndDate.Should().Be(request.EndDate.Date);
-        result.Status.Should().Be( DissertationConfigStatus.Active);
     }
 }

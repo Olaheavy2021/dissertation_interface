@@ -37,6 +37,7 @@ public class GetActiveAcademicYearQueryHandler: IRequestHandler<GetActiveAcademi
         }
 
         GetAcademicYear mappedAcademicYear = this._mapper.Map<GetAcademicYear>(academicYear);
+        mappedAcademicYear.UpdateStatus();
 
         this._logger.LogInformation("Successfully retrieved the active AcademicYear");
         response.IsSuccess = true;

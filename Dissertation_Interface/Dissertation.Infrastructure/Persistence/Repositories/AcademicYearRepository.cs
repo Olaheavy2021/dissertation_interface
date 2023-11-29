@@ -5,9 +5,7 @@ using Dissertation.Domain.Pagination;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Shared.Exceptions;
 using Shared.Helpers;
-using Shared.Logging;
 using Shared.Repository;
 
 namespace Dissertation.Infrastructure.Persistence.Repositories;
@@ -23,7 +21,9 @@ public class AcademicYearRepository : GenericRepository<AcademicYear>, IAcademic
         !await this.Context.Set<AcademicYear>().AnyAsync(a =>
             a.StartDate.Year == startDate.Year || a.EndDate.Year == endDate.Year);
 
-    public async Task<AcademicYear?> GetActiveAcademicYear() => await this.Context.Set<AcademicYear>().FirstOrDefaultAsync(a => a.Status == DissertationConfigStatus.Active);
+    public async Task<AcademicYear?> GetActiveAcademicYear() =>
+        await this.Context.Set<AcademicYear>().FirstOrDefaultAsync(a =>
+            a.StartDate.Date <= DateTime.UtcNow.Date && a.EndDate.Date >= DateTime.UtcNow.Date);
 
     public PagedList<AcademicYear> GetListOfAcademicYears(
         AcademicYearPaginationParameters paginationParameters)
@@ -38,19 +38,10 @@ public class AcademicYearRepository : GenericRepository<AcademicYear>, IAcademic
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByYear}%"));
         }
 
-        // Apply filter
-        if (!string.IsNullOrEmpty(paginationParameters.FilterByStatus) && Enum.IsDefined(typeof(DissertationConfigStatus), paginationParameters.FilterByStatus))
-        {
-            var status = (DissertationConfigStatus)Enum.Parse(typeof(DissertationConfigStatus), paginationParameters.FilterByStatus);
-            var whereOrAnd = sqlQuery.ToString().Contains("WHERE") ? "AND" : "WHERE";
-            sqlQuery.Append($" {whereOrAnd} Status = @filter");
-            parametersList.Add(new SqlParameter("@filter", status));
-        }
-
         return PagedList<AcademicYear>.ToPagedList(
             this.Context.Set<AcademicYear>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
-                .OrderBy(x => x.CreatedAt), paginationParameters.PageNumber,
+                .OrderByDescending(x => x.CreatedAt), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
 }

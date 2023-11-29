@@ -41,6 +41,8 @@ public class UpdateAcademicYearCommandHandler: IRequestHandler<UpdateAcademicYea
         await this._db.SaveAsync(cancellationToken);
 
         GetAcademicYear mappedAcademicYear = this._mapper.Map<GetAcademicYear>(academicYear);
+        mappedAcademicYear.UpdateStatus();
+
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
         response.Result = mappedAcademicYear;

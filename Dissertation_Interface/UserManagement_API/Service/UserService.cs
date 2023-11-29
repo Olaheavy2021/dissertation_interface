@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Shared.Constants;
 using Shared.DTO;
+using Shared.Enums;
 using Shared.Exceptions;
 using Shared.Helpers;
 using Shared.Logging;
@@ -46,6 +47,10 @@ public class UserService : IUserService
         {
             IList<string> roles = await this._userManager.GetRolesAsync(user);
             UserDto mappedUser = this._mapper.Map<ApplicationUser, UserDto>(user);
+            mappedUser.Status = user.LockoutEnd >= DateTimeOffset.UtcNow
+                ? UserStatus.Deactivated
+                : user.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive;
+
             var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow };
 
             response.IsSuccess = true;
@@ -291,7 +296,9 @@ public class UserService : IUserService
             LastName = applicationUser.LastName,
             IsLockedOut = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow,
             EmailConfirmed = applicationUser.EmailConfirmed,
-            Status  = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow ? "Deactivated" : (applicationUser.EmailConfirmed ? "Active" : "Inactive")
+            Status  =  applicationUser.LockoutEnd >= DateTimeOffset.UtcNow
+                ? UserStatus.Deactivated
+                : applicationUser.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive
         };
 
     private async Task PublishAccountDeactivationOrActivationEmail(ApplicationUser user, string emailType)

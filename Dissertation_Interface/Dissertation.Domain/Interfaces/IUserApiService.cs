@@ -8,6 +8,6 @@ public interface IUserApiService
 
     Task<ResponseDto<GetUserDto>> GetUserByUserName(string username);
 
-    Task<IEnumerable<GetUserDto>> RegisterUser();
+    Task<ResponseDto<string>> RegisterSupervisor(StudentOrSupervisorRegistrationDto model);
 
 }

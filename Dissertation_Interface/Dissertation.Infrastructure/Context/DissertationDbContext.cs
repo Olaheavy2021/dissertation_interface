@@ -43,7 +43,7 @@ public class DissertationDbContext : DbContext
     private void OnBeforeSaveChanges()
     {
         DateTime now = DateTime.UtcNow;
-        var currentUserEmail = this._httpContextAccessor.HttpContext?.Items["Email"] as string;
+        var currentUserEmail = this._httpContextAccessor.HttpContext?.Items["Email"] as string ?? "system";
 
         foreach (EntityEntry entry in ChangeTracker.Entries().Where(e => e.Entity.GetType().BaseType == typeof(AuditableEntity<long>)))
         {
