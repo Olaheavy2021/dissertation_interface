@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Dissertation.Domain.Entities;
 using Dissertation.Domain.Enums;
 using Dissertation.Domain.Pagination;
@@ -10,7 +10,7 @@ using Shared.Repository;
 
 namespace Dissertation.Infrastructure.Persistence.Repositories;
 
-public class DissertationCohortRepository: GenericRepository<DissertationCohort>, IDissertationCohortRepository
+public class DissertationCohortRepository : GenericRepository<DissertationCohort>, IDissertationCohortRepository
 {
     public DissertationCohortRepository(DbContext dbContext) : base(dbContext)
     {
@@ -38,5 +38,5 @@ public class DissertationCohortRepository: GenericRepository<DissertationCohort>
     }
 
     public async Task<DissertationCohort?> GetActiveDissertationCohort() =>
-        await this.Context.Set<DissertationCohort>().FirstOrDefaultAsync(cohort => cohort.StartDate.Date <= DateTime.UtcNow.Date && cohort.EndDate.Date >= DateTime.UtcNow.Date );
+        await this.Context.Set<DissertationCohort>().FirstOrDefaultAsync(cohort => cohort.StartDate.Date <= DateTime.UtcNow.Date && cohort.EndDate.Date >= DateTime.UtcNow.Date);
 }

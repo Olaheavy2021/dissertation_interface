@@ -1,4 +1,4 @@
-﻿using System.Collections.Specialized;
+using System.Collections.Specialized;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -113,7 +113,7 @@ public class RequestHelper : IRequestHelper
         }
 
         {
-            foreach (var (key, value) in headers)
+            foreach ((string key, string value) in headers)
             {
                 request.Headers.Add(key, value);
             }
@@ -130,7 +130,7 @@ public class RequestHelper : IRequestHelper
         }
 
         NameValueCollection query = HttpUtility.ParseQueryString(string.Empty);
-        foreach (var (key, value) in queryParams)
+        foreach ((string key, object value) in queryParams)
         {
             query.Add(key, value.ToString());
         }

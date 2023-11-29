@@ -1,6 +1,9 @@
-﻿namespace Dissertation.Infrastructure.Persistence.IRepository;
+using Dissertation.Domain.Entities;
+using Shared.Repository;
 
-public interface IStudentRepository
+namespace Dissertation.Infrastructure.Persistence.IRepository;
+
+public interface IStudentRepository : IGenericRepository<Student>
 {
-    
+
 }

@@ -4,6 +4,7 @@ using Dissertation.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dissertation.Infrastructure.Migrations
 {
     [DbContext(typeof(DissertationDbContext))]
-    partial class DissertationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231129232916_AddStudentAndStudentInvite")]
+    partial class AddStudentAndStudentInvite
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

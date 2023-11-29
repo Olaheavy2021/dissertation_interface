@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Entities;
+using Dissertation.Domain.Entities;
 using Dissertation.Domain.Pagination;
 using Shared.DTO;
 using Shared.Helpers;

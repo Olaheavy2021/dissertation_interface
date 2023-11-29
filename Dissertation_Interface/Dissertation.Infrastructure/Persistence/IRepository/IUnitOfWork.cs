@@ -13,6 +13,11 @@ public interface IUnitOfWork
     ISupervisorInviteRepository SupervisorInviteRepository { get; }
 
     ISupervisorRepository SupervisorRepository { get; }
+
+    IStudentRepository StudentRepository { get; }
+
+    IStudentInviteRepository StudentInviteRepository { get; }
+
     Task BeginTransactionAsync();
     Task<int> SaveAsync();
     Task<int> SaveAsync(CancellationToken cancellationToken);

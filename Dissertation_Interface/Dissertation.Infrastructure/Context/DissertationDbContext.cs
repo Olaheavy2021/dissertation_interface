@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.DomainHelper;
+using Dissertation.Domain.DomainHelper;
 using Dissertation.Domain.Entities;
 using Dissertation.Domain.Enums;
 using Microsoft.AspNetCore.Http;
@@ -23,6 +23,10 @@ public class DissertationDbContext : DbContext
     public DbSet<Supervisor> Supervisors { get; set; }
 
     public DbSet<SupervisorInvite> SupervisorInvites { get; set; }
+
+    public DbSet<Student> Students { get; set; }
+
+    public DbSet<StudentInvite> StudentInvites { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) => ModelBuilderConfiguration.Configure(modelBuilder);
 

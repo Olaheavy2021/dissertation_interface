@@ -49,6 +49,10 @@ public class UnitOfWork : IUnitOfWork
 
     public ISupervisorRepository SupervisorRepository => new SupervisorRepository(this.Context);
 
+    public IStudentRepository StudentRepository => new StudentRepository(this.Context);
+
+    public IStudentInviteRepository StudentInviteRepository => new StudentInviteRepository(this.Context);
+
     #endregion Repositories
 
     public async Task BeginTransactionAsync() => this._transaction = await this.Context.Database.BeginTransactionAsync().ConfigureAwait(false);

@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Dissertation.Domain.Entities;
 using Dissertation.Domain.Pagination;
 using Dissertation.Infrastructure.Persistence.IRepository;

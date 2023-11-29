@@ -1,6 +1,13 @@
-﻿namespace Dissertation.Infrastructure.Persistence.Repositories;
+using Dissertation.Domain.Entities;
+using Dissertation.Infrastructure.Persistence.IRepository;
+using Microsoft.EntityFrameworkCore;
+using Shared.Repository;
 
-public class StudentRepository
+namespace Dissertation.Infrastructure.Persistence.Repositories;
+
+public class StudentRepository : GenericRepository<Student>, IStudentRepository
 {
-    
+    public StudentRepository(DbContext dbContext) : base(dbContext)
+    {
+    }
 }
