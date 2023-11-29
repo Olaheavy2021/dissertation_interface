@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -10,7 +10,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.DissertationCohort.Queries.GetListOfDissertationCohort;
 
-public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOfDissertationCohortQuery,ResponseDto<PaginatedDissertationCohortListDto>>
+public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOfDissertationCohortQuery, ResponseDto<PaginatedDissertationCohortListDto>>
 {
     private readonly IAppLogger<GetListOfDissertationCohortQueryHandler> _logger;
     private readonly IUnitOfWork _db;
@@ -28,7 +28,7 @@ public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOf
     {
         var response = new ResponseDto<PaginatedDissertationCohortListDto>();
         this._logger.LogInformation("Attempting to retrieve list of Dissertation Cohort");
-        PagedList<Domain.Entities.DissertationCohort> dissertationCohort =  this._db.DissertationCohortRepository.GetListOfDissertationCohort(request.Parameters);
+        PagedList<Domain.Entities.DissertationCohort> dissertationCohort = this._db.DissertationCohortRepository.GetListOfDissertationCohort(request.Parameters);
 
         var mappedDissertationCohort = new PagedList<GetDissertationCohort>(
             dissertationCohort.Select(MapToDissertationCohortDto).ToList(),
@@ -53,7 +53,7 @@ public class GetListOfDissertationCohortQueryHandler : IRequestHandler<GetListOf
         return Task.FromResult(response);
     }
 
-    private  GetDissertationCohort MapToDissertationCohortDto(
+    private GetDissertationCohort MapToDissertationCohortDto(
         Domain.Entities.DissertationCohort dissertationCohort)
     {
         GetAcademicYear mappedAcademicYear = this._mapper.Map<GetAcademicYear>(dissertationCohort.AcademicYear);

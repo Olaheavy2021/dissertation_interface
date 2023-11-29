@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.AcademicYear.Queries.GetListOfAcademicYear;
+using Dissertation.Application.AcademicYear.Queries.GetListOfAcademicYear;
 using Dissertation.Application.Department.Queries.GetListOfDepartment;
 using Dissertation.Application.DissertationCohort.Queries.GetActiveDissertationCohort;
 using Dissertation.Application.DissertationCohort.Queries.GetListOfDissertationCohort;
@@ -34,7 +34,9 @@ public class GetListOfDissertationCohortQueryHandlerTest
     {
         var parameters = new DissertationCohortPaginationParameters()
         {
-            PageSize = 10, PageNumber = 1, SearchByStartYear = 2022
+            PageSize = 10,
+            PageNumber = 1,
+            SearchByStartYear = 2022
         };
         GetListOfDissertationCohortQuery query = new(parameters);
         this._unitOfWork
@@ -49,4 +51,3 @@ public class GetListOfDissertationCohortQueryHandlerTest
         response.IsSuccess.Should().BeTrue();
     }
 }
-

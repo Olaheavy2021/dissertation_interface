@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using Dissertation.Domain.DomainHelper;
 
 namespace Dissertation.Domain.Entities;
 
-public class SupervisorInvite :  AuditableEntity<long>
+public class SupervisorInvite : AuditableEntity<long>
 {
     public string LastName { get; set; }
 

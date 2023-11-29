@@ -1,4 +1,4 @@
-﻿namespace Dissertation.Domain.DomainHelper;
+namespace Dissertation.Domain.DomainHelper;
 
 public interface IAuditableEntity<TId> : IAuditableEntity, IEntity<TId>
 {

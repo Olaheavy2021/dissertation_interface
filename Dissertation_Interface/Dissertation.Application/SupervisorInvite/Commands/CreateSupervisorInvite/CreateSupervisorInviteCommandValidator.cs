@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Enums;
+using Dissertation.Domain.Enums;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
@@ -58,12 +58,12 @@ public class CreateSupervisorInviteCommandValidator : AbstractValidator<CreateSu
 
     private async Task<bool> DoesEmailExistsAsStudentOrSupervisor(CreateSupervisorInviteCommand request, CancellationToken token)
     {
-       ResponseDto<GetUserDto> response = await this._userApiService.GetUserByEmail(request.Email);
-       if (!response.IsSuccess) return true;
-       var isStudentOrSupervisor = response.Result!.Role.Any(role => role.Equals(Roles.RoleStudent, StringComparison.OrdinalIgnoreCase))
-                                   || response.Result!.Role.Any(role =>
-                                       role.Equals(Roles.RoleSupervisor, StringComparison.OrdinalIgnoreCase));
-       return !isStudentOrSupervisor;
+        ResponseDto<GetUserDto> response = await this._userApiService.GetUserByEmail(request.Email);
+        if (!response.IsSuccess) return true;
+        var isStudentOrSupervisor = response.Result!.Role.Any(role => role.Equals(Roles.RoleStudent, StringComparison.OrdinalIgnoreCase))
+                                    || response.Result!.Role.Any(role =>
+                                        role.Equals(Roles.RoleSupervisor, StringComparison.OrdinalIgnoreCase));
+        return !isStudentOrSupervisor;
     }
 
     private async Task<bool> DoesUserNameExistsAsStudentOrSupervisor(CreateSupervisorInviteCommand request, CancellationToken token)
@@ -79,7 +79,7 @@ public class CreateSupervisorInviteCommandValidator : AbstractValidator<CreateSu
 
     private async Task<bool> DoesRequestHaveActiveInvite(CreateSupervisorInviteCommand request, CancellationToken token)
     {
-        Domain.Entities.SupervisorInvite? supervisorInvite = await this._db.SupervisorInviteRepository.GetFirstOrDefaultAsync(x =>(
+        Domain.Entities.SupervisorInvite? supervisorInvite = await this._db.SupervisorInviteRepository.GetFirstOrDefaultAsync(x => (
             x.StaffId == request.StaffId.ToLower() || x.Email == request.Email.ToLower()) && x.ExpiryDate.Date > DateTime.UtcNow.Date);
 
         return supervisorInvite == null;

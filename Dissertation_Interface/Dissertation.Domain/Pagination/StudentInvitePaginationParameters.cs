@@ -1,6 +1,14 @@
-﻿namespace Dissertation.Domain.Pagination;
+using Shared.Helpers;
 
-public class StudentInvitePaginationParameters
+namespace Dissertation.Domain.Pagination;
+
+public class StudentInvitePaginationParameters : PaginationParameters
 {
-    
+    public string SearchByStudentId { get; set; } = default!;
+
+    public long FilterByCohortId { get; set; } = default;
+
+    public long FilterByCourseId { get; set; } = default;
+
+
 }

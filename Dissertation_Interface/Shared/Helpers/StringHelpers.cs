@@ -1,4 +1,4 @@
-﻿namespace Shared.Helpers;
+namespace Shared.Helpers;
 
 public class StringHelpers
 {

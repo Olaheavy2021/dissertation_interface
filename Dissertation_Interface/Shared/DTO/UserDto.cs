@@ -1,4 +1,4 @@
-﻿using Shared.Enums;
+using Shared.Enums;
 
 namespace Shared.DTO;
 

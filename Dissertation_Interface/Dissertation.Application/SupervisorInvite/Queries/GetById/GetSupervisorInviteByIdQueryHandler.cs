@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -9,7 +9,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.SupervisorInvite.Queries.GetById;
 
-public class GetSupervisionInviteByIdQueryHandler : IRequestHandler<GetSupervisionInviteByIdQuery,ResponseDto<GetSupervisorInvite>>
+public class GetSupervisionInviteByIdQueryHandler : IRequestHandler<GetSupervisionInviteByIdQuery, ResponseDto<GetSupervisorInvite>>
 {
     private readonly IAppLogger<GetSupervisionInviteByIdQueryHandler> _logger;
     private readonly IUnitOfWork _db;

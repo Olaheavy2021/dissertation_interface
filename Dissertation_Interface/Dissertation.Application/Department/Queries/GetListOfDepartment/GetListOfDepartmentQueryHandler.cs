@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
 using Shared.Constants;
@@ -24,7 +24,7 @@ public class GetListOfDepartmentQueryHandler : IRequestHandler<GetListOfDepartme
     {
         var response = new ResponseDto<PaginatedDepartmentListDto>();
         this._logger.LogInformation("Attempting to retrieve list of Department");
-        PagedList<Domain.Entities.Department> departments =  this._db.DepartmentRepository.GetListOfDepartments(request.Parameters);
+        PagedList<Domain.Entities.Department> departments = this._db.DepartmentRepository.GetListOfDepartments(request.Parameters);
 
         var mappedDepartments = new PagedList<GetDepartment>(
             departments.Select(MapToDepartmentDto).ToList(),
@@ -52,12 +52,12 @@ public class GetListOfDepartmentQueryHandler : IRequestHandler<GetListOfDepartme
     private static GetDepartment MapToDepartmentDto(Domain.Entities.Department department) =>
         new()
         {
-           Id = department.Id,
-           Status = department.Status,
-           UpdatedBy = department.UpdatedBy,
-           UpdatedAt = department.UpdatedAt,
-           CreatedBy = department.CreatedBy,
-           CreatedAt = department.CreatedAt,
-           Name = department.Name
+            Id = department.Id,
+            Status = department.Status,
+            UpdatedBy = department.UpdatedBy,
+            UpdatedAt = department.UpdatedAt,
+            CreatedBy = department.CreatedBy,
+            CreatedAt = department.CreatedAt,
+            Name = department.Name
         };
 }

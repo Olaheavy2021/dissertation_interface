@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -7,39 +7,39 @@ using Shared.DTO;
 using Shared.Exceptions;
 using Shared.Logging;
 
-namespace Dissertation.Application.SupervisorInvite.Queries.GetById;
+namespace Dissertation.Application.StudentInvite.Queries.GetById;
 
-public class GetSupervisionInviteByIdQueryHandler : IRequestHandler<GetSupervisionInviteByIdQuery,ResponseDto<GetSupervisorInvite>>
+public class GetStudentInviteByIdQueryHandler : IRequestHandler<GetStudentInviteByIdQuery, ResponseDto<GetStudentInvite>>
 {
-    private readonly IAppLogger<GetSupervisionInviteByIdQueryHandler> _logger;
+    private readonly IAppLogger<GetStudentInviteByIdQueryHandler> _logger;
     private readonly IUnitOfWork _db;
     private readonly IMapper _mapper;
 
-    public GetSupervisionInviteByIdQueryHandler(IAppLogger<GetSupervisionInviteByIdQueryHandler> logger, IUnitOfWork db, IMapper mapper)
+    public GetStudentInviteByIdQueryHandler(IAppLogger<GetStudentInviteByIdQueryHandler> logger, IUnitOfWork db, IMapper mapper)
     {
         this._logger = logger;
         this._db = db;
         this._mapper = mapper;
     }
 
-    public async Task<ResponseDto<GetSupervisorInvite>> Handle(GetSupervisionInviteByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ResponseDto<GetStudentInvite>> Handle(GetStudentInviteByIdQuery request, CancellationToken cancellationToken)
     {
-        var response = new ResponseDto<GetSupervisorInvite>();
-        this._logger.LogInformation("Attempting to retrieve a Supervision Invite by ID {SupervisionInviteID}", request.Id);
-        Domain.Entities.SupervisorInvite? supervisorInvite = await this._db.SupervisorInviteRepository.GetAsync(a => a.Id == request.Id);
-        if (supervisorInvite is null)
+        var response = new ResponseDto<GetStudentInvite>();
+        this._logger.LogInformation("Attempting to retrieve a Student Invite by ID {StudentInviteID}", request.Id);
+        Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository.GetAsync(a => a.Id == request.Id);
+        if (studentInvite is null)
         {
-            this._logger.LogError("No Supervision Invite with ID");
-            throw new NotFoundException(nameof(Domain.Entities.SupervisorInvite), request.Id);
+            this._logger.LogError("No Student Invite with ID");
+            throw new NotFoundException(nameof(Domain.Entities.StudentInvite), request.Id);
         }
 
-        GetSupervisorInvite mappedSupervisorInvite = this._mapper.Map<GetSupervisorInvite>(supervisorInvite);
-        mappedSupervisorInvite.UpdateStatus();
+        GetStudentInvite mappedStudentInvite = this._mapper.Map<GetStudentInvite>(studentInvite);
+        mappedStudentInvite.UpdateStatus();
 
-        this._logger.LogInformation("Successfully retrieved a Supervisor Invite by ID {SupervisionInviteID}", request.Id);
+        this._logger.LogInformation("Successfully retrieved a Student Invite by ID {StudentInviteID}", request.Id);
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
-        response.Result = mappedSupervisorInvite;
+        response.Result = mappedStudentInvite;
         return response;
     }
 }

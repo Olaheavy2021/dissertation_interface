@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Department.Commands.CreateDepartment;
+using Dissertation.Application.Department.Commands.CreateDepartment;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 

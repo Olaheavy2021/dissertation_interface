@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -36,14 +36,6 @@ public class DeleteSupervisorInviteCommandHandler : IRequestHandler<DeleteSuperv
         {
             this._logger.LogError("No Supervision Invite found with {ID}", request.Id);
             throw new NotFoundException(nameof(Domain.Entities.SupervisorInvite), request.Id);
-        }
-
-        if (DateTime.UtcNow.Date > supervisorInvite.ExpiryDate.Date)
-        {
-            response.IsSuccess = false;
-            response.Message = "Supervision Invite is not in an active status. Invalid Request";
-
-            return response;
         }
 
         this._db.SupervisorInviteRepository.Remove(supervisorInvite);

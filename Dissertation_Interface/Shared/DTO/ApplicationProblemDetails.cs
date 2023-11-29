@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace Shared.DTO;
 
@@ -14,7 +14,7 @@ public class ApplicationProblemDetails
 
     public ApplicationProblemDetails(int statusCode)
     {
-        if (this._defaults.TryGetValue(statusCode, out var clientErrorData))
+        if (this._defaults.TryGetValue(statusCode, out (string Type, string Title) clientErrorData))
         {
             Name ??= clientErrorData.Title;
             InformationLink ??= clientErrorData.Type;

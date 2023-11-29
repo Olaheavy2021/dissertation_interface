@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Dissertation.Application.AcademicYear.Commands.CreateAcademicYear;
 using Dissertation.Application.DTO;
 using Dissertation.Application.DTO.Response;

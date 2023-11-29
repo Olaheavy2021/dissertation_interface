@@ -1,13 +1,13 @@
-﻿using MediatR;
 using FluentValidation;
 using FluentValidation.Results;
+using MediatR;
 using Shared.Exceptions;
 
 namespace Dissertation.Application.Common.Behaviour;
 
 public class ValidationBehaviour<TRequest, TResponse> :
     IPipelineBehavior<TRequest, TResponse>
-    where TRequest: IRequest<TResponse>
+    where TRequest : IRequest<TResponse>
 {
     private readonly IValidator<TRequest>? _validator;
 

@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Enums;
+using Dissertation.Domain.Enums;
 
 namespace Dissertation.Application.DTO.Response;
 
@@ -14,7 +14,7 @@ public class GetSupervisorInvite
 
     public string Email { get; set; } = default!;
 
-    public  DissertationConfigStatus Status { get; set; }
+    public DissertationConfigStatus Status { get; set; }
 
     public DateTime ExpiryDate { get; set; }
 

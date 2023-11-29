@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.DomainHelper;
+using Dissertation.Domain.DomainHelper;
 using Dissertation.Domain.Enums;
 
 namespace Dissertation.Domain.Entities;

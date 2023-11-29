@@ -1,13 +1,14 @@
-﻿using FluentValidation;
+using Dissertation.Application.SupervisorInvite.Commands.ConfirmSupervisorInvite;
+using FluentValidation;
 using Shared.Constants;
 
-namespace Dissertation.Application.SupervisorInvite.Commands.ConfirmSupervisorInvite;
+namespace Dissertation.Application.StudentInvite.Commands.ConfirmStudentInvite;
 
-public class ConfirmSupervisorInviteCommandValidator : AbstractValidator<ConfirmSupervisorInviteCommand>
+public class ConfirmStudentInviteCommandValidator : AbstractValidator<ConfirmStudentInviteCommand>
 {
-    public ConfirmSupervisorInviteCommandValidator()
+    public ConfirmStudentInviteCommandValidator()
     {
-        RuleFor(p => p.StaffId)
+        RuleFor(p => p.StudentId)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50)
             .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace);

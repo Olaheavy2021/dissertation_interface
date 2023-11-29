@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Headers;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 
@@ -12,7 +12,7 @@ public class BackendApiAuthenticationHttpClientHandler : DelegatingHandler
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        var token =  this._accessor.HttpContext?.Items["AccessToken"] as string;
+        var token = this._accessor.HttpContext?.Items["AccessToken"] as string;
 
         if (!string.IsNullOrEmpty(token))
         {

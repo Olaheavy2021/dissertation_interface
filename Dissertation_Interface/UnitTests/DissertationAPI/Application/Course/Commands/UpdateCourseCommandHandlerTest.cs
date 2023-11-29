@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Dissertation.Application.Course.Commands.UpdateCourse;
 using Dissertation.Application.Department.Commands.UpdateDepartment;
 using Dissertation.Application.DTO.Request;

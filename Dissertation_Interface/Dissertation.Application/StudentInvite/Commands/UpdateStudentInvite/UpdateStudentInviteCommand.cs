@@ -1,14 +1,14 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using MediatR;
 using Shared.DTO;
 
-namespace Dissertation.Application.SupervisorInvite.Commands.UpdateSupervisorInvite;
+namespace Dissertation.Application.StudentInvite.Commands.UpdateStudentInvite;
 
-public sealed record UpdateSupervisorInviteCommand(
+public sealed record UpdateStudentInviteCommand(
     string LastName,
     string FirstName,
-    string StaffId,
+    string StudentId,
     string Email,
     long DepartmentId,
     long Id
-): IRequest<ResponseDto<GetSupervisorInvite>>;
+) : IRequest<ResponseDto<GetStudentInvite>>;

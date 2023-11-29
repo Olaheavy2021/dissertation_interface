@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using MediatR;
 using Shared.DTO;
 
@@ -11,4 +11,4 @@ public sealed record RegisterSupervisorCommand(
     long DepartmentId,
     string InvitationCode,
     string Password
-): IRequest<ResponseDto<string>>;
+) : IRequest<ResponseDto<string>>;

@@ -2,6 +2,18 @@
   "Routes": [
     //"DissertationAPI": "https://localhost:8000",
     {
+      "DownstreamPathTemplate": "/api/v1/Student/register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Student/register",
+      "UpstreamHttpMethod": [ "Post"]
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/Supervisor/register",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

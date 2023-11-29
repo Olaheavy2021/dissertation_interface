@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Dissertation.Application.Department.Commands.DisableDepartment;
 using Dissertation.Application.Department.Commands.EnableDepartment;
 using Dissertation.Application.DTO.Response;

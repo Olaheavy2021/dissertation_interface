@@ -1,10 +1,10 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using MediatR;
 using Shared.DTO;
 
-namespace Dissertation.Application.SupervisorInvite.Commands.ConfirmSupervisorInvite;
+namespace Dissertation.Application.StudentInvite.Commands.ConfirmStudentInvite;
 
-public sealed record ConfirmSupervisorInviteCommand(
-    string StaffId,
+public sealed record ConfirmStudentInviteCommand(
+    string StudentId,
     string InvitationCode
-) : IRequest<ResponseDto<GetSupervisorInvite>>;
+) : IRequest<ResponseDto<GetStudentInvite>>;

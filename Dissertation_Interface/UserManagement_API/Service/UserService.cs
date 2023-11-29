@@ -258,7 +258,7 @@ public class UserService : IUserService
                 response.IsSuccess = false;
                 response.Message = "Username already exists for another user";
                 await this._messageBus.PublishAuditLog(EventType.EditUser,
-                    this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError,request.Email);
+                    this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError, request.Email);
                 return response;
             }
         }
@@ -296,7 +296,7 @@ public class UserService : IUserService
             LastName = applicationUser.LastName,
             IsLockedOut = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow,
             EmailConfirmed = applicationUser.EmailConfirmed,
-            Status  =  applicationUser.LockoutEnd >= DateTimeOffset.UtcNow
+            Status = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow
                 ? UserStatus.Deactivated
                 : applicationUser.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive
         };

@@ -1,19 +1,17 @@
-﻿using Dissertation.Domain.Enums;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 using Shared.Constants;
 using Shared.DTO;
-using Shared.Helpers;
 
-namespace Dissertation.Application.SupervisorInvite.Commands.CreateSupervisorInvite;
+namespace Dissertation.Application.StudentInvite.Commands.CreateStudentInvite;
 
-public class CreateSupervisorInviteCommandValidator : AbstractValidator<CreateSupervisorInviteCommand>
+public class CreateStudentInviteCommandValidator : AbstractValidator<CreateStudentInviteCommand>
 {
     private readonly IUnitOfWork _db;
     private readonly IUserApiService _userApiService;
 
-    public CreateSupervisorInviteCommandValidator(IUnitOfWork db, IUserApiService userApiService)
+    public CreateStudentInviteCommandValidator(IUnitOfWork db, IUserApiService userApiService)
     {
         this._db = db;
         this._userApiService = userApiService;
@@ -28,7 +26,7 @@ public class CreateSupervisorInviteCommandValidator : AbstractValidator<CreateSu
             .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50)
             .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace);
 
-        RuleFor(p => p.StaffId)
+        RuleFor(p => p.StudentId)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50)
             .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace);
@@ -41,47 +39,38 @@ public class CreateSupervisorInviteCommandValidator : AbstractValidator<CreateSu
             .EmailAddress();
 
         RuleFor(q => q)
-            .MustAsync(DoesEmailExistsAsStudentOrSupervisor)
-            .WithMessage("This email already exists for a Student or Supervisor")
+            .MustAsync(DoesUserWithEmailExists)
+            .WithMessage("This email already exists for a user")
             .OverridePropertyName("Email");
 
         RuleFor(q => q)
-            .MustAsync(DoesUserNameExistsAsStudentOrSupervisor)
-            .WithMessage("This username already exists for a Student or Supervisor")
-            .OverridePropertyName("StaffId");
+            .MustAsync(DoesUserWithUserNameExists)
+            .WithMessage("This username already exists for a user")
+            .OverridePropertyName("StudentId");
 
         RuleFor(q => q)
             .MustAsync(DoesRequestHaveActiveInvite)
-            .WithMessage("The supervisor has an active invite for either the email or the staff id")
-            .OverridePropertyName("StaffId");
+            .WithMessage("The student has an active invite for either the email or the student id")
+            .OverridePropertyName("StudentId");
     }
 
-    private async Task<bool> DoesEmailExistsAsStudentOrSupervisor(CreateSupervisorInviteCommand request, CancellationToken token)
+    private async Task<bool> DoesUserWithEmailExists(CreateStudentInviteCommand request, CancellationToken token)
     {
-       ResponseDto<GetUserDto> response = await this._userApiService.GetUserByEmail(request.Email);
-       if (!response.IsSuccess) return true;
-       var isStudentOrSupervisor = response.Result!.Role.Any(role => role.Equals(Roles.RoleStudent, StringComparison.OrdinalIgnoreCase))
-                                   || response.Result!.Role.Any(role =>
-                                       role.Equals(Roles.RoleSupervisor, StringComparison.OrdinalIgnoreCase));
-       return !isStudentOrSupervisor;
+        ResponseDto<GetUserDto> response = await this._userApiService.GetUserByEmail(request.Email);
+        return !response.IsSuccess;
     }
 
-    private async Task<bool> DoesUserNameExistsAsStudentOrSupervisor(CreateSupervisorInviteCommand request, CancellationToken token)
+    private async Task<bool> DoesUserWithUserNameExists(CreateStudentInviteCommand request, CancellationToken token)
     {
-        ResponseDto<GetUserDto> response = await this._userApiService.GetUserByUserName(request.StaffId);
-        if (!response.IsSuccess) return true;
-
-        var isStudentOrSupervisor = response.Result!.Role.Any(role => role.Equals(Roles.RoleStudent, StringComparison.OrdinalIgnoreCase))
-                                    || response.Result!.Role.Any(role =>
-                                        role.Equals(Roles.RoleSupervisor, StringComparison.OrdinalIgnoreCase));
-        return !isStudentOrSupervisor;
+        ResponseDto<GetUserDto> response = await this._userApiService.GetUserByUserName(request.StudentId);
+        return !response.IsSuccess;
     }
 
-    private async Task<bool> DoesRequestHaveActiveInvite(CreateSupervisorInviteCommand request, CancellationToken token)
+    private async Task<bool> DoesRequestHaveActiveInvite(CreateStudentInviteCommand request, CancellationToken token)
     {
-        Domain.Entities.SupervisorInvite? supervisorInvite = await this._db.SupervisorInviteRepository.GetFirstOrDefaultAsync(x =>(
-            x.StaffId == request.StaffId.ToLower() || x.Email == request.Email.ToLower()) && x.ExpiryDate.Date > DateTime.UtcNow.Date);
+        Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(x => (
+            x.StudentId == request.StudentId.ToLower() || x.Email == request.Email.ToLower()) && x.ExpiryDate.Date > DateTime.UtcNow.Date);
 
-        return supervisorInvite == null;
+        return studentInvite == null;
     }
 }

@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
 using Shared.Constants;
@@ -69,7 +69,7 @@ public class RegisterSupervisorCommandHandler : IRequestHandler<RegisterSupervis
             return responseFromUserApi;
         }
 
-        var response = new ResponseDto<string> { IsSuccess = false, Result = ErrorMessages.DefaultError, Message = "Invalid Invitation code"};
+        var response = new ResponseDto<string> { IsSuccess = false, Result = ErrorMessages.DefaultError, Message = "Invalid Invitation code" };
         return response;
     }
 }

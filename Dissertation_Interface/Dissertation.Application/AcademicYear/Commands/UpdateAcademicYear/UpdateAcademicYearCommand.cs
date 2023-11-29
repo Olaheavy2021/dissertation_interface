@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using MediatR;
 using Shared.DTO;
 
@@ -8,4 +8,4 @@ public sealed record UpdateAcademicYearCommand(
     DateTime StartDate,
     DateTime EndDate,
     long Id
-    ): IRequest<ResponseDto<GetAcademicYear>>;
+    ) : IRequest<ResponseDto<GetAcademicYear>>;

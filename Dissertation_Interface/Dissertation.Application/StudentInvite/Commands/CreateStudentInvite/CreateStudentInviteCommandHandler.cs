@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -37,13 +37,24 @@ public class CreateStudentInviteCommandHandler : IRequestHandler<CreateStudentIn
     {
         this._logger.LogInformation("Attempting to Create Student Invite for this {email}", request.Email);
         var response = new ResponseDto<GetStudentInvite>();
+
+        //get active cohort
+        Domain.Entities.DissertationCohort? cohort = await this._db.DissertationCohortRepository.GetActiveDissertationCohort();
+        if (cohort == null)
+        {
+            response.IsSuccess = false;
+            response.Message = "Kindly initiate a new and active dissertation cohort before inviting Students";
+            return response;
+        }
+
         var invitationCode = InviteCodeGenerator.GenerateCode(8);
         var studentInvite = Domain.Entities.StudentInvite.Create(
            StringHelpers.CapitalizeFirstLetterAndLowercaseRest(request.LastName),
-           StringHelpers.CapitalizeFirstLetterAndLowercaseRest(request.FirstName) ,
+           StringHelpers.CapitalizeFirstLetterAndLowercaseRest(request.FirstName),
             request.StudentId.ToLower(),
             request.Email.ToLower(),
-            invitationCode
+            invitationCode,
+           cohort.Id
         );
 
         await this._db.StudentInviteRepository.AddAsync(studentInvite);
@@ -80,4 +91,3 @@ public class CreateStudentInviteCommandHandler : IRequestHandler<CreateStudentIn
             this._serviceBusSettings.ServiceBusConnectionString);
     }
 }
-

@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.AcademicYear.Queries.GetListOfAcademicYear;
+using Dissertation.Application.AcademicYear.Queries.GetListOfAcademicYear;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Pagination;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -29,7 +29,9 @@ public class GetListOfAcademicYearQueryHandlerTest
     {
         var parameters = new AcademicYearPaginationParameters()
         {
-            PageSize = 10, PageNumber = 1, SearchByYear = 2023
+            PageSize = 10,
+            PageNumber = 1,
+            SearchByYear = 2023
         };
         GetListOfAcademicYearQuery query = new(parameters);
         this._unitOfWork
@@ -44,4 +46,3 @@ public class GetListOfAcademicYearQueryHandlerTest
         response.IsSuccess.Should().BeTrue();
     }
 }
-

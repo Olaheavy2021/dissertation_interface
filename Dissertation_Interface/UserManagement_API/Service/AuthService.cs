@@ -104,6 +104,44 @@ public class AuthService : IAuthService
         return response;
     }
 
+    public async Task<ResponseDto<string>> RegisterStudent(StudentOrSupervisorRegistrationDto registrationRequestDto)
+    {
+        this._logger.LogInformation("Processing student registration request");
+        var response = new ResponseDto<string>();
+
+        var registrationRequest = new RegistrationRequestDto()
+        {
+            Password = registrationRequestDto.Password,
+            FirstName = registrationRequestDto.FirstName,
+            LastName = registrationRequestDto.LastName,
+            UserName = registrationRequestDto.UserName,
+            Email = registrationRequestDto.Email,
+            Role = Roles.RoleStudent
+        };
+        ResponseDto<string> registrationResponse = await Register(registrationRequest);
+
+        if (registrationResponse.IsSuccess)
+        {
+            //confirm email and return the userId
+            await ConfirmUserEmail(registrationRequest.Email);
+            response.IsSuccess = true;
+            response.Result = registrationResponse.Result;
+            response.Message = SuccessMessages.DefaultSuccess;
+
+            //publish audit log for supervisor registration
+        }
+        else
+        {
+            response.IsSuccess = registrationResponse.IsSuccess;
+            response.Result = ErrorMessages.DefaultError;
+            response.Message = registrationResponse.Message;
+
+            //publish audit log for supervisor registration
+        }
+
+        return response;
+    }
+
     public async Task<ResponseDto<string>> RegisterSupervisor(StudentOrSupervisorRegistrationDto registrationRequestDto)
     {
         this._logger.LogInformation("Processing supervisor registration request");
@@ -157,12 +195,12 @@ public class AuthService : IAuthService
         if (registrationResponse.IsSuccess)
         {
             //confirm email and return the userId
-           await ConfirmUserEmail(registrationRequest.Email);
-           response.IsSuccess = true;
-           response.Result = registrationResponse.Result;
-           response.Message = SuccessMessages.DefaultSuccess;
+            await ConfirmUserEmail(registrationRequest.Email);
+            response.IsSuccess = true;
+            response.Result = registrationResponse.Result;
+            response.Message = SuccessMessages.DefaultSuccess;
 
-           //publish audit log for supervisor registration
+            //publish audit log for supervisor registration
         }
         else
         {
@@ -188,7 +226,7 @@ public class AuthService : IAuthService
         return user;
     }
 
-    public async Task<ResponseDto<string>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto,  string? loggedInAdminEmail)
+    public async Task<ResponseDto<string>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto, string? loggedInAdminEmail)
     {
         this._logger.LogInformation("Processing admin register request {@AdminRegistrationRequestDto}", registrationRequestDto);
 

@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -9,7 +9,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.AcademicYear.Commands.UpdateAcademicYear;
 
-public class UpdateAcademicYearCommandHandler: IRequestHandler<UpdateAcademicYearCommand, ResponseDto<GetAcademicYear>>
+public class UpdateAcademicYearCommandHandler : IRequestHandler<UpdateAcademicYearCommand, ResponseDto<GetAcademicYear>>
 {
     private readonly IAppLogger<UpdateAcademicYearCommandHandler> _logger;
     private readonly IUnitOfWork _db;

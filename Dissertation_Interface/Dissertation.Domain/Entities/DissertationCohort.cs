@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using Dissertation.Domain.DomainHelper;
 using Dissertation.Domain.Enums;
 
 namespace Dissertation.Domain.Entities;
 
-public class DissertationCohort: AuditableEntity<long>
+public class DissertationCohort : AuditableEntity<long>
 {
     public DateTime StartDate { get; set; }
 
@@ -29,6 +29,6 @@ public class DissertationCohort: AuditableEntity<long>
         AcademicYearId = academicYearId;
     }
 
-    public static DissertationCohort Create(DateTime endDate, DateTime startDate, DateTime supervisionChoiceDeadline,  long academicYearId) =>
+    public static DissertationCohort Create(DateTime endDate, DateTime startDate, DateTime supervisionChoiceDeadline, long academicYearId) =>
         new(startDate, endDate, supervisionChoiceDeadline, academicYearId);
 }

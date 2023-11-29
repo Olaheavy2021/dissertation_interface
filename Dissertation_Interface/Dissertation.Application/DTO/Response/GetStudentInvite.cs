@@ -1,6 +1,22 @@
-﻿namespace Dissertation.Application.DTO.Response;
+using Dissertation.Domain.Enums;
+
+namespace Dissertation.Application.DTO.Response;
 
 public class GetStudentInvite
 {
-    
+    public long Id { get; set; }
+
+    public string LastName { get; set; } = default!;
+
+    public string FirstName { get; set; } = default!;
+
+    public string StudentId { get; set; } = default!;
+
+    public string Email { get; set; } = default!;
+
+    public DissertationConfigStatus Status { get; set; }
+
+    public DateTime ExpiryDate { get; set; }
+
+    public void UpdateStatus() => Status = DateTime.UtcNow.Date > ExpiryDate.Date ? DissertationConfigStatus.Expired : DissertationConfigStatus.Active;
 }

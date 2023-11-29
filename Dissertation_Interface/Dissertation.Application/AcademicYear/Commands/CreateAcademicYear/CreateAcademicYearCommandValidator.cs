@@ -1,4 +1,5 @@
-﻿using Dissertation.Infrastructure.Persistence.IRepository;
+using Dissertation.Application.Utility;
+using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 
 namespace Dissertation.Application.AcademicYear.Commands.CreateAcademicYear;
@@ -29,7 +30,7 @@ public class CreateAcademicYearCommandValidator : AbstractValidator<CreateAcadem
         RuleFor(x => x.EndDate)
             .NotEmpty().WithMessage("End Date is required");
         RuleFor(q => q)
-            .Must(IsEndDateJuly).WithMessage("The End Month must be August")
+            .Must(IsEndDateAugust).WithMessage("The End Month must be August")
             .OverridePropertyName("EndDate");
     }
 
@@ -42,8 +43,8 @@ public class CreateAcademicYearCommandValidator : AbstractValidator<CreateAcadem
        request.EndDate.Date.Year - request.StartDate.Date.Year == 1;
 
     private static bool IsStartDateSeptember(CreateAcademicYearCommand request) =>
-        request.StartDate.Date.Month == 9;
+        request.StartDate.Date.Month == MonthConstants.MonthConstantSeptember;
 
-    private static bool IsEndDateJuly(CreateAcademicYearCommand request) =>
-        request.EndDate.Date.Month == 8;
+    private static bool IsEndDateAugust(CreateAcademicYearCommand request) =>
+        request.EndDate.Date.Month == MonthConstants.MonthConstantAugust;
 }

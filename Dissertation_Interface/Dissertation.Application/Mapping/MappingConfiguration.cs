@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Dissertation.Application.DTO.Response;
 using Mapster;
 using MapsterMapper;

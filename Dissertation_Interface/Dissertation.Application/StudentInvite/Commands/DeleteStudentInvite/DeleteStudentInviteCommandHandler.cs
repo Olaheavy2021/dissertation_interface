@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -28,7 +28,7 @@ public class DeleteStudentInviteCommandHandler : IRequestHandler<DeleteStudentIn
     {
         var response = new ResponseDto<GetStudentInvite>();
 
-        //fetch the supervision invite from the database
+        //fetch the student invite from the database
         Domain.Entities.StudentInvite? studentInvite =
             await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id);
 
@@ -36,14 +36,6 @@ public class DeleteStudentInviteCommandHandler : IRequestHandler<DeleteStudentIn
         {
             this._logger.LogError("No Student Invite found with {ID}", request.Id);
             throw new NotFoundException(nameof(Domain.Entities.StudentInvite), request.Id);
-        }
-
-        if (DateTime.UtcNow.Date > studentInvite.ExpiryDate.Date)
-        {
-            response.IsSuccess = false;
-            response.Message = "Student Invite is not in an active status. Invalid Request";
-
-            return response;
         }
 
         this._db.StudentInviteRepository.Remove(studentInvite);

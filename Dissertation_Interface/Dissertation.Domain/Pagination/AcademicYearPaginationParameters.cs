@@ -1,4 +1,4 @@
-﻿using Shared.Helpers;
+using Shared.Helpers;
 
 namespace Dissertation.Domain.Pagination;
 

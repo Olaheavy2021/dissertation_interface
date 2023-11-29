@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Utility;
+using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 
@@ -48,20 +48,20 @@ public class CreateDissertationCohortCommandValidator : AbstractValidator<Create
 
     private async Task<bool> IsStartDateValid(CreateDissertationCohortCommand request, CancellationToken token)
     {
-       //must be either September and the start year of the session for the first one
-       //must be either May and the end year of the session for the second one
-       var doesCohortExist =
-           await this._db.DissertationCohortRepository.AnyAsync(a => a.AcademicYearId == request.AcademicYearId);
+        //must be either September and the start year of the session for the first one
+        //must be either May and the end year of the session for the second one
+        var doesCohortExist =
+            await this._db.DissertationCohortRepository.AnyAsync(a => a.AcademicYearId == request.AcademicYearId);
 
-       Domain.Entities.AcademicYear? academicYear =
-           await this._db.AcademicYearRepository.GetFirstOrDefaultAsync(a => a.Id == request.AcademicYearId);
+        Domain.Entities.AcademicYear? academicYear =
+            await this._db.AcademicYearRepository.GetFirstOrDefaultAsync(a => a.Id == request.AcademicYearId);
 
-       if (!doesCohortExist)
-       {
-           return request.StartDate.Date.Month == MonthConstants.MonthConstantSeptember && academicYear != null && request.StartDate.Year == academicYear.StartDate.Year && request.StartDate.Date >= academicYear.StartDate.Date;
-       }
+        if (!doesCohortExist)
+        {
+            return request.StartDate.Date.Month == MonthConstants.MonthConstantSeptember && academicYear != null && request.StartDate.Year == academicYear.StartDate.Year && request.StartDate.Date >= academicYear.StartDate.Date;
+        }
 
-       return request.StartDate.Date.Month == MonthConstants.MonthConstantMay && academicYear != null && request.StartDate.Year == academicYear.EndDate.Year;
+        return request.StartDate.Date.Month == MonthConstants.MonthConstantMay && academicYear != null && request.StartDate.Year == academicYear.EndDate.Year;
     }
 
 

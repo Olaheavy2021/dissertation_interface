@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using MediatR;
 using Shared.DTO;
 
@@ -9,4 +9,4 @@ public sealed record CreateStudentInviteCommand(
     string FirstName,
     string StudentId,
     string Email
-    ) : IRequest<ResponseDto<GetSupervisorInvite>>;
+    ) : IRequest<ResponseDto<GetStudentInvite>>;

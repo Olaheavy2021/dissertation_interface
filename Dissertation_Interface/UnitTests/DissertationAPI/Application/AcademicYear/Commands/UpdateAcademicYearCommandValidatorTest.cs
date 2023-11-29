@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.AcademicYear.Commands.UpdateAcademicYear;
+using Dissertation.Application.AcademicYear.Commands.UpdateAcademicYear;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using Moq;
 

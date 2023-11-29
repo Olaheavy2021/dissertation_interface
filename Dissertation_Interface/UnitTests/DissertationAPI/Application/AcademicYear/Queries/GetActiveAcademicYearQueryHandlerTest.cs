@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.AcademicYear.Queries.GetActiveAcademicYear;
+using Dissertation.Application.AcademicYear.Queries.GetActiveAcademicYear;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentAssertions;
@@ -47,7 +47,7 @@ public class GetActiveAcademicYearQueryHandlerTest
         GetActiveAcademicYearQuery query = new();
         this._unitOfWork
             .Setup(x => x.AcademicYearRepository.GetActiveAcademicYear())
-            .ReturnsAsync((Dissertation.Domain.Entities.AcademicYear) null!);
+            .ReturnsAsync((Dissertation.Domain.Entities.AcademicYear)null!);
 
         Assert.ThrowsAsync<NotFoundException>(async () =>
         {

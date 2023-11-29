@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -40,7 +40,7 @@ public class CreateSupervisorInviteCommandHandler : IRequestHandler<CreateSuperv
         var invitationCode = InviteCodeGenerator.GenerateCode(8);
         var supervisionInvite = Domain.Entities.SupervisorInvite.Create(
            StringHelpers.CapitalizeFirstLetterAndLowercaseRest(request.LastName),
-           StringHelpers.CapitalizeFirstLetterAndLowercaseRest(request.FirstName) ,
+           StringHelpers.CapitalizeFirstLetterAndLowercaseRest(request.FirstName),
             request.StaffId.ToLower(),
             request.Email.ToLower(),
             invitationCode
@@ -80,4 +80,3 @@ public class CreateSupervisorInviteCommandHandler : IRequestHandler<CreateSuperv
             this._serviceBusSettings.ServiceBusConnectionString);
     }
 }
-

@@ -1,8 +1,8 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Dissertation.Application.Common.Behaviour;
 using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dissertation.Application.Extensions;
 

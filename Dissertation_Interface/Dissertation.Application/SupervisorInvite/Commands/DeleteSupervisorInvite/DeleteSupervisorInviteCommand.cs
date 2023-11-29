@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using MediatR;
 using Shared.DTO;
 
@@ -6,4 +6,4 @@ namespace Dissertation.Application.SupervisorInvite.Commands.DeleteSupervisorInv
 
 public sealed record DeleteSupervisorInviteCommand(
     long Id
-): IRequest<ResponseDto<GetSupervisorInvite>>;
+) : IRequest<ResponseDto<GetSupervisorInvite>>;

@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Course.Commands.CreateCourse;
+using Dissertation.Application.Course.Commands.CreateCourse;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 

@@ -1,4 +1,4 @@
-﻿using Bogus;
+using Bogus;
 using Dissertation.Application.DTO.Request;
 using Dissertation.Domain.Entities;
 using Shared.Helpers;
@@ -41,8 +41,10 @@ public class DissertationCohortMocks
     public static PagedList<DissertationCohort> GetPaginatedResponse()
     {
         DissertationCohort dissertationCohort = GetFirstOrDefaultResponse();
-        var listOfDissertationCohort = new List<DissertationCohort>();
-        listOfDissertationCohort.Add(dissertationCohort);
+        var listOfDissertationCohort = new List<DissertationCohort>
+        {
+            dissertationCohort
+        };
 
         var response = new PagedList<DissertationCohort>(listOfDissertationCohort, 1, 1, 10);
 

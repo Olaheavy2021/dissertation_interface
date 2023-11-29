@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -10,7 +10,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.AcademicYear.Queries.GetActiveAcademicYear;
 
-public class GetActiveAcademicYearQueryHandler: IRequestHandler<GetActiveAcademicYearQuery, ResponseDto<GetAcademicYear>>
+public class GetActiveAcademicYearQueryHandler : IRequestHandler<GetActiveAcademicYearQuery, ResponseDto<GetAcademicYear>>
 {
     private readonly IAppLogger<GetActiveAcademicYearQueryHandler> _logger;
     private readonly IUnitOfWork _db;

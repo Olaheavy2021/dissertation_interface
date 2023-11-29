@@ -1,4 +1,4 @@
-﻿namespace Dissertation.Domain.Interfaces;
+namespace Dissertation.Domain.Interfaces;
 
 public interface IRequestHelper
 {

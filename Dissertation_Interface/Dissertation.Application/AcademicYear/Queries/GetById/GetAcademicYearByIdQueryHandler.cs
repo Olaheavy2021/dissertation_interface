@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -15,7 +15,7 @@ public class GetAcademicYearByIdQueryHandler : IRequestHandler<GetAcademicYearBy
     private readonly IUnitOfWork _db;
     private readonly IMapper _mapper;
 
-    public GetAcademicYearByIdQueryHandler(IAppLogger<GetAcademicYearByIdQueryHandler> logger,  IUnitOfWork db, IMapper mapper)
+    public GetAcademicYearByIdQueryHandler(IAppLogger<GetAcademicYearByIdQueryHandler> logger, IUnitOfWork db, IMapper mapper)
     {
         this._logger = logger;
         this._db = db;

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Notification_API.Data;

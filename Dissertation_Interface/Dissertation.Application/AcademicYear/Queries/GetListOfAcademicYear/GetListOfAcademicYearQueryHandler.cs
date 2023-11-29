@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
@@ -24,7 +24,7 @@ public class GetListOfAcademicYearQueryHandler : IRequestHandler<GetListOfAcadem
     {
         var response = new ResponseDto<PaginatedAcademicYearListDto>();
         this._logger.LogInformation("Attempting to retrieve list of AcademicYear");
-        PagedList<Domain.Entities.AcademicYear> academicYears =  this._db.AcademicYearRepository.GetListOfAcademicYears(request.Parameters);
+        PagedList<Domain.Entities.AcademicYear> academicYears = this._db.AcademicYearRepository.GetListOfAcademicYears(request.Parameters);
 
         var mappedAcademicYears = new PagedList<GetAcademicYear>(
             academicYears.Select(MapToAcademicYearDto).ToList(),

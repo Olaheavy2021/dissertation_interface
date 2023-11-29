@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -9,7 +9,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.Course.Queries.GetListOfCourse;
 
-public class GetListOfCourseQueryHandler : IRequestHandler<GetListOfCourseQuery,ResponseDto<PaginatedCourseListDto>>
+public class GetListOfCourseQueryHandler : IRequestHandler<GetListOfCourseQuery, ResponseDto<PaginatedCourseListDto>>
 {
     private readonly IAppLogger<GetListOfCourseQueryHandler> _logger;
     private readonly IUnitOfWork _db;
@@ -27,7 +27,7 @@ public class GetListOfCourseQueryHandler : IRequestHandler<GetListOfCourseQuery,
     {
         var response = new ResponseDto<PaginatedCourseListDto>();
         this._logger.LogInformation("Attempting to retrieve list of Course");
-        PagedList<Domain.Entities.Course> course =  this._db.CourseRepository.GetListOfCourse(request.Parameters);
+        PagedList<Domain.Entities.Course> course = this._db.CourseRepository.GetListOfCourse(request.Parameters);
 
         var mappedCourse = new PagedList<GetCourse>(
             course.Select(MapToCourseDto).ToList(),
@@ -52,7 +52,7 @@ public class GetListOfCourseQueryHandler : IRequestHandler<GetListOfCourseQuery,
         return Task.FromResult(response);
     }
 
-    private  GetCourse MapToCourseDto(
+    private GetCourse MapToCourseDto(
         Domain.Entities.Course course)
     {
         GetDepartment mappedDepartment = this._mapper.Map<GetDepartment>(course.Department);

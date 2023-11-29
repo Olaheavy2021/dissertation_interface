@@ -1,8 +1,8 @@
-﻿using Dissertation.Application.DTO.Request;
+using Dissertation.Application.DTO.Request;
 using Dissertation.Domain.Entities;
 using Dissertation.Domain.Enums;
-using UnitTests.DissertationAPI.Mocks;
 using FluentAssertions;
+using UnitTests.DissertationAPI.Mocks;
 
 namespace UnitTests.DissertationAPI.Domain;
 
@@ -19,6 +19,6 @@ public class DepartmentTests
 
         //Assert
         result.Name.Should().Be(request.Name);
-        result.Status.Should().Be( DissertationConfigStatus.Active);
+        result.Status.Should().Be(DissertationConfigStatus.Active);
     }
 }

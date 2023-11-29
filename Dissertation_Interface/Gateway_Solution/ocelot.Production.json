@@ -1,6 +1,17 @@
 ﻿{
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/v1/Student/register",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Student/register",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/Supervisor/register",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [

@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 using Shared.Constants;
@@ -6,14 +6,14 @@ using Shared.DTO;
 
 namespace Dissertation.Application.SupervisorInvite.Commands.UpdateSupervisorInvite;
 
-public class UpdateSupervisorInviteCommandValidator: AbstractValidator<UpdateSupervisorInviteCommand>
+public class UpdateSupervisorInviteCommandValidator : AbstractValidator<UpdateSupervisorInviteCommand>
 {
     private readonly IUnitOfWork _db;
     private readonly IUserApiService _userApiService;
 
     public UpdateSupervisorInviteCommandValidator(IUnitOfWork db, IUserApiService userApiService)
     {
-         this._db = db;
+        this._db = db;
         this._userApiService = userApiService;
 
         RuleFor(p => p.FirstName)
@@ -64,8 +64,8 @@ public class UpdateSupervisorInviteCommandValidator: AbstractValidator<UpdateSup
         if (!response.IsSuccess) return true;
         if (request.Email == response.Result!.User?.Email) return true;
 
-        var isAStudent =  response.Result!.Role.Contains(Roles.RoleStudent);
-        var isASupervisor =  response.Result!.Role.Contains(Roles.RoleSupervisor);
+        var isAStudent = response.Result!.Role.Contains(Roles.RoleStudent);
+        var isASupervisor = response.Result!.Role.Contains(Roles.RoleSupervisor);
         return !isAStudent && !isASupervisor;
     }
 
@@ -75,8 +75,8 @@ public class UpdateSupervisorInviteCommandValidator: AbstractValidator<UpdateSup
         if (!response.IsSuccess) return true;
         if (request.StaffId == response.Result!.User?.UserName) return true;
 
-        var isAStudent =  response.Result!.Role.Contains(Roles.RoleStudent);
-        var isASupervisor =  response.Result!.Role.Contains(Roles.RoleSupervisor);
+        var isAStudent = response.Result!.Role.Contains(Roles.RoleStudent);
+        var isASupervisor = response.Result!.Role.Contains(Roles.RoleSupervisor);
         return !isAStudent && !isASupervisor;
     }
 

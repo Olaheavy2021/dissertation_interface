@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Utility;
+using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 
@@ -35,28 +35,28 @@ public class UpdateDissertationCohortCommandValidator : AbstractValidator<Update
 
     private async Task<bool> IsStartDateValid(UpdateDissertationCohortCommand request, CancellationToken token)
     {
-       //must be either September and the start year of the session for the first one
-       //must be either May and the end year of the session for the second one
+        //must be either September and the start year of the session for the first one
+        //must be either May and the end year of the session for the second one
 
-       Domain.Entities.DissertationCohort? dissertationCohort =
-           await this._db.DissertationCohortRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id,includes: x => x.AcademicYear);
+        Domain.Entities.DissertationCohort? dissertationCohort =
+            await this._db.DissertationCohortRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id, includes: x => x.AcademicYear);
 
-       if (dissertationCohort != null)
-       {
-           if (dissertationCohort.StartDate.Month == MonthConstants.MonthConstantSeptember)
-           {
-               return request.StartDate.Date.Month == MonthConstants.MonthConstantSeptember && request.StartDate.Year == dissertationCohort.AcademicYear.StartDate.Year && request.StartDate >= dissertationCohort.AcademicYear.StartDate;
-           }
+        if (dissertationCohort != null)
+        {
+            if (dissertationCohort.StartDate.Month == MonthConstants.MonthConstantSeptember)
+            {
+                return request.StartDate.Date.Month == MonthConstants.MonthConstantSeptember && request.StartDate.Year == dissertationCohort.AcademicYear.StartDate.Year && request.StartDate >= dissertationCohort.AcademicYear.StartDate;
+            }
 
-           if (dissertationCohort.StartDate.Month == MonthConstants.MonthConstantMay)
-           {
-               return request.StartDate.Date.Month == MonthConstants.MonthConstantMay  && request.StartDate.Year == dissertationCohort.AcademicYear.EndDate.Year;
-           }
+            if (dissertationCohort.StartDate.Month == MonthConstants.MonthConstantMay)
+            {
+                return request.StartDate.Date.Month == MonthConstants.MonthConstantMay && request.StartDate.Year == dissertationCohort.AcademicYear.EndDate.Year;
+            }
 
-           return false;
-       }
+            return false;
+        }
 
-       return false;
+        return false;
     }
 
 
@@ -66,7 +66,7 @@ public class UpdateDissertationCohortCommandValidator : AbstractValidator<Update
         //must be either August and the end year of the session for the second one
 
         Domain.Entities.DissertationCohort? dissertationCohort =
-            await this._db.DissertationCohortRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id,includes: x => x.AcademicYear);
+            await this._db.DissertationCohortRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id, includes: x => x.AcademicYear);
 
         if (dissertationCohort != null)
         {
@@ -77,7 +77,7 @@ public class UpdateDissertationCohortCommandValidator : AbstractValidator<Update
 
             if (dissertationCohort.EndDate.Month == MonthConstants.MonthConstantAugust)
             {
-                return request.EndDate.Date.Month == MonthConstants.MonthConstantAugust  && request.EndDate.Year == dissertationCohort.AcademicYear.EndDate.Year && request.EndDate.Date <= dissertationCohort.AcademicYear.EndDate.Date;
+                return request.EndDate.Date.Month == MonthConstants.MonthConstantAugust && request.EndDate.Year == dissertationCohort.AcademicYear.EndDate.Year && request.EndDate.Date <= dissertationCohort.AcademicYear.EndDate.Date;
             }
 
             return false;

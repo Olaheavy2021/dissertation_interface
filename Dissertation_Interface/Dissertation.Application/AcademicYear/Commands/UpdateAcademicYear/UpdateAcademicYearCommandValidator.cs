@@ -1,10 +1,10 @@
-﻿using Dissertation.Application.Utility;
+using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 
 namespace Dissertation.Application.AcademicYear.Commands.UpdateAcademicYear;
 
-public class  UpdateAcademicYearCommandValidator : AbstractValidator<UpdateAcademicYearCommand>
+public class UpdateAcademicYearCommandValidator : AbstractValidator<UpdateAcademicYearCommand>
 {
     private readonly IUnitOfWork _db;
 
@@ -81,7 +81,7 @@ public class  UpdateAcademicYearCommandValidator : AbstractValidator<UpdateAcade
             return false;
         }
 
-        return request.EndDate <  endDate;
+        return request.EndDate < endDate;
     }
 
     private static bool IsStartDateSeptember(UpdateAcademicYearCommand request) =>

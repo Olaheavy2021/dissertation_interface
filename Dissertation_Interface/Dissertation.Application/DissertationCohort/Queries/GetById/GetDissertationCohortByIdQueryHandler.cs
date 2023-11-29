@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -9,13 +9,13 @@ using Shared.Logging;
 
 namespace Dissertation.Application.DissertationCohort.Queries.GetById;
 
-public class GetDissertationCohortByIdQueryHandler: IRequestHandler<GetDissertationCohortByIdQuery, ResponseDto<GetDissertationCohort>>
+public class GetDissertationCohortByIdQueryHandler : IRequestHandler<GetDissertationCohortByIdQuery, ResponseDto<GetDissertationCohort>>
 {
     private readonly IAppLogger<GetDissertationCohortByIdQueryHandler> _logger;
     private readonly IUnitOfWork _db;
     private readonly IMapper _mapper;
 
-    public GetDissertationCohortByIdQueryHandler(IAppLogger<GetDissertationCohortByIdQueryHandler> logger,IUnitOfWork db, IMapper mapper)
+    public GetDissertationCohortByIdQueryHandler(IAppLogger<GetDissertationCohortByIdQueryHandler> logger, IUnitOfWork db, IMapper mapper)
     {
         this._mapper = mapper;
         this._logger = logger;

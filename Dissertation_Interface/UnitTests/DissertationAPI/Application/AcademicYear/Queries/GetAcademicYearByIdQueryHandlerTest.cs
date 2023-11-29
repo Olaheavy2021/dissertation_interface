@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Dissertation.Application.AcademicYear.Queries.GetById;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -54,7 +54,7 @@ public class GetAcademicYearByIdQueryHandlerTest
                 It.IsAny<Expression<Func<Dissertation.Domain.Entities.AcademicYear, bool>>>(),
                 It.IsAny<Func<IQueryable<Dissertation.Domain.Entities.AcademicYear>, IOrderedQueryable<Dissertation.Domain.Entities.AcademicYear>>>(),
                 It.IsAny<Expression<Func<Dissertation.Domain.Entities.AcademicYear, object>>[]>()))
-            .ReturnsAsync((Dissertation.Domain.Entities.AcademicYear) null!);
+            .ReturnsAsync((Dissertation.Domain.Entities.AcademicYear)null!);
 
         Assert.ThrowsAsync<NotFoundException>(async () =>
         {

@@ -2,13 +2,13 @@ using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 using Shared.Constants;
 
-namespace Dissertation.Application.Supervisor.Commands.RegisterSupervisor;
+namespace Dissertation.Application.Student.Commands.RegisterStudent;
 
-public class RegisterSupervisorCommandValidator : AbstractValidator<RegisterSupervisorCommand>
+public class RegisterStudentCommandValidator : AbstractValidator<RegisterStudentCommand>
 {
     private readonly IUnitOfWork _db;
 
-    public RegisterSupervisorCommandValidator(IUnitOfWork db)
+    public RegisterStudentCommandValidator(IUnitOfWork db)
     {
         this._db = db;
 
@@ -31,7 +31,7 @@ public class RegisterSupervisorCommandValidator : AbstractValidator<RegisterSupe
             .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50)
             .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace);
 
-        RuleFor(p => p.StaffId)
+        RuleFor(p => p.StudentId)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField)
             .MaximumLength(50).WithMessage(ErrorMessages.MaximumLength50)
             .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace);
@@ -39,20 +39,20 @@ public class RegisterSupervisorCommandValidator : AbstractValidator<RegisterSupe
         RuleFor(p => p.InvitationCode)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField);
 
-        RuleFor(p => p.DepartmentId)
+        RuleFor(p => p.CourseId)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField);
 
         RuleFor(q => q)
-            .MustAsync(DoesDepartmentExist)
-            .WithMessage("This department does not exist")
-            .OverridePropertyName("DepartmentId");
+            .MustAsync(DoesCourseExist)
+            .WithMessage("This Course does not exist")
+            .OverridePropertyName("CourseId");
 
     }
 
-    private async Task<bool> DoesDepartmentExist(RegisterSupervisorCommand request, CancellationToken token)
+    private async Task<bool> DoesCourseExist(RegisterStudentCommand request, CancellationToken token)
     {
-        Domain.Entities.Department? department = await this._db.DepartmentRepository.GetAsync(x => x.Id == request.DepartmentId);
-        return department != null;
+        Domain.Entities.Course? course = await this._db.CourseRepository.GetAsync(x => x.Id == request.CourseId);
+        return course != null;
     }
 
 }

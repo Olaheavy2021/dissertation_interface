@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Course.Commands.CreateCourse;
+using Dissertation.Application.Course.Commands.CreateCourse;
 using Dissertation.Application.Department.Commands.CreateDepartment;
 using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;

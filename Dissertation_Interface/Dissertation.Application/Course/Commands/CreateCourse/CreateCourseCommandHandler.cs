@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -8,7 +8,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.Course.Commands.CreateCourse;
 
-public class CreateCourseCommandHandler: IRequestHandler<CreateCourseCommand, ResponseDto<GetCourse>>
+public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, ResponseDto<GetCourse>>
 {
     private readonly IAppLogger<CreateCourseCommandHandler> _logger;
     private readonly IUnitOfWork _db;

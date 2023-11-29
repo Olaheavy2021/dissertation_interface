@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using MediatR;
 using Shared.DTO;
 
@@ -10,4 +10,4 @@ public sealed record UpdateDissertationCohortCommand(
     DateTime SupervisionChoiceDeadline,
     long AcademicYearId,
     long Id
-): IRequest<ResponseDto<GetDissertationCohort>>;
+) : IRequest<ResponseDto<GetDissertationCohort>>;

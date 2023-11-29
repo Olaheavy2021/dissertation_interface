@@ -28,7 +28,7 @@ public static class ApplicationBuilderExtensions
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapHealthChecks("/healthz");;
+            endpoints.MapHealthChecks("/healthz"); ;
         });
 
     private static void OnStop() => ServiceBusConsumer?.Stop();

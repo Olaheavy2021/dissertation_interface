@@ -1,5 +1,3 @@
-﻿using System.Linq.Expressions;
-using Dissertation.Application.AcademicYear.Queries.GetActiveAcademicYear;
 using Dissertation.Application.DissertationCohort.Queries.GetActiveDissertationCohort;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -32,10 +30,7 @@ public class GetActiveDissertationCohortQueryHandlerTest
     {
         GetActiveDissertationCohortQuery query = new();
         this._unitOfWork
-            .Setup(x => x.DissertationCohortRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, bool>>>(),
-                It.IsAny<Func<IQueryable<Dissertation.Domain.Entities.DissertationCohort>, IOrderedQueryable<Dissertation.Domain.Entities.DissertationCohort>>>(),
-                It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, object>>[]>()))
+            .Setup(x => x.DissertationCohortRepository.GetActiveDissertationCohort())
             .ReturnsAsync(DissertationCohortMocks.GetFirstOrDefaultResponse());
 
         ResponseDto<GetDissertationCohort> response =
@@ -51,10 +46,7 @@ public class GetActiveDissertationCohortQueryHandlerTest
     {
         GetActiveDissertationCohortQuery query = new();
         this._unitOfWork
-            .Setup(x => x.DissertationCohortRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, bool>>>(),
-                It.IsAny<Func<IQueryable<Dissertation.Domain.Entities.DissertationCohort>, IOrderedQueryable<Dissertation.Domain.Entities.DissertationCohort>>>(),
-                It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, object>>[]>()))
+            .Setup(x => x.DissertationCohortRepository.GetActiveDissertationCohort())
             .ReturnsAsync((Dissertation.Domain.Entities.DissertationCohort)null!);
 
         Assert.ThrowsAsync<NotFoundException>(async () =>

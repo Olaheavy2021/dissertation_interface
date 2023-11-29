@@ -1,4 +1,4 @@
-﻿using Bogus;
+using Bogus;
 using Dissertation.Application.DTO;
 using Dissertation.Domain.Entities;
 using Dissertation.Domain.Enums;
@@ -51,8 +51,10 @@ public static class AcademicYearMocks
     public static PagedList<AcademicYear> GetPaginatedResponse()
     {
         AcademicYear academicYear = GetFirstOrDefaultResponse();
-        var listOfAcademicYear = new List<AcademicYear>();
-        listOfAcademicYear.Add(academicYear);
+        var listOfAcademicYear = new List<AcademicYear>
+        {
+            academicYear
+        };
 
         var response = new PagedList<AcademicYear>(listOfAcademicYear, 1, 1, 10);
 

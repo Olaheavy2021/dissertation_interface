@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Dissertation.Application.AcademicYear.Queries.GetById;
 using Dissertation.Application.DissertationCohort.Queries.GetById;
 using Dissertation.Application.DTO.Response;

@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DissertationCohort.Queries.GetListOfDissertationCohort;
+using Dissertation.Application.DissertationCohort.Queries.GetListOfDissertationCohort;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -11,17 +11,15 @@ using Shared.Logging;
 
 namespace Dissertation.Application.SupervisorInvite.Queries.GetListOfSupervisorInvite;
 
-public class GetSupervisorInviteListQueryHandler : IRequestHandler<GetSupervisorInviteListQuery,ResponseDto<PaginatedSupervisorInvite>>
+public class GetSupervisorInviteListQueryHandler : IRequestHandler<GetSupervisorInviteListQuery, ResponseDto<PaginatedSupervisorInvite>>
 {
     private readonly IAppLogger<GetSupervisorInviteListQueryHandler> _logger;
     private readonly IUnitOfWork _db;
-    private readonly IMapper _mapper;
 
-    public GetSupervisorInviteListQueryHandler(IAppLogger<GetSupervisorInviteListQueryHandler> logger, IUnitOfWork db, IMapper mapper)
+    public GetSupervisorInviteListQueryHandler(IAppLogger<GetSupervisorInviteListQueryHandler> logger, IUnitOfWork db)
     {
         this._db = db;
         this._logger = logger;
-        this._mapper = mapper;
     }
 
 
@@ -30,7 +28,7 @@ public class GetSupervisorInviteListQueryHandler : IRequestHandler<GetSupervisor
     {
         var response = new ResponseDto<PaginatedSupervisorInvite>();
         this._logger.LogInformation("Attempting to retrieve list of Dissertation Cohort");
-        PagedList<Domain.Entities.SupervisorInvite> supervisorInvites =  this._db.SupervisorInviteRepository.GetListOfSupervisorInvites(request.Parameters);
+        PagedList<Domain.Entities.SupervisorInvite> supervisorInvites = this._db.SupervisorInviteRepository.GetListOfSupervisorInvites(request.Parameters);
 
         var mappedSupervisorInvite = new PagedList<GetSupervisorInvite>(
             supervisorInvites.Select(MapToSupervisorInviteDto).ToList(),
@@ -55,7 +53,7 @@ public class GetSupervisorInviteListQueryHandler : IRequestHandler<GetSupervisor
         return Task.FromResult(response);
     }
 
-    private  GetSupervisorInvite MapToSupervisorInviteDto(
+    private GetSupervisorInvite MapToSupervisorInviteDto(
         Domain.Entities.SupervisorInvite supervisorInvite) =>
         new()
         {

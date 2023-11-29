@@ -86,7 +86,7 @@ public class RegisterAdminUnitTest
             this._signInManagerMock?.Object!, this._userManagerMock?.Object!, this._logger?.Object!, this._mapperMock!.Object,
             this._serviceBusSettings?.Object!
         );
-        ResponseDto<string> result = await authService.RegisterAdmin(this._adminRegistrationRequestDto,this._adminRegistrationRequestDto.Email);
+        ResponseDto<string> result = await authService.RegisterAdmin(this._adminRegistrationRequestDto, this._adminRegistrationRequestDto.Email);
         #endregion
 
         #region Assert

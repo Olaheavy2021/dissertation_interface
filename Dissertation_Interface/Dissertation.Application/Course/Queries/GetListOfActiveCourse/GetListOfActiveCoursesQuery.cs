@@ -1,7 +1,7 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using MediatR;
 using Shared.DTO;
 
-namespace Dissertation.Application.Department.Queries.GetListOfActiveDepartment;
+namespace Dissertation.Application.Course.Queries.GetListOfActiveCourse;
 
-public sealed record GetListOfActiveDepartmentQuery() : IRequest<ResponseDto<IEnumerable<GetDepartment>>>;
+public sealed record GetListOfActiveCoursesQuery() : IRequest<ResponseDto<IEnumerable<GetCourse>>>;

@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -16,7 +16,7 @@ public class GetActiveDissertationCohortQueryHandler : IRequestHandler<GetActive
     private readonly IUnitOfWork _db;
     private readonly IMapper _mapper;
 
-    public GetActiveDissertationCohortQueryHandler(IAppLogger<GetActiveDissertationCohortQueryHandler> logger, IUnitOfWork db, IMapper mapper )
+    public GetActiveDissertationCohortQueryHandler(IAppLogger<GetActiveDissertationCohortQueryHandler> logger, IUnitOfWork db, IMapper mapper)
     {
         this._logger = logger;
         this._db = db;

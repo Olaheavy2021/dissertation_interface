@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Dissertation.Application.Utility;
 
@@ -10,7 +10,7 @@ public static class InviteCodeGenerator
         var random = new Random();
         var code = new StringBuilder();
 
-        for (int i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
         {
             code.Append(chars[random.Next(chars.Length)]);
         }

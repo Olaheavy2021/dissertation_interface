@@ -1,4 +1,4 @@
-﻿using Shared.DTO;
+using Shared.DTO;
 
 namespace Dissertation.Domain.Interfaces;
 
@@ -9,5 +9,7 @@ public interface IUserApiService
     Task<ResponseDto<GetUserDto>> GetUserByUserName(string username);
 
     Task<ResponseDto<string>> RegisterSupervisor(StudentOrSupervisorRegistrationDto model);
+
+    Task<ResponseDto<string>> RegisterStudent(StudentOrSupervisorRegistrationDto model);
 
 }

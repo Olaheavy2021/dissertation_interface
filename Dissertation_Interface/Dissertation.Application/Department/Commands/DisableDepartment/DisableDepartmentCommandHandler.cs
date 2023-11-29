@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Department.Commands.EnableDepartment;
+using Dissertation.Application.Department.Commands.EnableDepartment;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -29,7 +29,7 @@ public class DisableDepartmentCommandHandler : IRequestHandler<DisableDepartment
         CancellationToken cancellationToken)
     {
         var response = new ResponseDto<GetDepartment>();
-        
+
         //fetch the department from the database
         Domain.Entities.Department? department =
             await this._db.DepartmentRepository.GetFirstOrDefaultAsync(a => a.Id == request.DepartmentId);
