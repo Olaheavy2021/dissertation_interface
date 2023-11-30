@@ -1,6 +1,7 @@
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Shared.Constants;
 using Shared.DTO;
 
@@ -50,7 +51,7 @@ public class CreateStudentInviteCommandValidator : AbstractValidator<CreateStude
 
         RuleFor(q => q)
             .MustAsync(DoesRequestHaveActiveInvite)
-            .WithMessage("The student has an active invite for either the email or the student id")
+            .WithMessage("The student has an active invite.")
             .OverridePropertyName("StudentId");
     }
 
@@ -68,9 +69,10 @@ public class CreateStudentInviteCommandValidator : AbstractValidator<CreateStude
 
     private async Task<bool> DoesRequestHaveActiveInvite(CreateStudentInviteCommand request, CancellationToken token)
     {
-        Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(x => (
-            x.StudentId == request.StudentId.ToLower() || x.Email == request.Email.ToLower()) && x.ExpiryDate.Date > DateTime.UtcNow.Date);
-
+        Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository
+            .GetFirstOrDefaultAsync(x =>
+                (EF.Functions.Like(x.StudentId, request.StudentId) || EF.Functions.Like(x.Email, request.Email))
+                && x.ExpiryDate.Date > DateTime.UtcNow.Date);
         return studentInvite == null;
     }
 }

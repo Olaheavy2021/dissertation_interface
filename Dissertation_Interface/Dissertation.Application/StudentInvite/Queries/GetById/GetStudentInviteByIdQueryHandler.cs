@@ -26,7 +26,7 @@ public class GetStudentInviteByIdQueryHandler : IRequestHandler<GetStudentInvite
     {
         var response = new ResponseDto<GetStudentInvite>();
         this._logger.LogInformation("Attempting to retrieve a Student Invite by ID {StudentInviteID}", request.Id);
-        Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository.GetAsync(a => a.Id == request.Id);
+        Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository.GetAsync(a => a.Id == request.Id, includes: x=> x.DissertationCohort);
         if (studentInvite is null)
         {
             this._logger.LogError("No Student Invite with ID");

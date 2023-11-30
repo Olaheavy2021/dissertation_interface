@@ -30,7 +30,7 @@ public class DeleteStudentInviteCommandHandler : IRequestHandler<DeleteStudentIn
 
         //fetch the student invite from the database
         Domain.Entities.StudentInvite? studentInvite =
-            await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id);
+            await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id, includes: x=> x.DissertationCohort);
 
         if (studentInvite == null)
         {

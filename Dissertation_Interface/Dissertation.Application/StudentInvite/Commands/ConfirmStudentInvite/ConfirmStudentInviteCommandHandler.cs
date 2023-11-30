@@ -27,7 +27,7 @@ public class ConfirmStudentInviteCommandHandler : IRequestHandler<ConfirmStudent
         var response = new ResponseDto<GetStudentInvite>();
         Domain.Entities.StudentInvite? studentInvite =
             await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(x =>
-                x.StudentId == request.StudentId && x.InvitationCode == request.InvitationCode);
+                x.StudentId == request.StudentId && x.InvitationCode == request.InvitationCode, includes: x=> x.DissertationCohort);
 
         if (studentInvite == null)
         {

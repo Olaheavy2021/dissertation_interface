@@ -37,7 +37,7 @@ public class UpdateStudentInviteCommandHandler : IRequestHandler<UpdateStudentIn
     {
         var response = new ResponseDto<GetStudentInvite>();
         //fetch the student invite from the database
-        Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id);
+        Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id, includes: x=> x.DissertationCohort);
         if (studentInvite == null)
         {
             this._logger.LogError("No Student Invite found with {ID}", request.Id);

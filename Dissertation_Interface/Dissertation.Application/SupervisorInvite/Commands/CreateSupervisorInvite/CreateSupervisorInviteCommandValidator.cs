@@ -2,6 +2,7 @@ using Dissertation.Domain.Enums;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Shared.Constants;
 using Shared.DTO;
 using Shared.Helpers;
@@ -52,7 +53,7 @@ public class CreateSupervisorInviteCommandValidator : AbstractValidator<CreateSu
 
         RuleFor(q => q)
             .MustAsync(DoesRequestHaveActiveInvite)
-            .WithMessage("The supervisor has an active invite for either the email or the staff id")
+            .WithMessage("The supervisor has an active invite.")
             .OverridePropertyName("StaffId");
     }
 
@@ -79,8 +80,10 @@ public class CreateSupervisorInviteCommandValidator : AbstractValidator<CreateSu
 
     private async Task<bool> DoesRequestHaveActiveInvite(CreateSupervisorInviteCommand request, CancellationToken token)
     {
-        Domain.Entities.SupervisorInvite? supervisorInvite = await this._db.SupervisorInviteRepository.GetFirstOrDefaultAsync(x => (
-            x.StaffId == request.StaffId.ToLower() || x.Email == request.Email.ToLower()) && x.ExpiryDate.Date > DateTime.UtcNow.Date);
+        Domain.Entities.SupervisorInvite? supervisorInvite =
+            await this._db.SupervisorInviteRepository.GetFirstOrDefaultAsync(x =>
+                (EF.Functions.Like(x.StaffId, request.StaffId) || EF.Functions.Like(x.Email, request.Email))
+                && x.ExpiryDate.Date > DateTime.UtcNow.Date);
 
         return supervisorInvite == null;
     }

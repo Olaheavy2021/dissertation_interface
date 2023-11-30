@@ -112,6 +112,16 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                         emailType = EmailType.EmailTypeSupervisorInviteEmail;
                         subject = EmailSubject.EmailSubjectForSupervisorInvite;
                         break;
+                    case EmailType.EmailTypeStudentInviteEmail:
+                        emailBody = await GenerateStudentEmailBody(emailDto);
+                        emailType = EmailType.EmailTypeStudentInviteEmail;
+                        subject = EmailSubject.EmailSubjectForStudentInvite;
+                        break;
+                }
+
+                if (string.IsNullOrEmpty(emailBody) || string.IsNullOrEmpty(emailType))
+                {
+                    throw new NotImplementedException("Email Handler has not been implemented");
                 }
 
                 var logEmailDto = new LogEmailRequestDto
@@ -330,6 +340,42 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
         );
 
         return messageBody;
+    }
+
+    private async Task<string> GenerateStudentEmailBody(PublishEmailDto request)
+    {
+        var pathToFile = this._env.WebRootPath
+                         + Path.DirectorySeparatorChar
+                         + "Templates"
+                         + Path.DirectorySeparatorChar
+                         + "EmailTemplates"
+                         + Path.DirectorySeparatorChar
+                         + "Student_Invitation.html";
+
+        var builder = new BodyBuilder();
+
+        using StreamReader sourceReader = File.OpenText(pathToFile);
+        builder.HtmlBody = await sourceReader.ReadToEndAsync();
+
+        //{0} : Subject
+        const string subject = EmailSubject.EmailSubjectForStudentInvite;
+        //{1} : Date
+        //{2} : FirstName
+        var adminEmail = this._sendgridSettings.AdminEmail;
+        //{3} : AdminEmail
+
+        //{4} :Callback URL
+
+        var messageBody = string.Format(builder.HtmlBody,
+            subject,
+            $"{DateTime.Now:dddd, d MMMM yyyy}",
+            request.User?.FirstName,
+            adminEmail,
+            request.CallbackUrl
+        );
+
+        return messageBody;
+
     }
     #endregion
 }

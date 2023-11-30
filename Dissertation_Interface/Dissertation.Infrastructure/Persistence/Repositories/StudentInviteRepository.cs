@@ -24,7 +24,7 @@ public class StudentInviteRepository : GenericRepository<StudentInvite>, IStuden
         // Apply search
         if (!string.IsNullOrEmpty(paginationParameters.SearchByStudentId))
         {
-            sqlQuery.Append(" WHERE Name LIKE @search");
+            sqlQuery.Append(" WHERE StudentId LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByStudentId}%"));
         }
 
@@ -51,6 +51,7 @@ public class StudentInviteRepository : GenericRepository<StudentInvite>, IStuden
         return PagedList<StudentInvite>.ToPagedList(
             this.Context.Set<StudentInvite>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
+                .Include(x => x.DissertationCohort)
                 .OrderByDescending(x => x.CreatedAt), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }

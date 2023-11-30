@@ -16,6 +16,8 @@ public class GetStudentInvite
 
     public DissertationConfigStatus Status { get; set; }
 
+    public GetDissertationCohort DissertationCohort  { get; set; }
+
     public DateTime ExpiryDate { get; set; }
 
     public void UpdateStatus() => Status = DateTime.UtcNow.Date > ExpiryDate.Date ? DissertationConfigStatus.Expired : DissertationConfigStatus.Active;

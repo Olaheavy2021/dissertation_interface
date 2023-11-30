@@ -1,6 +1,7 @@
 using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
+using MapsterMapper;
 using MediatR;
 using Shared.Constants;
 using Shared.DTO;
@@ -13,11 +14,13 @@ public class GetStudentInviteListQueryHandler : IRequestHandler<GetStudentInvite
 {
     private readonly IAppLogger<GetStudentInviteListQueryHandler> _logger;
     private readonly IUnitOfWork _db;
+    private readonly IMapper _mapper;
 
-    public GetStudentInviteListQueryHandler(IAppLogger<GetStudentInviteListQueryHandler> logger, IUnitOfWork db)
+    public GetStudentInviteListQueryHandler(IAppLogger<GetStudentInviteListQueryHandler> logger, IUnitOfWork db, IMapper mapper)
     {
         this._db = db;
         this._logger = logger;
+        this._mapper = mapper;
     }
 
     public async Task<ResponseDto<PaginatedStudentInvite>> Handle(GetStudentInviteListQuery request,
@@ -61,8 +64,10 @@ public class GetStudentInviteListQueryHandler : IRequestHandler<GetStudentInvite
     }
 
     private GetStudentInvite MapToStudentInviteDto(
-        Domain.Entities.StudentInvite studentInvite) =>
-        new()
+        Domain.Entities.StudentInvite studentInvite)
+    {
+        GetDissertationCohort mappedCohort = this._mapper.Map<GetDissertationCohort>(studentInvite.DissertationCohort);
+        var getStudentInvite = new GetStudentInvite
         {
             Id = studentInvite.Id,
             FirstName = studentInvite.FirstName,
@@ -70,5 +75,10 @@ public class GetStudentInviteListQueryHandler : IRequestHandler<GetStudentInvite
             StudentId = studentInvite.StudentId,
             LastName = studentInvite.LastName,
             ExpiryDate = studentInvite.ExpiryDate,
+            Email = studentInvite.Email,
+            DissertationCohort = mappedCohort
         };
+        return getStudentInvite;
+    }
+
 }

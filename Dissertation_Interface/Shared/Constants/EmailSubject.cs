@@ -8,4 +8,6 @@ public static class EmailSubject
     public const string EmailSubjectForResetPassword = "Dissertation Interface - Reset Password";
     public const string EmailSubjectForSupervisorInvite =
         "Invitation to Register on the Dissertation Management System";
+    public const string EmailSubjectForStudentInvite =
+        "Invitation to Register on the Dissertation Management System";
 }

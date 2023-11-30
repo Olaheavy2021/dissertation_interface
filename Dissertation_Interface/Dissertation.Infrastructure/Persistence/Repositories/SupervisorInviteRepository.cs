@@ -24,7 +24,7 @@ public class SupervisorInviteRepository : GenericRepository<SupervisorInvite>, I
         // Apply search
         if (!string.IsNullOrEmpty(paginationParameters.SearchByStaffId))
         {
-            sqlQuery.Append(" WHERE Name LIKE @search");
+            sqlQuery.Append(" WHERE StaffId LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByStaffId}%"));
         }
 
