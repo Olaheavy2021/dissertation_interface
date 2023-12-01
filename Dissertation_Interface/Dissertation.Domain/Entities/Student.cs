@@ -10,13 +10,13 @@ public class Student : AuditableEntity<long>
     [ForeignKey("CourseId")]
     public Course Course { get; set; }
 
-    public string? ProfilePicture { get; set; } = default!;
+    public string? ProfilePicture { get; set; }
 
-    public string UserId { get; set; } = default!;
+    public string UserId { get; set; }
 
-    public string? ResearchTopic { get; set; } = default!;
+    public string? ResearchTopic { get; set; }
 
-    public string? ResearchProposal { get; set; } = default!;
+    public string? ResearchProposal { get; set; }
 
     public long DissertationCohortId { get; set; }
 

@@ -105,6 +105,7 @@ public class CourseController : Controller
         return Ok(response);
     }
 
+    [AllowAnonymous]
     [HttpGet("active")]
     [SwaggerOperation(Summary = "Get List Of Active Courses")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<IEnumerable<GetCourse>>))]

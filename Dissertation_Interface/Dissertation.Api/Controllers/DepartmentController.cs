@@ -71,6 +71,7 @@ public class DepartmentController : Controller
         return Ok(result);
     }
 
+    [AllowAnonymous]
     [HttpGet("active")]
     [SwaggerOperation(Summary = "Get List Of Active Departments")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<IEnumerable<GetDepartment>>))]
