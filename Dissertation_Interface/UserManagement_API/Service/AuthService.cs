@@ -123,7 +123,7 @@ public class AuthService : IAuthService
         if (registrationResponse.IsSuccess)
         {
             //confirm email and return the userId
-            await ConfirmUserEmail(registrationRequest.Email);
+            await ConfirmStudentEmailAndSetCourse(registrationRequest.Email, registrationRequestDto.CourseId);
             response.IsSuccess = true;
             response.Result = registrationResponse.Result;
             response.Message = SuccessMessages.DefaultSuccess;
@@ -160,17 +160,19 @@ public class AuthService : IAuthService
                 IdentityResult result = await this._userManager.AddToRoleAsync(user, Roles.RoleSupervisor);
                 if (result.Succeeded)
                 {
+                    await ConfirmSupervisorEmailAndSetDepartment(registrationRequestDto.Email, registrationRequestDto.DepartmentId);
+
                     response.IsSuccess = true;
                     response.Message = SuccessMessages.DefaultSuccess;
                     response.Result = user.Id;
-                    //publish audit log for supervisor registration
+                    //TODO:publish audit log for supervisor registration
                     return response;
                 }
 
                 response.IsSuccess = false;
                 response.Message = result.Errors.FirstOrDefault()?.Description;
                 response.Result = ErrorMessages.DefaultError;
-                //publish audit log for supervisor registration
+                //TODO: publish audit log for supervisor registration
                 return response;
             }
 
@@ -195,7 +197,7 @@ public class AuthService : IAuthService
         if (registrationResponse.IsSuccess)
         {
             //confirm email and return the userId
-            await ConfirmUserEmail(registrationRequest.Email);
+            await ConfirmSupervisorEmailAndSetDepartment(registrationRequest.Email, registrationRequestDto.DepartmentId);
             response.IsSuccess = true;
             response.Result = registrationResponse.Result;
             response.Message = SuccessMessages.DefaultSuccess;
@@ -214,16 +216,26 @@ public class AuthService : IAuthService
         return response;
     }
 
-    private async Task<ApplicationUser?> ConfirmUserEmail(string email)
+    private async Task ConfirmStudentEmailAndSetCourse(string email, long? courseId)
     {
         //fetch the user
         ApplicationUser? user = await this._userManager.FindByEmailAsync(email);
-        if (user == null) return user;
+        if (user == null) throw new NotFoundException(nameof(ApplicationUser), email);
 
         user.EmailConfirmed = true;
+        user.CourseId = courseId;
         await this._userManager.UpdateAsync(user);
+    }
 
-        return user;
+    private async Task ConfirmSupervisorEmailAndSetDepartment(string email, long? departmentId)
+    {
+        //fetch the user
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(email);
+        if (user == null) throw new NotFoundException(nameof(ApplicationUser), email);
+
+        user.EmailConfirmed = true;
+        user.DepartmentId = departmentId;
+        await this._userManager.UpdateAsync(user);
     }
 
     public async Task<ResponseDto<string>> RegisterAdmin(AdminRegistrationRequestDto registrationRequestDto, string? loggedInAdminEmail)

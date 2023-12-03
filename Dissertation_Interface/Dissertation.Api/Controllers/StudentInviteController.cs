@@ -55,7 +55,7 @@ public class StudentInviteController : Controller
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> UpdateStudentInvite([FromBody] CreateStudentInviteRequest request, [FromRoute] long inviteId)
     {
-        var command = new UpdateStudentInviteCommand(request.LastName, request.FirstName, request.StudentId, request.Email, request.CourseId, inviteId);
+        var command = new UpdateStudentInviteCommand(request.LastName, request.FirstName, request.StudentId, request.Email, inviteId);
         ResponseDto<GetStudentInvite> response = await this._sender.Send(command);
         return Ok(response);
     }
@@ -71,6 +71,7 @@ public class StudentInviteController : Controller
         return Ok(response);
     }
 
+    [AllowAnonymous]
     [HttpPost("confirm-invite")]
     [SwaggerOperation(Summary = "Confirm Student Invite")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetStudentInvite>))]

@@ -11,8 +11,10 @@ public class ApplicationUser : IdentityUser
     public string LastName { get; set; } = string.Empty;
     public string RefreshToken { get; set; } = string.Empty;
     public DateTime RefreshTokenExpiryTime { get; set; }
-
     public bool IsLockedOutByAdmin { get; set; }
-
     public DateTime CreatedOn { get; set; }
+    public long? DepartmentId { get; set; }
+    public long? CourseId { get; set; }
+
+    public string? ProfilePicture { get; set; }
 }

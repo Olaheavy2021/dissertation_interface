@@ -38,6 +38,7 @@ public class RegisterSupervisorCommandHandler : IRequestHandler<RegisterSupervis
                 Email = supervisorInvite.Email,
                 UserName = supervisorInvite.StaffId,
                 Password = request.Password,
+                DepartmentId = request.DepartmentId
             };
 
             ResponseDto<string> responseFromUserApi =

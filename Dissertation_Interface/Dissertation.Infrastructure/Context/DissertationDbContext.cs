@@ -4,6 +4,7 @@ using Dissertation.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Dissertation.Infrastructure.Context;
 
@@ -28,7 +29,17 @@ public class DissertationDbContext : DbContext
 
     public DbSet<StudentInvite> StudentInvites { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) => ModelBuilderConfiguration.Configure(modelBuilder);
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        ModelBuilderConfiguration.Configure(modelBuilder);
+        modelBuilder.Entity<Supervisor>()
+            .Property(e => e.ResearchArea)
+            .HasColumnType("text");
+
+        modelBuilder.Entity<Student>()
+            .Property(e => e.ResearchTopic)
+            .HasMaxLength(200);
+    }
 
     public override int SaveChanges()
     {

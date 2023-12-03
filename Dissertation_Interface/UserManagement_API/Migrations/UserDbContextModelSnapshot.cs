@@ -205,8 +205,14 @@ namespace UserManagement_API.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("CourseId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<long?>("DepartmentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -251,6 +257,9 @@ namespace UserManagement_API.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RefreshToken")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -285,7 +294,7 @@ namespace UserManagement_API.Migrations
                         {
                             Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "481a2151-842a-42ff-ad7c-2d5a5d3dfa3e",
+                            ConcurrencyStamp = "38c994dc-4cb6-4f01-8057-9470f9a5b1e7",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "superadmin1@shu.com",
                             EmailConfirmed = true,
@@ -295,11 +304,11 @@ namespace UserManagement_API.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN1@SHU.COM",
                             NormalizedUserName = "SUPERADMIN1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMUMeoTG71z6oKkb0MQ4ZUy3vCFMelHG276ZcuK21axLNwTperghOfbuB5URIyYnTg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECqLTtzVA88qEvHtrlo+Ctx607DfpgpRCjyyu3ar/H4Y6PV3nqDNt0Wh2LK9kUkmWA==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "1d0a8bdc-a7dc-438c-8708-672999786490",
+                            SecurityStamp = "0bbddfb2-fef2-4c87-aa13-1747d5d6f749",
                             TwoFactorEnabled = false,
                             UserName = "superadmin1"
                         },
@@ -307,7 +316,7 @@ namespace UserManagement_API.Migrations
                         {
                             Id = "9e224968-33e4-4652-b7b7-8574d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "eb77afc6-41d4-4422-9b88-55c226a4f80c",
+                            ConcurrencyStamp = "f3118c6e-4bb3-46f1-b533-97cdaa20d370",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "superadmin2@shu.com",
                             EmailConfirmed = true,
@@ -317,11 +326,11 @@ namespace UserManagement_API.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN2@SHU.COM",
                             NormalizedUserName = "SUPERADMIN2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEG5Vgn+Ld/LGbK2gi6tIttnuzm1ewzA8PjLlIpXuZHK12DPIUm2MBts0zgAFYy5xxw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN76sZt0Fqp2RrX7qhnzc5nAu65r5xpJDkyXJgPiXyEBaiIzED2vmfdSADsFzqMfRA==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "d0668d66-dbb4-4a7b-a4f7-6c5719985dd8",
+                            SecurityStamp = "c67fe57b-e877-4e6b-b523-1ad03a7997b1",
                             TwoFactorEnabled = false,
                             UserName = "superadmin2"
                         });

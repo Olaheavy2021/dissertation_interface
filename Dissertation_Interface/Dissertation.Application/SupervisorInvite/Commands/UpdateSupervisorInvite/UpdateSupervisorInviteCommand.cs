@@ -9,6 +9,5 @@ public sealed record UpdateSupervisorInviteCommand(
     string FirstName,
     string StaffId,
     string Email,
-    long DepartmentId,
     long Id
 ) : IRequest<ResponseDto<GetSupervisorInvite>>;

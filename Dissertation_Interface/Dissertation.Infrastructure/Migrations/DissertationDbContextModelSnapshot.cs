@@ -181,14 +181,12 @@ namespace Dissertation.Infrastructure.Migrations
                     b.Property<long>("DissertationCohortId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("ProfilePicture")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ResearchProposal")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResearchTopic")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -279,11 +277,8 @@ namespace Dissertation.Infrastructure.Migrations
                     b.Property<long>("DepartmentId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("ProfilePicture")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ResearchArea")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");

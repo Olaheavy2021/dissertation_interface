@@ -8,10 +8,6 @@
 
     <ItemGroup>
       <Folder Include="Responses\" />
-      <Folder Include="StudentInvite\Commands\ResendStudentInvite\" />
-      <Folder Include="Student\Queries\" />
-      <Folder Include="SupervisorInvite\Commands\ResendSupervisorInvite\" />
-      <Folder Include="Supervisor\Queries\" />
     </ItemGroup> 
 
     <ItemGroup>

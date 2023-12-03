@@ -48,7 +48,7 @@ public class UserController : Controller
         return Ok(response);
     }
 
-    [Authorize(Roles = "Superadmin, Admin")]
+    [Authorize(Roles = "Superadmin, Admin, Supervisor, Student")]
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Get the details for a user")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
@@ -139,6 +139,57 @@ public class UserController : Controller
         return Ok(users);
     }
 
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpGet("get-students")]
+    [SwaggerOperation(Summary = "List of Students")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedUserListDto>))]
+    public ActionResult GetStudents([FromQuery] DissertationStudentPaginationParameters paginationParameters)
+    {
+        ResponseDto<PaginatedUserListDto> users = this._userService.GetPaginatedStudents(paginationParameters);
+
+        if (users.Result != null)
+        {
+            var metadata = new
+            {
+                users.Result.TotalCount,
+                users.Result.PageSize,
+                users.Result.CurrentPage,
+                users.Result.TotalPages,
+                users.Result.HasNext,
+                users.Result.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+        }
+
+        return Ok(users);
+    }
+
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpGet("get-supervisors")]
+    [SwaggerOperation(Summary = "List of Supervisors")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PagedList<UserListDto>>))]
+    public ActionResult GetSupervisors([FromQuery] SupervisorPaginationParameters paginationParameters)
+    {
+        ResponseDto<PaginatedUserListDto> users = this._userService.GetPaginatedSupervisors(paginationParameters);
+
+        if (users.Result != null)
+        {
+            var metadata = new
+            {
+                users.Result.TotalCount,
+                users.Result.PageSize,
+                users.Result.CurrentPage,
+                users.Result.TotalPages,
+                users.Result.HasNext,
+                users.Result.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+        }
+
+        return Ok(users);
+    }
+
+
     [Authorize(Roles = "Superadmin")]
     [HttpPut("edit-admin-user")]
     [SwaggerOperation(Summary = "Edit an admin user")]
@@ -165,6 +216,28 @@ public class UserController : Controller
     public async Task<IActionResult> RegisterStudent([FromBody] StudentOrSupervisorRegistrationDto model)
     {
         ResponseDto<string> response = await this._authService.RegisterStudent(model);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin, Admin, Supervisor, Student")]
+    [HttpPost("edit-student")]
+    [SwaggerOperation(Summary = "Edit a Student")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    public async Task<IActionResult> EditStudent([FromBody] EditStudentRequestDto model)
+    {
+        var email = HttpContext.GetEmail();
+        ResponseDto<UserDto> response = await this._userService.EditStudent(model, email);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin, Admin, Supervisor, Student")]
+    [HttpPost("edit-supervisor")]
+    [SwaggerOperation(Summary = "Edit a Supervisor")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    public async Task<IActionResult> EditSupervisor([FromBody] EditSupervisorRequestDto model)
+    {
+        var email = HttpContext.GetEmail();
+        ResponseDto<UserDto> response = await this._userService.EditSupervisor(model, email);
         return Ok(response);
     }
 }

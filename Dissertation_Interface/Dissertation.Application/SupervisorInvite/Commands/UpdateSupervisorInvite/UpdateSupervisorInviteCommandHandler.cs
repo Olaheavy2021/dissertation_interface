@@ -41,10 +41,35 @@ public class UpdateSupervisorInviteCommandHandler : IRequestHandler<UpdateSuperv
         if (supervisorInvite == null)
         {
             this._logger.LogError("No Supervision Invite found with {ID}", request.Id);
-            throw new NotFoundException(nameof(Domain.Entities.Department), request.Id);
+            throw new NotFoundException(nameof(Domain.Entities.SupervisorInvite), request.Id);
         }
 
         var emailFromDatabase = supervisorInvite.Email;
+        var staffIdFromDatabase = supervisorInvite.StaffId;
+
+        if (!request.Email.Equals(emailFromDatabase, StringComparison.OrdinalIgnoreCase))
+        {
+            Domain.Entities.SupervisorInvite? duplicateEmailInvite = await this._db.SupervisorInviteRepository.GetFirstOrDefaultAsync(a => a.Email == request.Email && a.ExpiryDate.Date >= DateTime.UtcNow.Date);
+            if (duplicateEmailInvite != null)
+            {
+                return new ResponseDto<GetSupervisorInvite>()
+                {
+                    Message = $"This email - {request.Email} already has an active invite", IsSuccess = false,
+                };
+            }
+        }
+
+        if (!request.StaffId.Equals(staffIdFromDatabase, StringComparison.OrdinalIgnoreCase))
+        {
+            Domain.Entities.SupervisorInvite? duplicateStaffIdInvite = await this._db.SupervisorInviteRepository.GetFirstOrDefaultAsync(a => a.StaffId == request.StaffId && a.ExpiryDate.Date >= DateTime.UtcNow.Date);
+            if (duplicateStaffIdInvite != null)
+            {
+                return new ResponseDto<GetSupervisorInvite>()
+                {
+                    Message = $"This StaffId - {request.StaffId} already has an active invite", IsSuccess = false,
+                };
+            }
+        }
 
         //update the database
         supervisorInvite.FirstName = request.FirstName;

@@ -55,7 +55,7 @@ public class SupervisorInviteController : Controller
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> UpdateSupervisorInvite([FromBody] CreateSupervisorInviteRequest request, [FromRoute] long inviteId)
     {
-        var command = new UpdateSupervisorInviteCommand(request.LastName, request.FirstName, request.StaffId, request.Email, request.DepartmentId, inviteId);
+        var command = new UpdateSupervisorInviteCommand(request.LastName, request.FirstName, request.StaffId, request.Email, inviteId);
         ResponseDto<GetSupervisorInvite> response = await this._sender.Send(command);
         return Ok(response);
     }
@@ -71,6 +71,8 @@ public class SupervisorInviteController : Controller
         return Ok(response);
     }
 
+
+    [AllowAnonymous]
     [HttpPost("confirm-invite")]
     [SwaggerOperation(Summary = "Confirm Supervisor Invite")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetSupervisorInvite>))]

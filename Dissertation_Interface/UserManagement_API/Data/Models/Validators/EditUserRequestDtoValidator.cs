@@ -38,5 +38,4 @@ public class EditUserRequestDtoValidator : AbstractValidator<EditUserRequestDto>
             .Matches(@"^\S+$").WithMessage(ErrorMessages.MustNotContainWhiteSpace)
             .EmailAddress();
     }
-
 }

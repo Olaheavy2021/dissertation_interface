@@ -9,6 +9,5 @@ public sealed record UpdateStudentInviteCommand(
     string FirstName,
     string StudentId,
     string Email,
-    long DepartmentId,
     long Id
 ) : IRequest<ResponseDto<GetStudentInvite>>;

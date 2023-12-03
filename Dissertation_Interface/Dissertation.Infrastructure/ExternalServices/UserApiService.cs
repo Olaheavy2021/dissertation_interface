@@ -2,7 +2,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Helpers;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Shared.DTO;
 using Shared.Enums;
@@ -14,7 +13,6 @@ namespace Dissertation.Infrastructure.ExternalServices;
 public class UserApiService : IUserApiService
 {
     private readonly IRequestHelper _requestHelper;
-    private readonly ILogger<UserApiService> _logger;
     private readonly ServiceUrlSettings _serviceUrlSettings;
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
@@ -26,10 +24,9 @@ public class UserApiService : IUserApiService
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
     };
 
-    public UserApiService(IRequestHelper requestHelper, ILogger<UserApiService> logger, IOptions<ServiceUrlSettings> serviceUrlSettings)
+    public UserApiService(IRequestHelper requestHelper, IOptions<ServiceUrlSettings> serviceUrlSettings)
     {
         this._requestHelper = requestHelper;
-        this._logger = logger;
         this._serviceUrlSettings = serviceUrlSettings.Value;
     }
 
@@ -59,5 +56,54 @@ public class UserApiService : IUserApiService
         var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.RegisterStudentRoute}";
         var response = await this._requestHelper.PostAsync(url, model, mediaType: MediaType.Json);
         return JsonSerializer.Deserialize<ResponseDto<string>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<PaginatedUserListDto>> GetListOfSupervisors(SupervisorPaginationParameters model)
+    {
+        var urlParams = new Dictionary<string, object>
+        {
+            { "pageNumber", model.PageNumber }, { "pageSize", model.PageSize },
+            { "searchByUserName", model.SearchByUserName },
+            { "filterByDepartment", model.FilterByDepartment }
+        };
+
+        var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.GetSupervisors}";
+        var response = await this._requestHelper.GetAsync(url, null, urlParams, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<PaginatedUserListDto>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<PaginatedUserListDto>> GetListOfStudents(DissertationStudentPaginationParameters model)
+    {
+        var urlParams = new Dictionary<string, object>
+        {
+            { "pageNumber", model.PageNumber }, { "pageSize", model.PageSize },
+            { "searchByUserName", model.SearchByUserName },  { "filterByCourse", model.FilterByCourse },
+            { "cohortEndDate", model.CohortEndDate }, { "cohortStartDate", model.CohortStartDate }
+        };
+
+        var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.GetStudents}";
+        var response = await this._requestHelper.GetAsync(url, null, urlParams, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<PaginatedUserListDto>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<GetUserDto>> GetUserByUserId(string userId)
+    {
+        var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.UserRoute}{userId}";
+        var response = await this._requestHelper.GetAsync(url, null, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<GetUserDto>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<UserDto>> EditStudent(EditStudentRequestDto model)
+    {
+        var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.EditStudentRoute}";
+        var response = await this._requestHelper.PostAsync(url, model, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<UserDto>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<UserDto>> EditSupervisor(EditSupervisorRequestDto model)
+    {
+        var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.EditSupervisorRoute}";
+        var response = await this._requestHelper.PostAsync(url, model, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<UserDto>>(response, this._jsonSerializerOptions)!;
     }
 }

@@ -203,13 +203,70 @@ public class UserService : IUserService
         return response;
     }
 
+    public ResponseDto<PaginatedUserListDto> GetPaginatedStudents(DissertationStudentPaginationParameters paginationParameters)
+    {
+        var response = new ResponseDto<PaginatedUserListDto>();
+        PagedList<ApplicationUser> users = this._db.ApplicationUserRepository.GetPaginatedStudents(paginationParameters);
+
+        var userDtos = new PagedList<UserListDto>(
+            users.Select(MapToUserDto).ToList(),
+            users.TotalCount,
+            users.CurrentPage,
+            users.PageSize
+        );
+
+        response.IsSuccess = true;
+        response.Message = SuccessMessages.DefaultSuccess;
+        response.Result = new PaginatedUserListDto
+        {
+            Data = userDtos,
+            TotalCount = userDtos.TotalCount,
+            PageSize = userDtos.PageSize,
+            CurrentPage = userDtos.CurrentPage,
+            TotalPages = userDtos.TotalPages,
+            HasNext = userDtos.HasNext,
+            HasPrevious = userDtos.HasPrevious
+        };
+
+        return response;
+    }
+
+    public ResponseDto<PaginatedUserListDto> GetPaginatedSupervisors(
+        SupervisorPaginationParameters paginationParameters)
+    {
+        var response = new ResponseDto<PaginatedUserListDto>();
+        PagedList<ApplicationUser> users = this._db.ApplicationUserRepository.GetPaginatedSupervisors(paginationParameters);
+
+        var userDtos = new PagedList<UserListDto>(
+            users.Select(MapToUserDto).ToList(),
+            users.TotalCount,
+            users.CurrentPage,
+            users.PageSize
+        );
+
+        response.IsSuccess = true;
+        response.Message = SuccessMessages.DefaultSuccess;
+        response.Result = new PaginatedUserListDto
+        {
+            Data = userDtos,
+            TotalCount = userDtos.TotalCount,
+            PageSize = userDtos.PageSize,
+            CurrentPage = userDtos.CurrentPage,
+            TotalPages = userDtos.TotalPages,
+            HasNext = userDtos.HasNext,
+            HasPrevious = userDtos.HasPrevious
+        };
+
+        return response;
+    }
+
     public async Task<ResponseDto<EditUserRequestDto>> EditUser(EditUserRequestDto request, string? loggedInAdminEmail)
     {
         if (string.IsNullOrEmpty(loggedInAdminEmail))
             throw new UnauthorizedException();
 
-        var response = new ResponseDto<EditUserRequestDto>() { IsSuccess = false, Message = ErrorMessages.DefaultError };
-        this._logger.LogInformation("Request update user with this email -  {0}", request.Email);
+        var response = new ResponseDto<EditUserRequestDto> { IsSuccess = false, Message = ErrorMessages.DefaultError };
+        this._logger.LogInformation("Request to update user with this email -  {0}", request.Email);
 
         //validate the request
         var validator = new EditUserRequestDtoValidator();
@@ -285,6 +342,127 @@ public class UserService : IUserService
             this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, SuccessMessages.DefaultSuccess, request.Email);
         return response;
     }
+
+    public async Task<ResponseDto<UserDto>> EditSupervisor(EditSupervisorRequestDto request, string? loggedInUser)
+    {
+        if (string.IsNullOrEmpty(loggedInUser))
+            throw new UnauthorizedException();
+
+        var response = new ResponseDto<UserDto> { IsSuccess = false, Message = ErrorMessages.DefaultError };
+        this._logger.LogInformation("Request to update supervisor with this userId -  {0}", request.UserId);
+
+        //validate the request
+        var validator = new EditSupervisorRequestDtoValidator();
+        ValidationResult? validationResult = await validator.ValidateAsync(request);
+        if (validationResult.Errors.Any())
+        {
+            this._logger.LogWarning("Edit Supervisor - Validation errors in whilst editing user for {0} - {1}", nameof(ApplicationUser), request.StaffId);
+            await this._messageBus.PublishAuditLog(EventType.EditUser,
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, ErrorMessages.DefaultError, request.StaffId);
+            throw new BadRequestException("Invalid Login Request", validationResult);
+        }
+
+        //check if the user exists
+        ApplicationUser? user = await this._userManager.FindByIdAsync(request.UserId);
+        if (user == null)
+        {
+            response.Message = $"Supervisor with this userid - {request.UserId} does not exist";
+            await this._messageBus.PublishAuditLog(EventType.EditUser,
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, ErrorMessages.DefaultError, request.StaffId);
+            return response;
+        }
+
+        //check if the username is unique
+        if (user is { UserName: not null } && !user.UserName.Equals(request.StaffId))
+        {
+            var doesUserDetailsExist = await this._db.ApplicationUserRepository.DoesUserNameExist(request.StaffId, new CancellationToken());
+            if (doesUserDetailsExist)
+            {
+                response.IsSuccess = false;
+                response.Message = "Username already exists for another user";
+                await this._messageBus.PublishAuditLog(EventType.EditUser,
+                    this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, ErrorMessages.DefaultError, request.StaffId);
+                return response;
+            }
+        }
+
+        user.UserName = request.StaffId;
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
+        user.DepartmentId = request.DepartmentId;
+
+        await this._userManager.UpdateAsync(user);
+
+        UserDto? mappedUser = this._mapper.Map<UserDto>(user);
+        this._logger.LogInformation("Supervisor updated successfully -  {0}", request.UserId);
+        response.IsSuccess = true;
+        response.Message = SuccessMessages.DefaultSuccess;
+        response.Result = mappedUser;
+        await this._messageBus.PublishAuditLog(EventType.EditUser,
+            this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, SuccessMessages.DefaultSuccess, request.StaffId);
+        return response;
+    }
+
+    public async Task<ResponseDto<UserDto>> EditStudent(EditStudentRequestDto request, string? loggedInUser)
+    {
+        if (string.IsNullOrEmpty(loggedInUser))
+            throw new UnauthorizedException();
+
+        var response = new ResponseDto<UserDto> { IsSuccess = false, Message = ErrorMessages.DefaultError };
+        this._logger.LogInformation("Request to update student with this userId -  {0}", request.UserId);
+
+        //validate the request
+        var validator = new EditStudentRequestDtoValidator();
+        ValidationResult? validationResult = await validator.ValidateAsync(request);
+        if (validationResult.Errors.Any())
+        {
+            this._logger.LogWarning("Edit Student - Validation errors in whilst editing user for {0} - {1}", nameof(ApplicationUser), request.StudentId);
+            await this._messageBus.PublishAuditLog(EventType.EditUser,
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, ErrorMessages.DefaultError, request.StudentId);
+            throw new BadRequestException("Invalid Login Request", validationResult);
+        }
+
+        //check if the user exists
+        ApplicationUser? user = await this._userManager.FindByIdAsync(request.UserId);
+        if (user == null)
+        {
+            response.Message = $"Student with this userid - {request.UserId} does not exist";
+            await this._messageBus.PublishAuditLog(EventType.EditUser,
+                this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, ErrorMessages.DefaultError, request.StudentId);
+            return response;
+        }
+
+        //check if the username is unique
+        if (user is { UserName: not null } && !user.UserName.Equals(request.StudentId))
+        {
+            var doesUserDetailsExist = await this._db.ApplicationUserRepository.DoesUserNameExist(request.StudentId, new CancellationToken());
+            if (doesUserDetailsExist)
+            {
+                response.IsSuccess = false;
+                response.Message = "Username already exists for another user";
+                await this._messageBus.PublishAuditLog(EventType.EditUser,
+                    this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, ErrorMessages.DefaultError, request.StudentId);
+                return response;
+            }
+        }
+
+        user.UserName = request.StudentId;
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
+        user.CourseId = request.CourseId;
+
+        await this._userManager.UpdateAsync(user);
+
+        UserDto? mappedUser = this._mapper.Map<UserDto>(user);
+        this._logger.LogInformation("Student updated successfully -  {0}", request.UserId);
+        response.IsSuccess = true;
+        response.Message = SuccessMessages.DefaultSuccess;
+        response.Result = mappedUser;
+        await this._messageBus.PublishAuditLog(EventType.EditUser,
+            this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, SuccessMessages.DefaultSuccess, request.StudentId);
+        return response;
+    }
+
 
     private static UserListDto MapToUserDto(ApplicationUser applicationUser) =>
         new()

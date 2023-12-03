@@ -23,6 +23,7 @@ public class RegisterStudentCommandHandler : IRequestHandler<RegisterStudentComm
     public async Task<ResponseDto<string>> Handle(RegisterStudentCommand request, CancellationToken cancellationToken)
     {
         this._logger.LogInformation("Attempting to register a student");
+
         //fetch the invitation with the invitation Code
         Domain.Entities.StudentInvite? studentInvite =
             await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(x =>
@@ -38,6 +39,7 @@ public class RegisterStudentCommandHandler : IRequestHandler<RegisterStudentComm
                 Email = studentInvite.Email,
                 UserName = studentInvite.StudentId,
                 Password = request.Password,
+                CourseId = request.CourseId
             };
 
             ResponseDto<string> responseFromUserApi =

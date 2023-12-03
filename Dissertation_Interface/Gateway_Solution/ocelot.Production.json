@@ -1,6 +1,72 @@
 ﻿{
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/v1/Student/register",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Student/register",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Supervisor/register",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor/register",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Student/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Student/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Supervisor/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Student",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Student",
+      "UpstreamHttpMethod": [ "Get"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Supervisor",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor",
+      "UpstreamHttpMethod": [ "Get"]
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/StudentInvite/confirm-invite",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -40,28 +106,6 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/v1/Student/register",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "difdissertationapi.azurewebsites.net"
-        }
-      ],
-      "UpstreamPathTemplate": "/api/v1/Student/register",
-      "UpstreamHttpMethod": [ "Post" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/v1/Supervisor/register",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "difdissertationapi.azurewebsites.net"
-        }
-      ],
-      "UpstreamPathTemplate": "/api/v1/Supervisor/register",
-      "UpstreamHttpMethod": [ "Post" ]
-    },
-    {
       "DownstreamPathTemplate": "/api/v1/SupervisorInvite/confirm-invite",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -95,7 +139,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/v1/SupervisorInvite/{id}",
-      "UpstreamHttpMethod": [ "Get", "Put" ],
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }

@@ -9,12 +9,9 @@ public class Supervisor : AuditableEntity<long>
 
     [ForeignKey("DepartmentId")]
     public Department Department { get; set; }
-
-    public string? ProfilePicture { get; set; } = default!;
-
     public string UserId { get; set; } = default!;
 
-    public string? ResearchArea { get; set; } = default!;
+    public string? ResearchArea { get; set; }
 
     private Supervisor(
         string userId,

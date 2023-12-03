@@ -16,6 +16,12 @@ public class PagedList<T> : List<T>
         TotalPages = (int)Math.Ceiling(count / (double)pageSize);
         AddRange(items);
     }
+
+    // Parameterless constructor for serialization
+    public PagedList()
+    {
+    }
+
     public static PagedList<T> ToPagedList(IQueryable<T> source, int pageNumber, int pageSize)
     {
         var count = source.Count();

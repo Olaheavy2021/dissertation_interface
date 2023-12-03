@@ -1,7 +1,12 @@
 using Dissertation.Application.DTO.Request;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Application.Supervisor.Commands.RegisterSupervisor;
+using Dissertation.Application.Supervisor.Commands.UpdateSupervisor;
+using Dissertation.Application.Supervisor.Queries.GetListOfSupervisors;
+using Dissertation.Application.Supervisor.Queries.GetSupervisorById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Shared.DTO;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
@@ -37,4 +42,50 @@ public class SupervisorController : Controller
         return Ok(result);
     }
 
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get List of Supervisors")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedUserListDto>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
+    public async Task<IActionResult> GetListOfSupervisors([FromQuery] SupervisorPaginationParameters paginationParameters)
+    {
+        var query = new GetListOfSupervisorsQuery(paginationParameters);
+        ResponseDto<PaginatedUserListDto> response = await this._sender.Send(query);
+
+        if (response.Result != null)
+        {
+            var metadata = new
+            {
+                response.Result.TotalCount,
+                response.Result.PageSize,
+                response.Result.CurrentPage,
+                response.Result.TotalPages,
+                response.Result.HasNext,
+                response.Result.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+        }
+        return Ok(response);
+    }
+
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get Supervisor By UserId")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetSupervisor>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
+    public async Task<IActionResult> GetSupervisorById([FromRoute] string id)
+    {
+        var query = new GetSupervisorByIdQuery(id);
+        ResponseDto<GetSupervisor> response = await this._sender.Send(query);
+        return Ok(response);
+    }
+
+    [HttpPut("{id:long}")]
+    [SwaggerOperation(Summary = "Update Supervisor")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetStudent>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
+    public async Task<IActionResult> EditStudent([FromBody] EditSupervisorRequestDto request,[FromRoute] long id)
+    {
+        var query = new UpdateSupervisorCommand(request.LastName, request.FirstName, request.StaffId, request.DepartmentId, id);
+        ResponseDto<UserDto> response = await this._sender.Send(query);
+        return Ok(response);
+    }
 }

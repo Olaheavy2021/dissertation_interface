@@ -63,5 +63,6 @@ public class GetSupervisorInviteListQueryHandler : IRequestHandler<GetSupervisor
             StaffId = supervisorInvite.StaffId,
             LastName = supervisorInvite.LastName,
             ExpiryDate = supervisorInvite.ExpiryDate,
+            Email = supervisorInvite.Email
         };
 }

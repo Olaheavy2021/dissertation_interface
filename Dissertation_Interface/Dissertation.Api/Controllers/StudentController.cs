@@ -1,8 +1,12 @@
 using Dissertation.Application.DTO.Request;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Application.Student.Commands.RegisterStudent;
-using Dissertation.Application.Supervisor.Commands.RegisterSupervisor;
+using Dissertation.Application.Student.Commands.UpdateStudent;
+using Dissertation.Application.Student.Queries.GetListOfStudents;
+using Dissertation.Application.Student.Queries.GetStudentById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Shared.DTO;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
@@ -38,4 +42,50 @@ public class StudentController : Controller
         return Ok(result);
     }
 
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get List of Students")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedUserListDto>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
+    public async Task<IActionResult> GetListOfStudents([FromQuery] StudentPaginationParameters paginationParameters)
+    {
+        var query = new GetListOfStudentsQuery(paginationParameters);
+        ResponseDto<PaginatedUserListDto> response = await this._sender.Send(query);
+
+        if (response.Result != null)
+        {
+            var metadata = new
+            {
+                response.Result.TotalCount,
+                response.Result.PageSize,
+                response.Result.CurrentPage,
+                response.Result.TotalPages,
+                response.Result.HasNext,
+                response.Result.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+        }
+        return Ok(response);
+    }
+
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get Student By UserId")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetStudent>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
+    public async Task<IActionResult> GetStudentById([FromRoute] string id)
+    {
+        var query = new GetStudentByIdQuery(id);
+        ResponseDto<GetStudent> response = await this._sender.Send(query);
+        return Ok(response);
+    }
+
+    [HttpPut("{id:long}")]
+    [SwaggerOperation(Summary = "Update Student")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
+    public async Task<IActionResult> EditStudent([FromBody] EditStudentRequestDto request,[FromRoute] long id)
+    {
+        var query = new UpdateStudentCommand(request.LastName, request.FirstName, request.StudentId, request.CourseId, id);
+        ResponseDto<UserDto> response = await this._sender.Send(query);
+        return Ok(response);
+    }
 }

@@ -45,6 +45,31 @@ public class UpdateStudentInviteCommandHandler : IRequestHandler<UpdateStudentIn
         }
 
         var emailFromDatabase = studentInvite.Email;
+        var studentIdFromDatabase = studentInvite.StudentId;
+
+        if (!request.Email.Equals(emailFromDatabase, StringComparison.OrdinalIgnoreCase))
+        {
+            Domain.Entities.StudentInvite? duplicateEmailInvite = await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(a => a.Email == request.Email && a.ExpiryDate.Date >= DateTime.UtcNow.Date);
+            if (duplicateEmailInvite != null)
+            {
+                return new ResponseDto<GetStudentInvite>()
+                {
+                    Message = $"This email - {request.Email} already has an active invite", IsSuccess = false,
+                };
+            }
+        }
+
+        if (!request.StudentId.Equals(studentIdFromDatabase, StringComparison.OrdinalIgnoreCase))
+        {
+            Domain.Entities.StudentInvite? duplicateStudentIdInvite = await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(a => a.StudentId == request.StudentId && a.ExpiryDate.Date >= DateTime.UtcNow.Date);
+            if (duplicateStudentIdInvite != null)
+            {
+                return new ResponseDto<GetStudentInvite>()
+                {
+                    Message = $"This StudentId - {request.StudentId} already has an active invite", IsSuccess = false,
+                };
+            }
+        }
 
         //update the database
         studentInvite.FirstName = request.FirstName;
@@ -53,7 +78,7 @@ public class UpdateStudentInviteCommandHandler : IRequestHandler<UpdateStudentIn
         studentInvite.LastName = request.LastName;
 
         //send another email if the email was modified
-        if (request.Email != emailFromDatabase)
+        if (!request.Email.Equals(emailFromDatabase, StringComparison.OrdinalIgnoreCase))
         {
             var code = InviteCodeGenerator.GenerateCode(8);
             await PublishStudentInviteMessage(request, code);
