@@ -23,48 +23,88 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
     {
+      "DownstreamPathTemplate": "/api/v1/Supervisor/assign-admin-role",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor/assign-admin-role",
+      "UpstreamHttpMethod": [ "Post"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Supervisor/assign-supervisor-role",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor/assign-supervisor-role",
+      "UpstreamHttpMethod": [ "Post"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/Student/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "difdissertationapi.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/api/v1/Student/{id}",
-      "UpstreamHttpMethod": [ "Get", "Put"]
+      "UpstreamHttpMethod": [ "Get", "Put"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
     },
     {
       "DownstreamPathTemplate": "/api/v1/Supervisor/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "difdissertationapi.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/api/v1/Supervisor/{id}",
-      "UpstreamHttpMethod": [ "Get", "Put"]
+      "UpstreamHttpMethod": [ "Get", "Put"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
     },
     {
       "DownstreamPathTemplate": "/api/v1/Student",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "difdissertationapi.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/api/v1/Student",
-      "UpstreamHttpMethod": [ "Get"]
+      "UpstreamHttpMethod": [ "Get"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
     },
     {
       "DownstreamPathTemplate": "/api/v1/Supervisor",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "difdissertationapi.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/api/v1/Supervisor",
-      "UpstreamHttpMethod": [ "Get"]
+      "UpstreamHttpMethod": [ "Get"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
     },
     {
       "DownstreamPathTemplate": "/api/v1/StudentInvite/confirm-invite",

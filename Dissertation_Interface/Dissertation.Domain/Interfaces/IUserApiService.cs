@@ -1,4 +1,5 @@
 using Shared.DTO;
+using UserManagement_API.Data.Models.Dto;
 
 namespace Dissertation.Domain.Interfaces;
 
@@ -13,4 +14,6 @@ public interface IUserApiService
     Task<ResponseDto<GetUserDto>> GetUserByUserId(string userId);
     Task<ResponseDto<UserDto>> EditStudent(EditStudentRequestDto model);
     Task<ResponseDto<UserDto>> EditSupervisor(EditSupervisorRequestDto model);
+    Task<ResponseDto<UserDto>> AssignSupervisorRoleToAdmin(AssignSupervisorRoleRequestDto model);
+    Task<ResponseDto<UserDto>> AssignAdminRoleToSupervisor(AssignAdminRoleRequestDto model);
 }

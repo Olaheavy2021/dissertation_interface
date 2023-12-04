@@ -1,15 +1,19 @@
 using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;
+using Dissertation.Application.Supervisor.Commands.AssignAdminRole;
+using Dissertation.Application.Supervisor.Commands.AssignSupervisorRole;
 using Dissertation.Application.Supervisor.Commands.RegisterSupervisor;
 using Dissertation.Application.Supervisor.Commands.UpdateSupervisor;
 using Dissertation.Application.Supervisor.Queries.GetListOfSupervisors;
 using Dissertation.Application.Supervisor.Queries.GetSupervisorById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.DTO;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
+using UserManagement_API.Data.Models.Dto;
 
 namespace Dissertation_API.Controllers;
 
@@ -84,8 +88,30 @@ public class SupervisorController : Controller
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> EditStudent([FromBody] EditSupervisorRequestDto request,[FromRoute] long id)
     {
-        var query = new UpdateSupervisorCommand(request.LastName, request.FirstName, request.StaffId, request.DepartmentId, id);
-        ResponseDto<UserDto> response = await this._sender.Send(query);
+        var command = new UpdateSupervisorCommand(request.LastName, request.FirstName, request.StaffId, request.DepartmentId, id);
+        ResponseDto<UserDto> response = await this._sender.Send(command);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin")]
+    [HttpPost("assign-admin-role")]
+    [SwaggerOperation(Summary = "Assign Admin Role to a Supervisor")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    public async Task<IActionResult> AssignAdminRoleToSupervisor([FromBody] AssignAdminRoleRequestDto request)
+    {
+        var command = new AssignAdminRoleCommand(request.Email, request.Role);
+        ResponseDto<UserDto> response = await this._sender.Send(command);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin")]
+    [HttpPost("assign-supervisor-role")]
+    [SwaggerOperation(Summary = "Assign Supervisor role to admin")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    public async Task<IActionResult> AssignSupervisorRoleToAdmin([FromBody] AssignSupervisorRoleRequestDto request)
+    {
+        var command = new AssignSupervisorRoleCommand(request.Email, request.DepartmentId);
+        ResponseDto<UserDto> response = await this._sender.Send(command);
         return Ok(response);
     }
 }

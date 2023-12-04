@@ -43,13 +43,13 @@ public class UpdateSupervisorInviteCommandValidator : AbstractValidator<UpdateSu
             .EmailAddress();
 
         RuleFor(q => q)
-            .MustAsync(DoesEmailExistsAsStudentOrSupervisor)
-            .WithMessage("This email already exists for a Student or Supervisor")
+            .MustAsync(DoesUserWithEmailExists)
+            .WithMessage("This email already exists for a user")
             .OverridePropertyName("Email");
 
         RuleFor(q => q)
-            .MustAsync(DoesUserNameExistsAsStudentOrSupervisor)
-            .WithMessage("This username already exists for a Student or Supervisor")
+            .MustAsync(DoesUserWithUserNameExists)
+            .WithMessage("This username already exists for a user")
             .OverridePropertyName("StaffId");
 
         RuleFor(q => q)
@@ -58,26 +58,16 @@ public class UpdateSupervisorInviteCommandValidator : AbstractValidator<UpdateSu
             .OverridePropertyName("Id");
     }
 
-    private async Task<bool> DoesEmailExistsAsStudentOrSupervisor(UpdateSupervisorInviteCommand request, CancellationToken token)
-    {
-        ResponseDto<GetUserDto> response = await this._userApiService.GetUserByEmail(request.Email);
-        if (!response.IsSuccess) return true;
-        if (request.Email == response.Result!.User?.Email) return true;
-
-        var isAStudent = response.Result!.Role.Contains(Roles.RoleStudent);
-        var isASupervisor = response.Result!.Role.Contains(Roles.RoleSupervisor);
-        return !isAStudent && !isASupervisor;
-    }
-
-    private async Task<bool> DoesUserNameExistsAsStudentOrSupervisor(UpdateSupervisorInviteCommand request, CancellationToken token)
+    private async Task<bool> DoesUserWithUserNameExists(UpdateSupervisorInviteCommand request, CancellationToken token)
     {
         ResponseDto<GetUserDto> response = await this._userApiService.GetUserByUserName(request.StaffId);
-        if (!response.IsSuccess) return true;
-        if (request.StaffId == response.Result!.User?.UserName) return true;
+        return !response.IsSuccess;
+    }
 
-        var isAStudent = response.Result!.Role.Contains(Roles.RoleStudent);
-        var isASupervisor = response.Result!.Role.Contains(Roles.RoleSupervisor);
-        return !isAStudent && !isASupervisor;
+    private async Task<bool> DoesUserWithEmailExists(UpdateSupervisorInviteCommand request, CancellationToken token)
+    {
+        ResponseDto<GetUserDto> response = await this._userApiService.GetUserByEmail(request.Email);
+        return !response.IsSuccess;
     }
 
     private async Task<bool> IsSupervisionInviteActive(UpdateSupervisorInviteCommand request, CancellationToken token)

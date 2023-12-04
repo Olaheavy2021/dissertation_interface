@@ -13,14 +13,16 @@ public class RegisterSupervisorCommandHandler : IRequestHandler<RegisterSupervis
     private readonly IUnitOfWork _db;
     private readonly IUserApiService _userApiService;
 
-    public RegisterSupervisorCommandHandler(IAppLogger<RegisterSupervisorCommandHandler> logger, IUnitOfWork db, IUserApiService userApiService)
+    public RegisterSupervisorCommandHandler(IAppLogger<RegisterSupervisorCommandHandler> logger, IUnitOfWork db,
+        IUserApiService userApiService)
     {
         this._logger = logger;
         this._db = db;
         this._userApiService = userApiService;
     }
 
-    public async Task<ResponseDto<string>> Handle(RegisterSupervisorCommand request, CancellationToken cancellationToken)
+    public async Task<ResponseDto<string>> Handle(RegisterSupervisorCommand request,
+        CancellationToken cancellationToken)
     {
         this._logger.LogInformation("Attempting to register a supervisor");
         //fetch the invitation with the invitation Code
@@ -49,7 +51,6 @@ public class RegisterSupervisorCommandHandler : IRequestHandler<RegisterSupervis
 
             if (responseFromUserApi.IsSuccess && !string.IsNullOrEmpty(responseFromUserApi.Result))
             {
-
                 //save the supervisor details
                 var supervisor = Domain.Entities.Supervisor.Create(
                     responseFromUserApi.Result,
@@ -70,7 +71,10 @@ public class RegisterSupervisorCommandHandler : IRequestHandler<RegisterSupervis
             return responseFromUserApi;
         }
 
-        var response = new ResponseDto<string> { IsSuccess = false, Result = ErrorMessages.DefaultError, Message = "Invalid Invitation code" };
+        var response = new ResponseDto<string>
+        {
+            IsSuccess = false, Result = ErrorMessages.DefaultError, Message = "Invalid Invitation code"
+        };
         return response;
     }
 }

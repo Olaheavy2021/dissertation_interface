@@ -36,9 +36,17 @@ public class DissertationDbContext : DbContext
             .Property(e => e.ResearchArea)
             .HasColumnType("text");
 
+        modelBuilder.Entity<Supervisor>()
+            .HasIndex(e => e.UserId)
+            .IsUnique();
+
         modelBuilder.Entity<Student>()
             .Property(e => e.ResearchTopic)
             .HasMaxLength(200);
+
+        modelBuilder.Entity<Student>()
+            .HasIndex(e => e.UserId)
+            .IsUnique();
     }
 
     public override int SaveChanges()

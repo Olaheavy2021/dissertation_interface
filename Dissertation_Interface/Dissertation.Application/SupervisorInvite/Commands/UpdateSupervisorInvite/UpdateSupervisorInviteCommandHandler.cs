@@ -112,7 +112,7 @@ public class UpdateSupervisorInviteCommandHandler : IRequestHandler<UpdateSuperv
             LastName = request.LastName,
             Email = request.Email
         };
-        var emailDto = new PublishEmailDto { User = userDto, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeResetPasswordEmail };
+        var emailDto = new PublishEmailDto { User = userDto, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeSupervisorInviteEmail };
         await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.EmailLoggerQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
     }

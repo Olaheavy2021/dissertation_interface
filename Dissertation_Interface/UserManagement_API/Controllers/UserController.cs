@@ -240,4 +240,37 @@ public class UserController : Controller
         ResponseDto<UserDto> response = await this._userService.EditSupervisor(model, email);
         return Ok(response);
     }
+
+    [Authorize(Roles = "Superadmin")]
+    [HttpPost("assign-supervisor-role")]
+    [SwaggerOperation(Summary = "Assign Supervisor role to admin")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    public async Task<IActionResult> AssignSupervisorRoleToAdmin([FromBody] AssignSupervisorRoleRequestDto model)
+    {
+        var email = HttpContext.GetEmail();
+        ResponseDto<UserDto> response = await this._authService.AssignSupervisorRoleToAdmin(model, email);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin")]
+    [HttpPost("change-admin-role")]
+    [SwaggerOperation(Summary = "Change Admin Role")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    public async Task<IActionResult> ChangeAdminRole([FromBody] EmailRequestDto model)
+    {
+        var email = HttpContext.GetEmail();
+        ResponseDto<UserDto> response = await this._authService.ChangeAdminRole(model, email);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin")]
+    [HttpPost("assign-admin-role")]
+    [SwaggerOperation(Summary = "Assign Admin Role to a Supervisor")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    public async Task<IActionResult> AssignAdminRoleToSupervisor([FromBody] AssignAdminRoleRequestDto model)
+    {
+        var email = HttpContext.GetEmail();
+        ResponseDto<UserDto> response = await this._authService.AssignAdminRoleToSupervisor(model, email);
+        return Ok(response);
+    }
 }

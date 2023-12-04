@@ -15,4 +15,7 @@ public interface IAuthService
     Task<ResponseDto<ConfirmEmailResponseDto>> ConfirmEmail(ConfirmEmailRequestDto request);
     Task<ResponseDto<string>> ResendConfirmationEmail(EmailRequestDto request, string? loggedInAdminEmail);
     Task<ResponseDto<RefreshTokenDto>> GetRefreshToken(RefreshTokenDto request);
+    Task<ResponseDto<UserDto>> AssignSupervisorRoleToAdmin(AssignSupervisorRoleRequestDto requestDto, string? loggedInAdminEmail);
+    Task<ResponseDto<UserDto>> AssignAdminRoleToSupervisor(AssignAdminRoleRequestDto request, string? loggedInAdminEmail);
+    Task<ResponseDto<UserDto>> ChangeAdminRole(EmailRequestDto request,  string? loggedInAdminEmail);
 }

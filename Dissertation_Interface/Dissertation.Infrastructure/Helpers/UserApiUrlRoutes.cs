@@ -19,4 +19,9 @@ public static class UserApiUrlRoutes
     public const string EditStudentRoute = $"{UserRoute}edit-student";
 
     public const string EditSupervisorRoute = $"{UserRoute}edit-supervisor";
+
+    public const string AssignSupervisorRoleToAdmin = $"{UserRoute}assign-supervisor-role";
+
+    public const string AssignAdminRoleToSupervisor = $"{UserRoute}assign-admin-role";
+
 }

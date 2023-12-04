@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Shared.DTO;
 using Shared.Enums;
 using Shared.Settings;
+using UserManagement_API.Data.Models.Dto;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Dissertation.Infrastructure.ExternalServices;
@@ -103,6 +104,20 @@ public class UserApiService : IUserApiService
     public async Task<ResponseDto<UserDto>> EditSupervisor(EditSupervisorRequestDto model)
     {
         var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.EditSupervisorRoute}";
+        var response = await this._requestHelper.PostAsync(url, model, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<UserDto>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<UserDto>> AssignAdminRoleToSupervisor (AssignAdminRoleRequestDto model)
+    {
+        var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.AssignAdminRoleToSupervisor}";
+        var response = await this._requestHelper.PostAsync(url, model, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<UserDto>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<UserDto>> AssignSupervisorRoleToAdmin (AssignSupervisorRoleRequestDto model)
+    {
+        var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.AssignSupervisorRoleToAdmin}";
         var response = await this._requestHelper.PostAsync(url, model, mediaType: MediaType.Json);
         return JsonSerializer.Deserialize<ResponseDto<UserDto>>(response, this._jsonSerializerOptions)!;
     }
