@@ -3,6 +3,7 @@ using Dissertation.Application.DTO.Response;
 using Dissertation.Application.Supervisor.Commands.AssignAdminRole;
 using Dissertation.Application.Supervisor.Commands.AssignSupervisorRole;
 using Dissertation.Application.Supervisor.Commands.RegisterSupervisor;
+using Dissertation.Application.Supervisor.Commands.UpdateResearchArea;
 using Dissertation.Application.Supervisor.Commands.UpdateSupervisor;
 using Dissertation.Application.Supervisor.Queries.GetActiveStudentsCohort;
 using Dissertation.Application.Supervisor.Queries.GetListOfSupervisors;
@@ -127,6 +128,17 @@ public class SupervisorController : Controller
     {
         var query = new GetActiveStudentsCohortQuery(parameters);
         ResponseDto<PaginatedUserListDto> response = await this._sender.Send(query);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Supervisor")]
+    [HttpPut("research-area")]
+    [SwaggerOperation(Summary = "Update Research Area for a Supervisor")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    public async Task<IActionResult> UpdateResearchArea([FromBody] UpdateResearchAreaRequest request )
+    {
+        var command = new UpdateResearchAreaCommand(request.ResearchArea);
+        ResponseDto<SupervisorDto> response = await this._sender.Send(command);
         return Ok(response);
     }
 }

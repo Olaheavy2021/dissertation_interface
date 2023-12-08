@@ -28,6 +28,7 @@ public static class ServiceCollectionExtension
             .AddScoped<IUserApiService, UserApiService>()
             .AddScoped<BackendApiAuthenticationHttpClientHandler>()
             .AddScoped<IMessageBus, MessageBus>()
+            .AddScoped<IHtmlSanitizerService, HtmlSanitizerService>()
             .AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
 
     internal static IServiceCollection AddSwagger(this IServiceCollection services)
