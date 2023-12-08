@@ -32,6 +32,22 @@ public class ModelBuilderConfiguration
             .Property(e => e.EndDate)
             .HasColumnType("date");
 
+        modelBuilder.Entity<Supervisor>()
+            .Property(e => e.ResearchArea)
+            .HasColumnType("text");
+
+        modelBuilder.Entity<Supervisor>()
+            .HasIndex(e => e.UserId)
+            .IsUnique();
+
+        modelBuilder.Entity<Student>()
+            .Property(e => e.ResearchTopic)
+            .HasMaxLength(200);
+
+        modelBuilder.Entity<Student>()
+            .HasIndex(e => e.UserId)
+            .IsUnique();
+
     }
 
 }

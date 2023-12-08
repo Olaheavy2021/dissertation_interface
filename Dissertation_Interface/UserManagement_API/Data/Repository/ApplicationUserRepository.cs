@@ -71,7 +71,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
         if (paginationParameters.FilterByCourse > 0)
         {
             sqlQuery.Append(" AND U.CourseId = @filter");
-            parametersList.Add(new SqlParameter("@filter", $"%{paginationParameters.FilterByCourse}%"));
+            parametersList.Add(new SqlParameter("@filter", $"{paginationParameters.FilterByCourse}"));
         }
 
         // FormattedQuery prepares the placeholders for role names.
@@ -107,7 +107,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
         if (paginationParameters.FilterByDepartment > 0)
         {
             sqlQuery.Append(" AND U.CourseId = @filter");
-            parametersList.Add(new SqlParameter("@filter", $"%{paginationParameters.FilterByDepartment}%"));
+            parametersList.Add(new SqlParameter("@filter", $"{paginationParameters.FilterByDepartment}"));
         }
 
         // FormattedQuery prepares the placeholders for role names.

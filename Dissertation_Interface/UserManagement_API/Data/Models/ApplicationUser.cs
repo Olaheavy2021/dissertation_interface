@@ -17,4 +17,7 @@ public class ApplicationUser : IdentityUser
     public long? CourseId { get; set; }
 
     public string? ProfilePicture { get; set; }
+
+    public ICollection<SupervisionCohort> SupervisedCohorts { get; set; }
+
 }

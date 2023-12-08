@@ -3,6 +3,8 @@ using Dissertation.Application.DTO.Response;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.DTO;
+
 namespace Dissertation.Application.Mapping;
 
 public static class MappingConfiguration

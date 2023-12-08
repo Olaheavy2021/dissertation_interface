@@ -1,11 +1,17 @@
+using Destructurama;
 using Dissertation.Application.Mapping;
 using Dissertation.Infrastructure.Context;
-using Dissertation.Infrastructure.Extensions;
 using Dissertation_API.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER");
+builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
+    .Enrich.FromLogContext()
+    .Destructure.UsingAttributes()
+    .Enrich.WithCorrelationId()
+    .ReadFrom.Configuration(context.Configuration));
 builder.Services.ConfigureMvc();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureApiVersioning();

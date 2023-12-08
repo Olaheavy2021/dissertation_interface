@@ -29,25 +29,7 @@ public class DissertationDbContext : DbContext
 
     public DbSet<StudentInvite> StudentInvites { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        ModelBuilderConfiguration.Configure(modelBuilder);
-        modelBuilder.Entity<Supervisor>()
-            .Property(e => e.ResearchArea)
-            .HasColumnType("text");
-
-        modelBuilder.Entity<Supervisor>()
-            .HasIndex(e => e.UserId)
-            .IsUnique();
-
-        modelBuilder.Entity<Student>()
-            .Property(e => e.ResearchTopic)
-            .HasMaxLength(200);
-
-        modelBuilder.Entity<Student>()
-            .HasIndex(e => e.UserId)
-            .IsUnique();
-    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder) => ModelBuilderConfiguration.Configure(modelBuilder);
 
     public override int SaveChanges()
     {

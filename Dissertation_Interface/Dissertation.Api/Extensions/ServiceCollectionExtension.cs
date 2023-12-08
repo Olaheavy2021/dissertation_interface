@@ -4,13 +4,14 @@ using Asp.Versioning;
 using Dissertation.Application.Utility;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.ExternalServices;
-using Dissertation.Infrastructure.Helpers;
 using Dissertation_API.Middleware.Correlation;
+using Dissertation.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
+using Shared.Helpers;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Settings;
@@ -125,7 +126,6 @@ public static class ServiceCollectionExtension
         services.Configure<ServiceBusSettings>(config.GetSection(ServiceBusSettings.SectionName));
         return services;
     }
-
 
     internal static IServiceCollection AddDissertationHttpClient(this IServiceCollection services,
         IConfiguration configuration)

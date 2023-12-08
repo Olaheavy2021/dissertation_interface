@@ -1,6 +1,6 @@
 using Dissertation.Domain.Enums;
 
-namespace Dissertation.Application.DTO.Response;
+namespace Shared.DTO;
 
 public class GetDissertationCohort
 {

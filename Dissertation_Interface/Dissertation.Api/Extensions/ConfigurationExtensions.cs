@@ -36,4 +36,7 @@ public static class ConfigurationExtensions
     internal static IApplicationBuilder UseCorrelationIdMiddleware(this IApplicationBuilder app) =>
         app.UseMiddleware<CorrelationIdMiddleware>();
 
+    internal static IApplicationBuilder UseHttpLoggingMiddleware(this IApplicationBuilder app) =>
+        app.UseMiddleware<HttpLoggingMiddleware>();
+
 }

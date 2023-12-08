@@ -1,6 +1,4 @@
 using Dissertation.Application.Extensions;
-using Dissertation.Application.Mapping;
-using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Extensions;
 
 namespace Dissertation_API.Extensions;
@@ -25,6 +23,7 @@ public static class ProgramExtension
             .UseSwaggerBasicAuthMiddleware()
             .UseCorrelationIdMiddleware()
             .UseUserDetailsMiddleware()
+            .UseHttpLoggingMiddleware()
             .UseExceptionMiddleware()
             .UseAuthentication()
             .UseAuthorization()

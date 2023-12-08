@@ -133,6 +133,7 @@ public class AuthService : IAuthService
             response.Message = SuccessMessages.DefaultSuccess;
 
             //publish audit log for supervisor registration
+            //use a topic here
         }
         else
         {
@@ -185,6 +186,7 @@ public class AuthService : IAuthService
             response.Message = SuccessMessages.DefaultSuccess;
 
             //publish audit log for supervisor registration
+            //use a topic here
         }
         else
         {
@@ -276,7 +278,7 @@ public class AuthService : IAuthService
 
         if (!roles.Any(role => role.Equals(Roles.RoleAdmin, StringComparison.OrdinalIgnoreCase))
             && !roles.Any(role => role.Equals(Roles.RoleSuperAdmin, StringComparison.OrdinalIgnoreCase)))
-            return new ResponseDto<UserDto>() { IsSuccess = false, Message = "User is not an admin or superadmin" };
+            return new ResponseDto<UserDto> { IsSuccess = false, Message = "User is not an admin or superadmin" };
 
         if (!user.EmailConfirmed)
             return new ResponseDto<UserDto>
@@ -285,14 +287,14 @@ public class AuthService : IAuthService
             };
 
         if (roles.Any(role => role.Equals(Roles.RoleSupervisor, StringComparison.OrdinalIgnoreCase)))
-            return new ResponseDto<UserDto>()
+            return new ResponseDto<UserDto>
             {
                 IsSuccess = false, Message = "User is already assigned the supervisor role"
             };
 
         IdentityResult result = await this._userManager.AddToRoleAsync(user, Roles.RoleSupervisor);
         if (!result.Succeeded)
-            return new ResponseDto<UserDto>()
+            return new ResponseDto<UserDto>
             {
                 IsSuccess = false, Message = result.Errors.FirstOrDefault()?.Description
             };

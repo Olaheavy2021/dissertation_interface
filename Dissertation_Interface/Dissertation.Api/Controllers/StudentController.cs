@@ -2,9 +2,11 @@ using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Application.Student.Commands.RegisterStudent;
 using Dissertation.Application.Student.Commands.UpdateStudent;
+using Dissertation.Application.Student.Queries.GetAvailableSupervisors;
 using Dissertation.Application.Student.Queries.GetListOfStudents;
 using Dissertation.Application.Student.Queries.GetStudentById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.DTO;
@@ -42,6 +44,7 @@ public class StudentController : Controller
         return Ok(result);
     }
 
+    [Authorize(Roles = "Superadmin, Admin")]
     [HttpGet]
     [SwaggerOperation(Summary = "Get List of Students")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedUserListDto>))]
@@ -67,6 +70,7 @@ public class StudentController : Controller
         return Ok(response);
     }
 
+    [Authorize(Roles = "Superadmin, Admin, Student, Supervisor")]
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Get Student By UserId")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetStudent>))]
@@ -78,6 +82,7 @@ public class StudentController : Controller
         return Ok(response);
     }
 
+    [Authorize(Roles = "Superadmin, Admin")]
     [HttpPut("{id:long}")]
     [SwaggerOperation(Summary = "Update Student")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
@@ -86,6 +91,18 @@ public class StudentController : Controller
     {
         var query = new UpdateStudentCommand(request.LastName, request.FirstName, request.StudentId, request.CourseId, id);
         ResponseDto<UserDto> response = await this._sender.Send(query);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Student")]
+    [HttpGet("available-supervisors")]
+    [SwaggerOperation(Summary = "Get Available Supervisor for the Cohort")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetStudent>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
+    public async Task<IActionResult> GetAvailableSupervisors([FromQuery] SupervisionCohortListParameters parameters)
+    {
+        var query = new GetAvailableSupervisorsQuery(parameters);
+        ResponseDto<PaginatedSupervisionCohortListDto> response = await this._sender.Send(query);
         return Ok(response);
     }
 }

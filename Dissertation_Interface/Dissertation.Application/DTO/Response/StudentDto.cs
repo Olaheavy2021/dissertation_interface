@@ -1,4 +1,6 @@
-﻿namespace Dissertation.Application.DTO.Response;
+﻿using Shared.DTO;
+
+namespace Dissertation.Application.DTO.Response;
 
 public class StudentDto
 {

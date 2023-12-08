@@ -294,7 +294,7 @@ namespace UserManagement_API.Migrations
                         {
                             Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "38c994dc-4cb6-4f01-8057-9470f9a5b1e7",
+                            ConcurrencyStamp = "15ba2b27-aa87-4f43-890d-c8d1e9845757",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "superadmin1@shu.com",
                             EmailConfirmed = true,
@@ -304,11 +304,11 @@ namespace UserManagement_API.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN1@SHU.COM",
                             NormalizedUserName = "SUPERADMIN1",
-                            PasswordHash = "AQAAAAIAAYagAAAAECqLTtzVA88qEvHtrlo+Ctx607DfpgpRCjyyu3ar/H4Y6PV3nqDNt0Wh2LK9kUkmWA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJhjnT10xAVmdLP/QJUjIXaTlSonCQgokjtZcpqfSdQgPs0TCjVEy+gU3HqXQf5WJA==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "0bbddfb2-fef2-4c87-aa13-1747d5d6f749",
+                            SecurityStamp = "0dff038b-9064-49f6-8ebd-883e177c5ffd",
                             TwoFactorEnabled = false,
                             UserName = "superadmin1"
                         },
@@ -316,7 +316,7 @@ namespace UserManagement_API.Migrations
                         {
                             Id = "9e224968-33e4-4652-b7b7-8574d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f3118c6e-4bb3-46f1-b533-97cdaa20d370",
+                            ConcurrencyStamp = "b574e39e-4c93-49e0-9521-0d1ecfe3a009",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "superadmin2@shu.com",
                             EmailConfirmed = true,
@@ -326,14 +326,51 @@ namespace UserManagement_API.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN2@SHU.COM",
                             NormalizedUserName = "SUPERADMIN2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEN76sZt0Fqp2RrX7qhnzc5nAu65r5xpJDkyXJgPiXyEBaiIzED2vmfdSADsFzqMfRA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJI5k/AT1uSnFkp0zOhLfyA/QZZJHJq/tnPunH5OAe8XJBOtRY79BMqvQRfGxA/hfQ==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "c67fe57b-e877-4e6b-b523-1ad03a7997b1",
+                            SecurityStamp = "6dfedfa3-6f0f-4c77-a42f-ace207a05dd7",
                             TwoFactorEnabled = false,
                             UserName = "superadmin2"
                         });
+                });
+
+            modelBuilder.Entity("UserManagement_API.Data.Models.SupervisionCohort", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("DissertationCohortId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SupervisionSlot")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SupervisorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SupervisorId");
+
+                    b.ToTable("SupervisionCohorts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -385,6 +422,22 @@ namespace UserManagement_API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("UserManagement_API.Data.Models.SupervisionCohort", b =>
+                {
+                    b.HasOne("UserManagement_API.Data.Models.ApplicationUser", "Supervisor")
+                        .WithMany("SupervisedCohorts")
+                        .HasForeignKey("SupervisorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Supervisor");
+                });
+
+            modelBuilder.Entity("UserManagement_API.Data.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("SupervisedCohorts");
                 });
 #pragma warning restore 612, 618
         }

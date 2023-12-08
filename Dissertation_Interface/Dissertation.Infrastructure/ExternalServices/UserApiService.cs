@@ -5,6 +5,7 @@ using Dissertation.Infrastructure.Helpers;
 using Microsoft.Extensions.Options;
 using Shared.DTO;
 using Shared.Enums;
+using Shared.Helpers;
 using Shared.Settings;
 using UserManagement_API.Data.Models.Dto;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -113,6 +114,50 @@ public class UserApiService : IUserApiService
         var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.AssignAdminRoleToSupervisor}";
         var response = await this._requestHelper.PostAsync(url, model, mediaType: MediaType.Json);
         return JsonSerializer.Deserialize<ResponseDto<UserDto>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<string>> CreateSupervisionCohortListRequest(CreateSupervisionCohortListRequest model)
+    {
+        var url = $"{this._serviceUrlSettings.UserApi}{SupervisionCohortRoutes.SupervisionCohortRoute}";
+        var response = await this._requestHelper.PostAsync(url, model, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<string>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<PaginatedSupervisionCohortListDto>> GetSupervisionCohorts(
+        SupervisionCohortListParameters model)
+    {
+        var urlParams = new Dictionary<string, object>
+        {
+            { "pageNumber", model.PageNumber }, { "pageSize", model.PageSize },
+            { "searchByUserName", model.SearchByUserName },
+            { "dissertationCohortId", model.DissertationCohortId }
+        };
+
+        var url = $"{this._serviceUrlSettings.UserApi}{SupervisionCohortRoutes.SupervisionCohortRoute}";
+        var response = await this._requestHelper.GetAsync(url, null, urlParams, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<PaginatedSupervisionCohortListDto>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<PaginatedUserListDto>> GetUnAssignedSupervisors(
+        SupervisionCohortListParameters model)
+    {
+        var urlParams = new Dictionary<string, object>
+        {
+            { "pageNumber", model.PageNumber }, { "pageSize", model.PageSize },
+            { "searchByUserName", model.SearchByUserName },
+            { "dissertationCohortId", model.DissertationCohortId }
+        };
+
+        var url = $"{this._serviceUrlSettings.UserApi}{SupervisionCohortRoutes.UnassignedSupervisors}";
+        var response = await this._requestHelper.GetAsync(url, null, urlParams, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<PaginatedUserListDto>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<GetSupervisionCohort>> GetSupervisionCohort(long id)
+    {
+        var url = $"{this._serviceUrlSettings.UserApi}{SupervisionCohortRoutes.SupervisionCohortRoute}/{id}";
+        var response = await this._requestHelper.GetAsync(url, null, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<GetSupervisionCohort>>(response, this._jsonSerializerOptions)!;
     }
 
     public async Task<ResponseDto<UserDto>> AssignSupervisorRoleToAdmin (AssignSupervisorRoleRequestDto model)

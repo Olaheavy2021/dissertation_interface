@@ -35,7 +35,7 @@ public class AcademicYearRepository : GenericRepository<AcademicYear>, IAcademic
         if (paginationParameters.SearchByYear > 0)
         {
             sqlQuery.Append(" WHERE YEAR(StartDate) = @search");
-            parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByYear}%"));
+            parametersList.Add(new SqlParameter("@search", $"{paginationParameters.SearchByYear}"));
         }
 
         return PagedList<AcademicYear>.ToPagedList(

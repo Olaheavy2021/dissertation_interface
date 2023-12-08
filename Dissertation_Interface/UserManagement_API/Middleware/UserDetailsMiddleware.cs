@@ -36,6 +36,7 @@ public class UserDetailsMiddleware
                 context.Items["UserId"] = userId;
                 context.Items["UserName"] = userName;
                 context.Items["Email"] = email;
+                context.Items["AccessToken"] = token;
             }
         }
 

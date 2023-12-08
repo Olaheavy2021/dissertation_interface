@@ -4,6 +4,7 @@ using Dissertation.Application.Supervisor.Commands.AssignAdminRole;
 using Dissertation.Application.Supervisor.Commands.AssignSupervisorRole;
 using Dissertation.Application.Supervisor.Commands.RegisterSupervisor;
 using Dissertation.Application.Supervisor.Commands.UpdateSupervisor;
+using Dissertation.Application.Supervisor.Queries.GetActiveStudentsCohort;
 using Dissertation.Application.Supervisor.Queries.GetListOfSupervisors;
 using Dissertation.Application.Supervisor.Queries.GetSupervisorById;
 using MediatR;
@@ -46,6 +47,7 @@ public class SupervisorController : Controller
         return Ok(result);
     }
 
+    [Authorize(Roles = "Superadmin, Admin")]
     [HttpGet]
     [SwaggerOperation(Summary = "Get List of Supervisors")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedUserListDto>))]
@@ -71,6 +73,7 @@ public class SupervisorController : Controller
         return Ok(response);
     }
 
+    [Authorize(Roles = "Superadmin, Admin, Student, Supervisor")]
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Get Supervisor By UserId")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetSupervisor>))]
@@ -82,6 +85,7 @@ public class SupervisorController : Controller
         return Ok(response);
     }
 
+    [Authorize(Roles = "Superadmin, Admin")]
     [HttpPut("{id:long}")]
     [SwaggerOperation(Summary = "Update Supervisor")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetStudent>))]
@@ -112,6 +116,17 @@ public class SupervisorController : Controller
     {
         var command = new AssignSupervisorRoleCommand(request.Email, request.DepartmentId);
         ResponseDto<UserDto> response = await this._sender.Send(command);
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Supervisor")]
+    [HttpGet("available-students")]
+    [SwaggerOperation(Summary = "Get Available Students for the active cohort")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    public async Task<IActionResult> GetAvailableStudents([FromQuery] StudentPaginationParameters parameters)
+    {
+        var query = new GetActiveStudentsCohortQuery(parameters);
+        ResponseDto<PaginatedUserListDto> response = await this._sender.Send(query);
         return Ok(response);
     }
 }

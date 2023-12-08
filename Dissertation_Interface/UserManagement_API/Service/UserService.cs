@@ -14,6 +14,7 @@ using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Models.Dto;
 using UserManagement_API.Data.Models.Validators;
+using UserManagement_API.Helpers;
 using UserManagement_API.Service.IService;
 
 namespace UserManagement_API.Service;
@@ -181,7 +182,7 @@ public class UserService : IUserService
         PagedList<ApplicationUser> users = this._db.ApplicationUserRepository.GetPaginatedAdminUsers(paginationParameters);
 
         var userDtos = new PagedList<UserListDto>(
-            users.Select(MapToUserDto).ToList(),
+            users.Select(CustomMappers.MapToUserDto).ToList(),
             users.TotalCount,
             users.CurrentPage,
             users.PageSize
@@ -209,7 +210,7 @@ public class UserService : IUserService
         PagedList<ApplicationUser> users = this._db.ApplicationUserRepository.GetPaginatedStudents(paginationParameters);
 
         var userDtos = new PagedList<UserListDto>(
-            users.Select(MapToUserDto).ToList(),
+            users.Select(CustomMappers.MapToUserDto).ToList(),
             users.TotalCount,
             users.CurrentPage,
             users.PageSize
@@ -238,7 +239,7 @@ public class UserService : IUserService
         PagedList<ApplicationUser> users = this._db.ApplicationUserRepository.GetPaginatedSupervisors(paginationParameters);
 
         var userDtos = new PagedList<UserListDto>(
-            users.Select(MapToUserDto).ToList(),
+            users.Select(CustomMappers.MapToUserDto).ToList(),
             users.TotalCount,
             users.CurrentPage,
             users.PageSize
@@ -395,6 +396,7 @@ public class UserService : IUserService
 
         UserDto? mappedUser = this._mapper.Map<UserDto>(user);
         this._logger.LogInformation("Supervisor updated successfully -  {0}", request.UserId);
+        //use a queue here
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
         response.Result = mappedUser;
@@ -452,7 +454,7 @@ public class UserService : IUserService
         user.CourseId = request.CourseId;
 
         await this._userManager.UpdateAsync(user);
-
+        //use a queue here
         UserDto? mappedUser = this._mapper.Map<UserDto>(user);
         this._logger.LogInformation("Student updated successfully -  {0}", request.UserId);
         response.IsSuccess = true;
@@ -462,22 +464,6 @@ public class UserService : IUserService
             this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, SuccessMessages.DefaultSuccess, request.StudentId);
         return response;
     }
-
-
-    private static UserListDto MapToUserDto(ApplicationUser applicationUser) =>
-        new()
-        {
-            Id = applicationUser.Id,
-            Email = applicationUser.Email,
-            UserName = applicationUser.UserName,
-            FirstName = applicationUser.FirstName,
-            LastName = applicationUser.LastName,
-            IsLockedOut = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow,
-            EmailConfirmed = applicationUser.EmailConfirmed,
-            Status = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow
-                ? UserStatus.Deactivated
-                : applicationUser.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive
-        };
 
     private async Task PublishAccountDeactivationOrActivationEmail(ApplicationUser user, string emailType)
     {

@@ -2,6 +2,8 @@ namespace Dissertation.Infrastructure.Helpers;
 
 public static class UserApiUrlRoutes
 {
+    public const string UserRoute = "/user/";
+
     public const string GetUserByEmailRoute = $"{UserRoute}get-by-email/";
 
     public const string GetUserByUserNameRoute = $"{UserRoute}get-by-username/";
@@ -13,8 +15,6 @@ public static class UserApiUrlRoutes
     public const string GetSupervisors =$"{UserRoute}get-supervisors";
 
     public const string GetStudents = $"{UserRoute}get-students";
-
-    public const string UserRoute = "/user/";
 
     public const string EditStudentRoute = $"{UserRoute}edit-student";
 

@@ -37,6 +37,7 @@ public class UnitOfWork : IUnitOfWork
     #region Repositories
 
     public IApplicationUserRepository ApplicationUserRepository => new ApplicationUserRepository(this.Context);
+    public ISupervisionCohortRepository SupervisionCohortRepository => new SupervisionCohortRepository(this.Context);
 
     #endregion Repositories
 
@@ -54,7 +55,7 @@ public class UnitOfWork : IUnitOfWork
         Dispose();
     }
 
-    public async Task SaveAsync() =>
+    public async Task SaveAsync(CancellationToken cancellationToken) =>
         //_changeTrackerManager?.FixupEntities(_context);
-        await this.Context.SaveChangesAsync().ConfigureAwait(false);
+        await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 }

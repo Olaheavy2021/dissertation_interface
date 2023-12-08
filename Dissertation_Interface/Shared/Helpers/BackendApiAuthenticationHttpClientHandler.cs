@@ -1,8 +1,7 @@
 using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 
-namespace Dissertation.Application.Utility;
+namespace Shared.Helpers;
 
 public class BackendApiAuthenticationHttpClientHandler : DelegatingHandler
 {

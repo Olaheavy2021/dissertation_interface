@@ -14,6 +14,8 @@ using Shared.Settings;
 using UserManagement_API.Data;
 using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Repository;
+using UserManagement_API.ExternalServices;
+using UserManagement_API.Helpers;
 using UserManagement_API.Middleware.Correlation;
 using UserManagement_API.Service;
 using UserManagement_API.Service.IService;
@@ -27,6 +29,7 @@ public static class ApplicationServiceRegistration
         // AppSettings Configuration
         services.Configure<ApplicationUrlSettings>(configuration.GetSection("ApplicationUrlSettings"));
         services.Configure<ServiceBusSettings>(configuration.GetSection("ServiceBusSettings"));
+        services.Configure<ServiceUrlSettings>(configuration.GetSection(ServiceUrlSettings.SectionName));
 
         //Database Connection
         services.AddDbContext<UserDbContext>(options =>
@@ -36,6 +39,10 @@ public static class ApplicationServiceRegistration
         services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
+        services.AddScoped<IRequestHelper, RequestHelper>();
+        services.AddScoped<IDissertationApiService, DissertationApiService>();
+        services.AddScoped<ISupervisionCohortService, SupervisionCohortService>();
         services.AddScoped<IMessageBus, MessageBus>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -107,6 +114,10 @@ public static class ApplicationServiceRegistration
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
             });
+
+            services.AddHttpClient("UserApiClient", u => u.BaseAddress =
+                new Uri(configuration["ServiceUrls:DissertationApi"] ?? throw new InvalidOperationException())).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
+
         return services;
     }
 }

@@ -1,4 +1,5 @@
 using Dissertation.Domain.Enums;
+using Shared.DTO;
 
 namespace Dissertation.Application.DTO.Response;
 

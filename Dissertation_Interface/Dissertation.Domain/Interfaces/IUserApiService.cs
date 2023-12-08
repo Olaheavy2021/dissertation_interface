@@ -16,4 +16,8 @@ public interface IUserApiService
     Task<ResponseDto<UserDto>> EditSupervisor(EditSupervisorRequestDto model);
     Task<ResponseDto<UserDto>> AssignSupervisorRoleToAdmin(AssignSupervisorRoleRequestDto model);
     Task<ResponseDto<UserDto>> AssignAdminRoleToSupervisor(AssignAdminRoleRequestDto model);
+    Task<ResponseDto<string>> CreateSupervisionCohortListRequest(CreateSupervisionCohortListRequest model);
+    Task<ResponseDto<PaginatedSupervisionCohortListDto>> GetSupervisionCohorts(SupervisionCohortListParameters model);
+    Task<ResponseDto<PaginatedUserListDto>> GetUnAssignedSupervisors(SupervisionCohortListParameters model);
+    Task<ResponseDto<GetSupervisionCohort>> GetSupervisionCohort(long id);
 }

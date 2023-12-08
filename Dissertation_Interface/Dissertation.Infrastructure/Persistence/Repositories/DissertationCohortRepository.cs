@@ -26,7 +26,7 @@ public class DissertationCohortRepository : GenericRepository<DissertationCohort
         if (paginationParameters.SearchByStartYear > 0)
         {
             sqlQuery.Append(" WHERE YEAR(StartDate) = @search");
-            parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByStartYear}%"));
+            parametersList.Add(new SqlParameter("@search", $"{paginationParameters.SearchByStartYear}"));
         }
 
         return PagedList<DissertationCohort>.ToPagedList(
