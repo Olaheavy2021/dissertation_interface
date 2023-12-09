@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
 using Shared.DTO;
 using Shared.Enums;
-using Shared.Helpers;
 using Shared.Settings;
 using UserManagement_API.Helpers;
 using UserManagement_API.Service.IService;
@@ -37,5 +36,19 @@ public class DissertationApiService : IDissertationApiService
         var url = $"{this._serviceUrlSettings.DissertationApi}{DissertationCohortRoutes.GetActiveDissertationCohortRoute}";
         var response = await this._requestHelper.GetAsync(url, null, mediaType: MediaType.Json);
         return JsonSerializer.Deserialize<ResponseDto<GetDissertationCohort>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<IReadOnlyList<GetCourse>>> GetAllCourses()
+    {
+        var url = $"{this._serviceUrlSettings.DissertationApi}{CourseRoutes.GetAllCoursesRoute}";
+        var response = await this._requestHelper.GetAsync(url, null, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<IReadOnlyList<GetCourse>>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<IReadOnlyList<GetDepartment>>> GetAllDepartments()
+    {
+        var url = $"{this._serviceUrlSettings.DissertationApi}{DepartmentRoutes.GetAllDepartmentsRoute}";
+        var response = await this._requestHelper.GetAsync(url, null, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<IReadOnlyList<GetDepartment>>>(response, this._jsonSerializerOptions)!;
     }
 }

@@ -56,7 +56,7 @@ public class SupervisorController : Controller
     public async Task<IActionResult> GetListOfSupervisors([FromQuery] SupervisorPaginationParameters paginationParameters)
     {
         var query = new GetListOfSupervisorsQuery(paginationParameters);
-        ResponseDto<PaginatedUserListDto> response = await this._sender.Send(query);
+        ResponseDto<PaginatedSupervisorListDto> response = await this._sender.Send(query);
 
         if (response.Result != null)
         {
@@ -123,11 +123,11 @@ public class SupervisorController : Controller
     [Authorize(Roles = "Supervisor")]
     [HttpGet("available-students")]
     [SwaggerOperation(Summary = "Get Available Students for the active cohort")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedStudentListDto>))]
     public async Task<IActionResult> GetAvailableStudents([FromQuery] StudentPaginationParameters parameters)
     {
         var query = new GetActiveStudentsCohortQuery(parameters);
-        ResponseDto<PaginatedUserListDto> response = await this._sender.Send(query);
+        ResponseDto<PaginatedStudentListDto> response = await this._sender.Send(query);
         return Ok(response);
     }
 

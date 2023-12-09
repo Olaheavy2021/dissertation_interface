@@ -1,3 +1,4 @@
+using Shared.DTO;
 using Shared.Helpers;
 
 namespace Dissertation.Application.DTO.Response;

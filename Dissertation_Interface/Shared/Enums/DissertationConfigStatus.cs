@@ -1,4 +1,4 @@
-namespace Dissertation.Domain.Enums;
+namespace Shared.Enums;
 
 public enum DissertationConfigStatus
 {

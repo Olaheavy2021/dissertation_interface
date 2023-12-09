@@ -1,6 +1,34 @@
 ﻿{
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/v1/Supervisor/research-area",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor/research-area",
+      "UpstreamHttpMethod": [ "Put"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Student/research-topic",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Student/research-topic",
+      "UpstreamHttpMethod": [ "Put"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/Supervisor/available-students",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -269,6 +297,20 @@
       }
     },
     {
+      "DownstreamPathTemplate": "/api/v1/Course/all-courses",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Course/all-courses",
+      "UpstreamHttpMethod": [ "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/Course/active",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -331,6 +373,20 @@
       ],
       "UpstreamPathTemplate": "/api/v1/Course",
       "UpstreamHttpMethod": [ "Post", "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Department/all-departments",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Department/all-departments",
+      "UpstreamHttpMethod": [ "Get" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }

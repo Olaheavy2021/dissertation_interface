@@ -1,7 +1,6 @@
 using Bogus;
 using Dissertation.Application.DTO;
 using Dissertation.Domain.Entities;
-using Dissertation.Domain.Enums;
 using Shared.Helpers;
 
 namespace UnitTests.DissertationAPI.Mocks;

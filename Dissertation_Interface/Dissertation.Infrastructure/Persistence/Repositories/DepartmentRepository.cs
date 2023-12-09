@@ -1,10 +1,10 @@
 using System.Text;
 using Dissertation.Domain.Entities;
-using Dissertation.Domain.Enums;
 using Dissertation.Domain.Pagination;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Shared.Enums;
 using Shared.Helpers;
 using Shared.Repository;
 

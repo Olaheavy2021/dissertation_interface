@@ -1,5 +1,5 @@
 using Dissertation.Domain.DomainHelper;
-using Dissertation.Domain.Enums;
+using Shared.Enums;
 
 namespace Dissertation.Domain.Entities;
 

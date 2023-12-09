@@ -1,6 +1,5 @@
 using System.Text;
 using Dissertation.Domain.Entities;
-using Dissertation.Domain.Enums;
 using Dissertation.Domain.Pagination;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using Microsoft.Data.SqlClient;

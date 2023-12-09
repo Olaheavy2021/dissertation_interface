@@ -5,7 +5,6 @@ using Dissertation.Infrastructure.Helpers;
 using Microsoft.Extensions.Options;
 using Shared.DTO;
 using Shared.Enums;
-using Shared.Helpers;
 using Shared.Settings;
 using UserManagement_API.Data.Models.Dto;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -60,7 +59,7 @@ public class UserApiService : IUserApiService
         return JsonSerializer.Deserialize<ResponseDto<string>>(response, this._jsonSerializerOptions)!;
     }
 
-    public async Task<ResponseDto<PaginatedUserListDto>> GetListOfSupervisors(SupervisorPaginationParameters model)
+    public async Task<ResponseDto<PaginatedSupervisorListDto>> GetListOfSupervisors(SupervisorPaginationParameters model)
     {
         var urlParams = new Dictionary<string, object>
         {
@@ -71,10 +70,10 @@ public class UserApiService : IUserApiService
 
         var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.GetSupervisors}";
         var response = await this._requestHelper.GetAsync(url, null, urlParams, mediaType: MediaType.Json);
-        return JsonSerializer.Deserialize<ResponseDto<PaginatedUserListDto>>(response, this._jsonSerializerOptions)!;
+        return JsonSerializer.Deserialize<ResponseDto<PaginatedSupervisorListDto>>(response, this._jsonSerializerOptions)!;
     }
 
-    public async Task<ResponseDto<PaginatedUserListDto>> GetListOfStudents(DissertationStudentPaginationParameters model)
+    public async Task<ResponseDto<PaginatedStudentListDto>> GetListOfStudents(DissertationStudentPaginationParameters model)
     {
         var urlParams = new Dictionary<string, object>
         {
@@ -85,7 +84,7 @@ public class UserApiService : IUserApiService
 
         var url = $"{this._serviceUrlSettings.UserApi}{UserApiUrlRoutes.GetStudents}";
         var response = await this._requestHelper.GetAsync(url, null, urlParams, mediaType: MediaType.Json);
-        return JsonSerializer.Deserialize<ResponseDto<PaginatedUserListDto>>(response, this._jsonSerializerOptions)!;
+        return JsonSerializer.Deserialize<ResponseDto<PaginatedStudentListDto>>(response, this._jsonSerializerOptions)!;
     }
 
     public async Task<ResponseDto<GetUserDto>> GetUserByUserId(string userId)

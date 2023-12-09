@@ -27,14 +27,16 @@ public class UserService : IUserService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMessageBus _messageBus;
     private readonly ServiceBusSettings _serviceBusSettings;
+    private readonly IDissertationApiService _dissertationApiService;
 
-    public UserService(IUnitOfWork db, IAppLogger<UserService> logger, IMapper mapper, UserManager<ApplicationUser> userManager, IMessageBus messageBus, IOptions<ServiceBusSettings> serviceBusSettings)
+    public UserService(IUnitOfWork db, IAppLogger<UserService> logger, IMapper mapper, UserManager<ApplicationUser> userManager, IMessageBus messageBus, IOptions<ServiceBusSettings> serviceBusSettings, IDissertationApiService dissertationApiService)
     {
         this._db = db;
         this._mapper = mapper;
         this._logger = logger;
         this._userManager = userManager;
         this._messageBus = messageBus;
+        this._dissertationApiService = dissertationApiService;
         this._serviceBusSettings = serviceBusSettings.Value;
     }
 
@@ -77,6 +79,7 @@ public class UserService : IUserService
         {
             IList<string> roles = await this._userManager.GetRolesAsync(user);
             UserDto mappedUser = this._mapper.Map<ApplicationUser, UserDto>(user);
+            mappedUser.UpdateStatus(user.LockoutEnd, user.EmailConfirmed);
             var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow };
 
             response.IsSuccess = true;
@@ -102,6 +105,7 @@ public class UserService : IUserService
         {
             IList<string> roles = await this._userManager.GetRolesAsync(user);
             UserDto mappedUser = this._mapper.Map<ApplicationUser, UserDto>(user);
+            mappedUser.UpdateStatus(user.LockoutEnd, user.EmailConfirmed);
             var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow };
 
             response.IsSuccess = true;
@@ -204,13 +208,19 @@ public class UserService : IUserService
         return response;
     }
 
-    public ResponseDto<PaginatedUserListDto> GetPaginatedStudents(DissertationStudentPaginationParameters paginationParameters)
+    public async Task<ResponseDto<PaginatedStudentListDto>> GetPaginatedStudents(
+        DissertationStudentPaginationParameters paginationParameters)
     {
-        var response = new ResponseDto<PaginatedUserListDto>();
+        var response = new ResponseDto<PaginatedStudentListDto>();
         PagedList<ApplicationUser> users = this._db.ApplicationUserRepository.GetPaginatedStudents(paginationParameters);
 
-        var userDtos = new PagedList<UserListDto>(
-            users.Select(CustomMappers.MapToUserDto).ToList(),
+        ResponseDto<IReadOnlyList<GetCourse>> courses = await this._dissertationApiService.GetAllCourses();
+        if (courses == null || courses.Result == null) throw new NotFoundException("Courses", "all");
+
+        this._logger.LogInformation("Number of courses - {count}", courses.Result.Count);
+
+        var userDtos = new PagedList<StudentListDto>(
+            users.Select(user => CustomMappers.MapToUserDto(user, courses.Result)).ToList(),
             users.TotalCount,
             users.CurrentPage,
             users.PageSize
@@ -218,7 +228,7 @@ public class UserService : IUserService
 
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
-        response.Result = new PaginatedUserListDto
+        response.Result = new PaginatedStudentListDto
         {
             Data = userDtos,
             TotalCount = userDtos.TotalCount,
@@ -232,14 +242,18 @@ public class UserService : IUserService
         return response;
     }
 
-    public ResponseDto<PaginatedUserListDto> GetPaginatedSupervisors(
+    public async Task<ResponseDto<PaginatedSupervisorListDto>> GetPaginatedSupervisors(
         SupervisorPaginationParameters paginationParameters)
     {
-        var response = new ResponseDto<PaginatedUserListDto>();
+        var response = new ResponseDto<PaginatedSupervisorListDto>();
         PagedList<ApplicationUser> users = this._db.ApplicationUserRepository.GetPaginatedSupervisors(paginationParameters);
 
-        var userDtos = new PagedList<UserListDto>(
-            users.Select(CustomMappers.MapToUserDto).ToList(),
+        ResponseDto<IReadOnlyList<GetDepartment>> departments = await this._dissertationApiService.GetAllDepartments();
+        if (departments == null || departments.Result == null) throw new NotFoundException("Departments", "all");
+        this._logger.LogInformation("Number of departments - {count}", departments.Result.Count);
+
+        var userDtos = new PagedList<SupervisorListDto>(
+            users.Select(user => CustomMappers.MapToUserDto(user, departments.Result)).ToList(),
             users.TotalCount,
             users.CurrentPage,
             users.PageSize
@@ -247,7 +261,7 @@ public class UserService : IUserService
 
         response.IsSuccess = true;
         response.Message = SuccessMessages.DefaultSuccess;
-        response.Result = new PaginatedUserListDto
+        response.Result = new PaginatedSupervisorListDto()
         {
             Data = userDtos,
             TotalCount = userDtos.TotalCount,

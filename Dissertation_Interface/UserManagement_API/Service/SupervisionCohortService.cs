@@ -62,6 +62,13 @@ public class SupervisionCohortService : ISupervisionCohortService
                 continue;
             }
 
+            //check if the supervisor has not been deactivated
+            if (user.IsLockedOutByAdmin)
+            {
+                this._logger.LogWarning("This supervisor - {userId} has been disabled by the admin", createSupervisionCohortRequest.UserId);
+                continue;
+            }
+
             //check if the supervisor has not been added before for this cohort
             var doesSupervisionCohortExist = await this._db.SupervisionCohortRepository.AnyAsync(x =>
                 x.SupervisorId == createSupervisionCohortRequest.UserId && x.DissertationCohortId == request.DissertationCohortId);
@@ -99,7 +106,14 @@ public class SupervisionCohortService : ISupervisionCohortService
             throw new NotFoundException(nameof(SupervisionCohort), id);
         }
 
-        UserDto supervisor = this._mapper.Map<UserDto>(supervisionCohort.Supervisor);
+        ResponseDto<IReadOnlyList<GetDepartment>> departments = await this._dissertationApiService.GetAllDepartments();
+        if (departments == null || departments.Result == null) throw new NotFoundException("Departments", "all");
+        this._logger.LogInformation("Number of departments - {count}", departments.Result.Count);
+
+
+        SupervisorListDto? supervisor = this._mapper.Map<SupervisorListDto>(supervisionCohort.Supervisor);
+        supervisor.Department = departments.Result.FirstOrDefault(x => x.Id == supervisionCohort.Supervisor.DepartmentId)!; // Map department
+
         return new ResponseDto<GetSupervisionCohort>
         {
             IsSuccess = true,
@@ -114,14 +128,19 @@ public class SupervisionCohortService : ISupervisionCohortService
         };
     }
 
-    public Task<ResponseDto<PaginatedSupervisionCohortListDto>> GetSupervisionCohorts(SupervisionCohortListParameters parameters)
+    public async Task<ResponseDto<PaginatedSupervisionCohortListDto>> GetSupervisionCohorts(SupervisionCohortListParameters parameters)
     {
         var response = new ResponseDto<PaginatedSupervisionCohortListDto>();
         this._logger.LogInformation("Attempting to retrieve list of Supervision Cohorts");
         PagedList<SupervisionCohort> supervisionCohorts = this._db.SupervisionCohortRepository.GetPaginatedListOfSupervisionCohort(parameters);
 
+        ResponseDto<IReadOnlyList<GetDepartment>> departments = await this._dissertationApiService.GetAllDepartments();
+        if (departments == null || departments.Result == null) throw new NotFoundException("Departments", "all");
+        this._logger.LogInformation("Number of departments - {count}", departments.Result.Count);
+
+
         var mappedDissertationCohort = new PagedList<GetSupervisionCohort>(
-            supervisionCohorts.Select(MapToSupervisionCohortDto).ToList(),
+            supervisionCohorts.Select(supervisionCohort => MapToSupervisionCohortDto(supervisionCohort, departments.Result) ).ToList(),
             supervisionCohorts.TotalCount,
             supervisionCohorts.CurrentPage,
             supervisionCohorts.PageSize
@@ -140,7 +159,7 @@ public class SupervisionCohortService : ISupervisionCohortService
             HasPrevious = mappedDissertationCohort.HasPrevious
         };
 
-        return Task.FromResult(response);
+        return response;
     }
 
     public ResponseDto<PaginatedUserListDto> GetActiveSupervisorsForCohort(
@@ -201,38 +220,29 @@ public class SupervisionCohortService : ISupervisionCohortService
         return response;
     }
 
-    public async Task<ResponseDto<GetSupervisionCohort>> UpdateSupervisionCohort(EditSupervisionCohortRequest request)
+    public async Task<ResponseDto<SupervisionCohort>> GetSupervisionCohort(SupervisionCohortParameters parameters)
     {
-        this._logger.LogInformation("Attempting to update a Supervision Cohort with this {id}", request.SupervisionSlot);
-        SupervisionCohort? supervisionCohort =
-            await this._db.SupervisionCohortRepository.GetAsync(x => x.Id ==  request.SupervisionSlot, includes: x => x.Supervisor);
-
+        SupervisionCohort? supervisionCohort = await this._db.SupervisionCohortRepository.GetFirstOrDefaultAsync(x =>
+            x.SupervisorId == parameters.SupervisorId && x.DissertationCohortId == parameters.DissertationCohortId, includes: x => x.Supervisor);
         if (supervisionCohort == null)
         {
-            throw new NotFoundException(nameof(SupervisionCohort),  request.SupervisionSlot);
+            return new ResponseDto<SupervisionCohort>
+            {
+                IsSuccess = false, Message = "Supervisor has not been assigned to this cohort"
+            };
         }
 
-        //TODO: count the supervision list for that particular request
-
-        UserDto supervisor = this._mapper.Map<UserDto>(supervisionCohort.Supervisor);
-        return new ResponseDto<GetSupervisionCohort>
+        return new ResponseDto<SupervisionCohort>()
         {
-            IsSuccess = true,
-            Message = SuccessMessages.DefaultSuccess,
-            Result = new GetSupervisionCohort
-            {
-                Id = supervisionCohort.Id,
-                SupervisionSlot = supervisionCohort.SupervisionSlot,
-                DissertationCohortId = supervisionCohort.DissertationCohortId,
-                UserDetails = supervisor
-            }
+            IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = supervisionCohort
         };
     }
 
     private GetSupervisionCohort MapToSupervisionCohortDto(
-        SupervisionCohort supervisionCohort)
+        SupervisionCohort supervisionCohort, IEnumerable<GetDepartment> departments)
     {
-        UserDto mappedUser = this._mapper.Map<UserDto>(supervisionCohort.Supervisor);
+         SupervisorListDto? mappedUser = this._mapper.Map<SupervisorListDto>(supervisionCohort.Supervisor);
+         mappedUser.Department = departments.FirstOrDefault(x => x.Id == supervisionCohort.Supervisor.DepartmentId)!; // Map department
         return new GetSupervisionCohort
         {
             Id = supervisionCohort.Id,

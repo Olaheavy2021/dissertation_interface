@@ -6,7 +6,6 @@ using Shared.Helpers;
 using Shared.Repository;
 using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Models;
-using UserManagement_API.Data.Models.Dto;
 
 namespace UserManagement_API.Data.Repository;
 
@@ -26,7 +25,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
                                          " INNER JOIN AspNetRoles R ON UR.RoleId = R.Id " +
                                          " INNER JOIN SupervisionCohorts S ON U.Id = S.SupervisorId " +
                                          " WHERE R.Name IN ({0}) AND " +
-                                         " AND S.DissertationCohortId = @cohortId)");
+                                         " AND S.DissertationCohortId = @cohortId");
         // Parameters for query including roles and currentUserId.
         var parametersList = roleNames
             .Select((roleName, index) => new SqlParameter($"@p{index}", roleName))

@@ -15,6 +15,8 @@ public class UserDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<SupervisionCohort> SupervisionCohorts { get; set; }
 
+    public DbSet<SupervisionRequest> SupervisionRequests { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

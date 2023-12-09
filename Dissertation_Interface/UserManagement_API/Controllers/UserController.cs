@@ -143,9 +143,9 @@ public class UserController : Controller
     [HttpGet("get-students")]
     [SwaggerOperation(Summary = "List of Students")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedUserListDto>))]
-    public ActionResult GetStudents([FromQuery] DissertationStudentPaginationParameters paginationParameters)
+    public async Task<ActionResult> GetStudents([FromQuery] DissertationStudentPaginationParameters paginationParameters)
     {
-        ResponseDto<PaginatedUserListDto> users = this._userService.GetPaginatedStudents(paginationParameters);
+        ResponseDto<PaginatedStudentListDto> users = await this._userService.GetPaginatedStudents(paginationParameters);
 
         if (users.Result != null)
         {
@@ -167,10 +167,10 @@ public class UserController : Controller
     [Authorize(Roles = "Superadmin, Admin")]
     [HttpGet("get-supervisors")]
     [SwaggerOperation(Summary = "List of Supervisors")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PagedList<UserListDto>>))]
-    public ActionResult GetSupervisors([FromQuery] SupervisorPaginationParameters paginationParameters)
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedSupervisorListDto>))]
+    public async Task<IActionResult> GetSupervisors([FromQuery] SupervisorPaginationParameters paginationParameters)
     {
-        ResponseDto<PaginatedUserListDto> users = this._userService.GetPaginatedSupervisors(paginationParameters);
+        ResponseDto<PaginatedSupervisorListDto> users = await this._userService.GetPaginatedSupervisors(paginationParameters);
 
         if (users.Result != null)
         {

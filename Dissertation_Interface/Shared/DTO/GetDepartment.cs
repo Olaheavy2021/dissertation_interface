@@ -1,6 +1,6 @@
-using Dissertation.Domain.Enums;
+using Shared.Enums;
 
-namespace Dissertation.Application.DTO.Response;
+namespace Shared.DTO;
 
 public class GetDepartment
 {

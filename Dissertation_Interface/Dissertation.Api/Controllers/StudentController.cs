@@ -53,7 +53,7 @@ public class StudentController : Controller
     public async Task<IActionResult> GetListOfStudents([FromQuery] StudentPaginationParameters paginationParameters)
     {
         var query = new GetListOfStudentsQuery(paginationParameters);
-        ResponseDto<PaginatedUserListDto> response = await this._sender.Send(query);
+        ResponseDto<PaginatedStudentListDto> response = await this._sender.Send(query);
 
         if (response.Result != null)
         {

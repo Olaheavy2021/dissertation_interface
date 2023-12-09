@@ -39,6 +39,8 @@ public class UnitOfWork : IUnitOfWork
     public IApplicationUserRepository ApplicationUserRepository => new ApplicationUserRepository(this.Context);
     public ISupervisionCohortRepository SupervisionCohortRepository => new SupervisionCohortRepository(this.Context);
 
+    public ISupervisionRequestRepository SupervisionRequestRepository => new SupervisionRequestRepository(this.Context);
+
     #endregion Repositories
 
     public async Task BeginTransactionAsync() => this._transaction = await this.Context.Database.BeginTransactionAsync().ConfigureAwait(false);

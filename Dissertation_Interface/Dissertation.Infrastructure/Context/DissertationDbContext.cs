@@ -1,6 +1,5 @@
 using Dissertation.Domain.DomainHelper;
 using Dissertation.Domain.Entities;
-using Dissertation.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;

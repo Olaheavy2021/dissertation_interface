@@ -1,15 +1,15 @@
-﻿using Dissertation.Domain.Enums;
-using Dissertation.Domain.Interfaces;
+﻿using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
 using Shared.DTO;
+using Shared.Enums;
 using Shared.Exceptions;
 using Shared.Logging;
 
 namespace Dissertation.Application.Supervisor.Queries.GetActiveStudentsCohort;
 
-public class GetActiveStudentsCohortHandler : IRequestHandler<GetActiveStudentsCohortQuery, ResponseDto<PaginatedUserListDto>>
+public class GetActiveStudentsCohortHandler : IRequestHandler<GetActiveStudentsCohortQuery, ResponseDto<PaginatedStudentListDto>>
 {
     private readonly IAppLogger<GetActiveStudentsCohortQuery> _logger;
     private readonly IUnitOfWork _db;
@@ -24,7 +24,7 @@ public class GetActiveStudentsCohortHandler : IRequestHandler<GetActiveStudentsC
         this._userApiService = userApiService;
     }
 
-    public async Task<ResponseDto<PaginatedUserListDto>> Handle(GetActiveStudentsCohortQuery request,
+    public async Task<ResponseDto<PaginatedStudentListDto>> Handle(GetActiveStudentsCohortQuery request,
         CancellationToken cancellationToken)
     {
         this._logger.LogInformation("Attempting to retrieve list of students");
@@ -43,7 +43,7 @@ public class GetActiveStudentsCohortHandler : IRequestHandler<GetActiveStudentsC
         parameters.CohortStartDate = cohort.StartDate;
 
         // Fetch the list of students
-        ResponseDto<PaginatedUserListDto> students = await this._userApiService.GetListOfStudents(parameters);
+        ResponseDto<PaginatedStudentListDto> students = await this._userApiService.GetListOfStudents(parameters);
         return students;
     }
 }

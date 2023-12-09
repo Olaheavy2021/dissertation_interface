@@ -1,4 +1,4 @@
-using Dissertation.Domain.Enums;
+using Shared.Enums;
 
 namespace Shared.DTO;
 

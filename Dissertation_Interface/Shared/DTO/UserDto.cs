@@ -12,4 +12,11 @@ public class UserDto
 
     public string? ProfilePicture { get; set; } = string.Empty;
     public UserStatus Status { get; set; }
+
+    public void UpdateStatus(DateTimeOffset? lockoutEnd, bool emailConfirmed) =>
+        Status = lockoutEnd >= DateTimeOffset.UtcNow
+            ? UserStatus.Deactivated
+            : emailConfirmed
+                ? UserStatus.Active
+                : UserStatus.Inactive;
 }

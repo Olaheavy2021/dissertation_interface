@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Dissertation.Domain.DomainHelper;
-using Dissertation.Domain.Enums;
 
 namespace Dissertation.Domain.Entities;
 

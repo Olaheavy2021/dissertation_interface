@@ -8,7 +8,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.Supervisor.Queries.GetListOfSupervisors;
 
-public class GetListOfSupervisorsQueryHandler: IRequestHandler<GetListOfSupervisorsQuery, ResponseDto<PaginatedUserListDto>>
+public class GetListOfSupervisorsQueryHandler: IRequestHandler<GetListOfSupervisorsQuery, ResponseDto<PaginatedSupervisorListDto>>
 {
     private readonly IAppLogger<GetListOfSupervisorsQueryHandler> _logger;
     private readonly IUnitOfWork _db;
@@ -24,11 +24,11 @@ public class GetListOfSupervisorsQueryHandler: IRequestHandler<GetListOfSupervis
     }
 
 
-    public Task<ResponseDto<PaginatedUserListDto>> Handle(GetListOfSupervisorsQuery request,
+    public Task<ResponseDto<PaginatedSupervisorListDto>> Handle(GetListOfSupervisorsQuery request,
         CancellationToken cancellationToken)
     {
         this._logger.LogInformation("Attempting to retrieve list of supervisors");
-        Task<ResponseDto<PaginatedUserListDto>> supervisors = this._userApiService.GetListOfSupervisors(request.Parameters);
+        Task<ResponseDto<PaginatedSupervisorListDto>> supervisors = this._userApiService.GetListOfSupervisors(request.Parameters);
         return supervisors;
 
     }

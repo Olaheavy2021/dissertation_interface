@@ -1,11 +1,11 @@
 using Dissertation.Application.DissertationCohort.Queries.GetListOfDissertationCohort;
 using Dissertation.Application.DTO.Response;
-using Dissertation.Domain.Enums;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
 using Shared.Constants;
 using Shared.DTO;
+using Shared.Enums;
 using Shared.Helpers;
 using Shared.Logging;
 

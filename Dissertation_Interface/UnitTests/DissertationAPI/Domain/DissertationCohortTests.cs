@@ -1,6 +1,5 @@
 using Dissertation.Application.DTO.Request;
 using Dissertation.Domain.Entities;
-using Dissertation.Domain.Enums;
 using FluentAssertions;
 using UnitTests.DissertationAPI.Mocks;
 
