@@ -1,6 +1,132 @@
 ﻿{
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/v1/supervisionlist",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/supervisionlist",
+      "UpstreamHttpMethod": [ "Get"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Supervisor/supervision-list",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor/supervision-list",
+      "UpstreamHttpMethod": [ "Get"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Student/supervision-list",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Student/supervision-list",
+      "UpstreamHttpMethod": [ "Get"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Student/supervision-requests/cancel",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Student/supervision-requests/cancel",
+      "UpstreamHttpMethod": [ "Put"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Student/supervision-requests",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Student/supervision-requests",
+      "UpstreamHttpMethod": [ "Get"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Supervisor/supervision-requests/reject",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor/supervision-requests/reject",
+      "UpstreamHttpMethod": [ "Put"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Supervisor/supervision-requests/accept",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor/supervision-requests/accept",
+      "UpstreamHttpMethod": [ "Put"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Supervisor/supervision-requests",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Supervisor/supervision-requests",
+      "UpstreamHttpMethod": [ "Get"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/supervisionrequest",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/supervisionrequest",
+      "UpstreamHttpMethod": [ "Get"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/Supervisor/research-area",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -107,6 +233,20 @@
         }
       ],
       "UpstreamPathTemplate": "/api/v1/supervisioncohort",
+      "UpstreamHttpMethod": [ "Post", "Put"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Student/initiate-request",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/Student/initiate-request",
       "UpstreamHttpMethod": [ "Post"],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"

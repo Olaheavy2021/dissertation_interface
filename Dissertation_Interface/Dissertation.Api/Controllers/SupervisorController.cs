@@ -1,12 +1,16 @@
 using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;
+using Dissertation.Application.Supervisor.Commands.AcceptSupervisionRequest;
 using Dissertation.Application.Supervisor.Commands.AssignAdminRole;
 using Dissertation.Application.Supervisor.Commands.AssignSupervisorRole;
 using Dissertation.Application.Supervisor.Commands.RegisterSupervisor;
+using Dissertation.Application.Supervisor.Commands.RejectSupervisionRequest;
 using Dissertation.Application.Supervisor.Commands.UpdateResearchArea;
 using Dissertation.Application.Supervisor.Commands.UpdateSupervisor;
 using Dissertation.Application.Supervisor.Queries.GetActiveStudentsCohort;
 using Dissertation.Application.Supervisor.Queries.GetListOfSupervisors;
+using Dissertation.Application.Supervisor.Queries.GetSupervisionLists;
+using Dissertation.Application.Supervisor.Queries.GetSupervisionRequests;
 using Dissertation.Application.Supervisor.Queries.GetSupervisorById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -140,5 +144,53 @@ public class SupervisorController : Controller
         var command = new UpdateResearchAreaCommand(request.ResearchArea);
         ResponseDto<SupervisorDto> response = await this._sender.Send(command);
         return Ok(response);
+    }
+
+    [Authorize(Roles = "Supervisor")]
+    [HttpGet("supervision-requests")]
+    [SwaggerOperation(Summary = "Get Supervision Requests for a Supervisor")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetSupervisionRequests([FromQuery] SupervisorSupervisionRequestParameters parameters)
+    {
+        var query = new GetSupervisorSupervisionRequestsQuery(parameters);
+        ResponseDto<PaginatedSupervisionRequestListDto> result = await this._sender.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Supervisor")]
+    [HttpPut("supervision-requests/reject")]
+    [SwaggerOperation(Summary = "Reject Supervision Requests")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> RejectSupervisionRequest([FromBody] ActionSupervisionRequest request)
+    {
+        var query = new RejectSupervisionRequestCommand(request.RequestId, request.Comment);
+        ResponseDto<string> result = await this._sender.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Supervisor")]
+    [HttpPut("supervision-requests/accept")]
+    [SwaggerOperation(Summary = "Accept Supervision Requests")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> AcceptSupervisionRequest([FromBody] ActionSupervisionRequest request)
+    {
+        var query = new AcceptSupervisionRequestCommand(request.RequestId, request.Comment);
+        ResponseDto<string> result = await this._sender.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Supervisor")]
+    [HttpGet("supervision-list")]
+    [SwaggerOperation(Summary = "Get Supervision List for a Supervisor")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetSupervisionList([FromQuery] SupervisorSupervisionListParameters parameters)
+    {
+        var query = new GetSupervisorSupervisionListQuery(parameters);
+        ResponseDto<PaginatedSupervisionListDto> result = await this._sender.Send(query);
+        return Ok(result);
     }
 }

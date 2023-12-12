@@ -54,6 +54,8 @@ public class GetStudentByIdQueryHandler : IRequestHandler<GetStudentByIdQuery, R
             throw new NotFoundException(nameof(Domain.Entities.Student), request.Id);
         }
 
+        //TODO:Check if a student has a supervisor
+
         // Map student details and prepare the response
         StudentDto mappedStudent = this._mapper.Map<StudentDto>(student);
         return new ResponseDto<GetStudent>

@@ -69,4 +69,15 @@ public class SupervisionCohortController : Controller
         ResponseDto<PaginatedUserListDto> response =  this._supervisionCohortService.GetInActiveSupervisorsForCohort(parameters);
         return Task.FromResult<IActionResult>(Ok(response));
     }
+
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpPost("update-slots")]
+    [SwaggerOperation(Summary = "Update Supervision Cohort")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedSupervisionCohortListDto>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> UpdateSupervisionSlot([FromBody] UpdateSupervisionCohortRequest request)
+    {
+        ResponseDto<string> response = await this._supervisionCohortService.UpdateSupervisionSlot(request, new CancellationToken());
+        return Ok(response);
+    }
 }

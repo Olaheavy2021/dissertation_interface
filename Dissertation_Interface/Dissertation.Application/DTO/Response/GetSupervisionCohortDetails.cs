@@ -11,5 +11,7 @@ public class GetSupervisionCohortDetails
 
     public int SupervisionSlot { get; set; }
 
+    public int AvailableSupervisionSlot { get; set; }
+
     public SupervisorDto? SupervisorDetails { get; set; }
 }

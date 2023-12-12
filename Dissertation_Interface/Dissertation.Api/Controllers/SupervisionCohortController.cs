@@ -1,6 +1,7 @@
 ﻿using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Application.SupervisionCohort.Commands.CreateSupervisionCohort;
+using Dissertation.Application.SupervisionCohort.Commands.UpdateSupervisionSlot;
 using Dissertation.Application.SupervisionCohort.Queries.GetAssignedSupervisors;
 using Dissertation.Application.SupervisionCohort.Queries.GetById;
 using Dissertation.Application.SupervisionCohort.Queries.GetUnassignedSupervisors;
@@ -79,6 +80,18 @@ public class SupervisionCohortController : Controller
     {
         var query = new GetUnassignedSupervisorsQuery(parameters);
         ResponseDto<PaginatedUserListDto> result = await this._sender.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpPut]
+    [SwaggerOperation(Summary = "Update Supervision Slots for a Supervisor")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> UpdateSupervisionSlots([FromBody] UpdateSupervisionCohortRequest request)
+    {
+        var query = new UpdateSupervisionSlotCommand(request.SupervisionSlots, request.SupervisionCohortId);
+        ResponseDto<string> result = await this._sender.Send(query);
         return Ok(result);
     }
 }

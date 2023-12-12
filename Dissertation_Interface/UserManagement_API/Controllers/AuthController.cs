@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTO;
-using Shared.Helpers;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
 using UserManagement_API.Data.Models.Dto;

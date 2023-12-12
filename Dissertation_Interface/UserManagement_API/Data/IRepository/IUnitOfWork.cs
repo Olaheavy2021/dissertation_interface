@@ -5,6 +5,7 @@ public interface IUnitOfWork
     IApplicationUserRepository ApplicationUserRepository { get; }
     ISupervisionCohortRepository SupervisionCohortRepository { get; }
     ISupervisionRequestRepository SupervisionRequestRepository { get; }
+    ISupervisionListRepository SupervisionListRepository { get; }
     Task BeginTransactionAsync();
     Task SaveAsync(CancellationToken cancellationToken);
     Task CommitAsync();

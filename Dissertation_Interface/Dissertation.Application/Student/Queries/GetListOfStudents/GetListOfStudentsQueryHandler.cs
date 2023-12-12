@@ -44,8 +44,10 @@ public class GetListOfStudentsQueryHandler: IRequestHandler<GetListOfStudentsQue
 
         if (cohort == null)
         {
-            var identifier = request.Parameters.FilterByCohort > 0 ? "Active" : request.Parameters.FilterByCohort.ToString();
-            throw new NotFoundException(nameof(DissertationCohort), identifier);
+            return new ResponseDto<PaginatedStudentListDto>()
+            {
+                Message = "Please select a dissertation cohort. There is no active cohort", IsSuccess = false
+            };
         }
 
         // Map the request parameters to the pagination parameters

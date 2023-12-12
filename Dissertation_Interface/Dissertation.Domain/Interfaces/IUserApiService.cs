@@ -20,4 +20,21 @@ public interface IUserApiService
     Task<ResponseDto<PaginatedSupervisionCohortListDto>> GetSupervisionCohorts(SupervisionCohortListParameters model);
     Task<ResponseDto<PaginatedUserListDto>> GetUnAssignedSupervisors(SupervisionCohortListParameters model);
     Task<ResponseDto<GetSupervisionCohort>> GetSupervisionCohort(long id);
+    Task<ResponseDto<string>> UpdateSupervisionSlots(UpdateSupervisionCohortRequest request);
+    Task<ResponseDto<string>> CreateSupervisionRequest(CreateSupervisionRequest model);
+    Task<ResponseDto<PaginatedSupervisionRequestListDto>> GetSupervisionRequests(
+        SupervisionRequestPaginationParameters model);
+    Task<ResponseDto<PaginatedSupervisionRequestListDto>> GetSupervisionRequestsForStudents(
+        SupervisionRequestPaginationParameters model);
+    Task<ResponseDto<PaginatedSupervisionRequestListDto>> GetSupervisionRequestsForASupervisor(
+        SupervisionRequestPaginationParameters model);
+    Task<ResponseDto<string>> RejectSupervisionRequest(ActionSupervisionRequest request);
+    Task<ResponseDto<string>> AcceptSupervisionRequest(ActionSupervisionRequest request);
+    Task<ResponseDto<string>> CancelSupervisionRequest(ActionSupervisionRequest request);
+    Task<ResponseDto<PaginatedSupervisionListDto>> GetSupervisionListsForStudents(
+        SupervisionListPaginationParameters model);
+    Task<ResponseDto<PaginatedSupervisionListDto>> GetSupervisionListForASupervisor(
+        SupervisionListPaginationParameters model);
+    Task<ResponseDto<PaginatedSupervisionListDto>> GetSupervisionLists(
+        SupervisionListPaginationParameters model);
 }

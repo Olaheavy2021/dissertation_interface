@@ -32,7 +32,7 @@ public class GetUnassignedSupervisorQueryHandler : IRequestHandler<GetUnassigned
                 return new ResponseDto<PaginatedUserListDto>()
                 {
                     IsSuccess = false,
-                    Message = "Kindly initiate a new and active dissertation cohort before inviting Supervisors"
+                    Message = "Kindly filter by the cohort as there is no active cohort."
                 };
             }
 

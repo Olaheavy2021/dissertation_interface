@@ -7,6 +7,5 @@ namespace Dissertation.Infrastructure.Persistence.IRepository;
 
 public interface IStudentInviteRepository : IGenericRepository<StudentInvite>
 {
-    PagedList<StudentInvite> GetListOfStudentInvites(StudentInvitePaginationParameters paginationParameters,
-        long cohortId);
+    PagedList<StudentInvite> GetListOfStudentInvites(StudentInvitePaginationParameters paginationParameters);
 }

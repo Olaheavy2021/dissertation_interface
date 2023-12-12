@@ -8,6 +8,9 @@ public interface ISupervisionCohortService
     Task<ResponseDto<string>> CreateSupervisionCohort(CreateSupervisionCohortListRequest request,
         CancellationToken cancellationToken);
 
+    Task<ResponseDto<string>> UpdateSupervisionSlot(UpdateSupervisionCohortRequest request,
+        CancellationToken cancellationToken);
+
     Task<ResponseDto<GetSupervisionCohort>> GetSupervisionCohort(long id);
 
     Task<ResponseDto<PaginatedSupervisionCohortListDto>> GetSupervisionCohorts(

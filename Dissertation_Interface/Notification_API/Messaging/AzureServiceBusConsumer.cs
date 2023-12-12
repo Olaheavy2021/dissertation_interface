@@ -117,6 +117,16 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                         emailType = EmailType.EmailTypeStudentInviteEmail;
                         subject = EmailSubject.EmailSubjectForStudentInvite;
                         break;
+                    case EmailType.EmailTypeSupervisionRequestInitiatedEmail:
+                        emailBody = await GenerateSupervisionRequestInitiatedBody(emailDto);
+                        emailType = EmailType.EmailTypeSupervisionRequestInitiatedEmail;
+                        subject = EmailSubject.EmailSubjectForSupervisionRequestInitiatedEmail;
+                        break;
+                    case EmailType.EmailTypeSupervisionRequestActionedEmail:
+                        emailBody = await GenerateSupervisionRequestActionedBody(emailDto);
+                        emailType = EmailType.EmailTypeSupervisionRequestActionedEmail;
+                        subject = EmailSubject.EmailSubjectForSupervisionRequestActionedEmail;
+                        break;
                 }
 
                 if (string.IsNullOrEmpty(emailBody) || string.IsNullOrEmpty(emailType))
@@ -153,7 +163,6 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
         catch (Exception ex)
         {
             this._logger.LogError("An exception occurred whilst processing the email queue - {0}", ex);
-
         }
     }
     private async Task OnAuditLogRequestReceived(ProcessMessageEventArgs args)
@@ -341,7 +350,6 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
 
         return messageBody;
     }
-
     private async Task<string> GenerateStudentEmailBody(PublishEmailDto request)
     {
         var pathToFile = this._env.WebRootPath
@@ -375,7 +383,67 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
         );
 
         return messageBody;
+    }
+    private async Task<string> GenerateSupervisionRequestInitiatedBody(PublishEmailDto request)
+    {
+        var pathToFile = this._env.WebRootPath
+                         + Path.DirectorySeparatorChar
+                         + "Templates"
+                         + Path.DirectorySeparatorChar
+                         + "EmailTemplates"
+                         + Path.DirectorySeparatorChar
+                         + "Supervisor_SupervisorRequest.html";
 
+        var builder = new BodyBuilder();
+
+        using StreamReader sourceReader = File.OpenText(pathToFile);
+        builder.HtmlBody = await sourceReader.ReadToEndAsync();
+
+        //{0} : Subject
+        const string subject = EmailSubject.EmailSubjectForSupervisionRequestInitiatedEmail;
+        //{1} : Date
+        //{2} : FirstName
+        var adminEmail = this._sendgridSettings.AdminEmail;
+        //{3} : AdminEmail
+
+        var messageBody = string.Format(builder.HtmlBody,
+            subject,
+            $"{DateTime.Now:dddd, d MMMM yyyy}",
+            request.User?.FirstName,
+            adminEmail
+        );
+
+        return messageBody;
+    }
+    private async Task<string> GenerateSupervisionRequestActionedBody(PublishEmailDto request)
+    {
+        var pathToFile = this._env.WebRootPath
+                         + Path.DirectorySeparatorChar
+                         + "Templates"
+                         + Path.DirectorySeparatorChar
+                         + "EmailTemplates"
+                         + Path.DirectorySeparatorChar
+                         + "Student_SupervisorRequest.html";
+
+        var builder = new BodyBuilder();
+
+        using StreamReader sourceReader = File.OpenText(pathToFile);
+        builder.HtmlBody = await sourceReader.ReadToEndAsync();
+
+        //{0} : Subject
+        const string subject = EmailSubject.EmailSubjectForSupervisionRequestActionedEmail;
+        //{1} : Date
+        //{2} : FirstName
+        var adminEmail = this._sendgridSettings.AdminEmail;
+        //{3} : AdminEmail
+
+        var messageBody = string.Format(builder.HtmlBody,
+            subject,
+            $"{DateTime.Now:dddd, d MMMM yyyy}",
+            request.User?.FirstName,
+            adminEmail
+        );
+        return messageBody;
     }
     #endregion
 }

@@ -17,6 +17,8 @@ public class UserDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<SupervisionRequest> SupervisionRequests { get; set; }
 
+    public DbSet<SupervisionList> SupervisionLists { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -28,6 +30,10 @@ public class UserDbContext : IdentityDbContext<ApplicationUser>
             .WithMany(u => u.SupervisedCohorts)
             .HasForeignKey(sc => sc.SupervisorId)
             .IsRequired();
+
+        modelBuilder.Entity<SupervisionRequest>()
+            .Property(e => e.Comment)
+            .HasColumnType("text");
     }
 
     public override int SaveChanges()

@@ -15,8 +15,7 @@ public class StudentInviteRepository : GenericRepository<StudentInvite>, IStuden
     {
     }
 
-    public PagedList<StudentInvite> GetListOfStudentInvites(StudentInvitePaginationParameters paginationParameters,
-        long cohortId)
+    public PagedList<StudentInvite> GetListOfStudentInvites(StudentInvitePaginationParameters paginationParameters)
     {
         var parametersList = new List<SqlParameter>();
         var sqlQuery = new StringBuilder("SELECT * FROM StudentInvites");
@@ -34,12 +33,7 @@ public class StudentInviteRepository : GenericRepository<StudentInvite>, IStuden
             sqlQuery.Append($" {whereOrAnd} DissertationCohortId = @filter");
             parametersList.Add(new SqlParameter("@filter", paginationParameters.FilterByCohortId));
         }
-        else
-        {
-            var whereOrAnd = sqlQuery.ToString().Contains("WHERE") ? "AND" : "WHERE";
-            sqlQuery.Append($" {whereOrAnd} DissertationCohortId = @filter");
-            parametersList.Add(new SqlParameter("@filter", cohortId));
-        }
+
 
         if (paginationParameters.FilterByCourseId > 0)
         {

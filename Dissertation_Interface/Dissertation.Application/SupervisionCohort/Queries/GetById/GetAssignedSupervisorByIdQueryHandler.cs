@@ -31,7 +31,7 @@ public class GetAssignedSupervisorByIdQueryHandler : IRequestHandler<GetAssigned
         this._logger.LogInformation("Attempting to retrieve an assigned supervisor");
        ResponseDto<GetSupervisionCohort> userDetails = await this._userApiService.GetSupervisionCohort(request.Id);
 
-       if (!userDetails.IsSuccess && userDetails.Result == null && userDetails.Result.UserDetails.Id == null)
+       if (!userDetails.IsSuccess || userDetails.Result == null || userDetails.Result?.UserDetails.Id == null)
        {
            return new ResponseDto<GetSupervisionCohortDetails>()
            {
@@ -42,22 +42,23 @@ public class GetAssignedSupervisorByIdQueryHandler : IRequestHandler<GetAssigned
        //fetch the supervisor details
        Domain.Entities.Supervisor? supervisor =
            await this._db.SupervisorRepository.GetFirstOrDefaultAsync(
-               x => x.UserId == userDetails.Result.UserDetails.Id, includes: x =>x.Department);
+               x => x.UserId == userDetails.Result!.UserDetails.Id, includes: x =>x.Department);
 
        if (supervisor == null)
        {
-           throw new NotFoundException(nameof(Domain.Entities.Supervisor), userDetails.Result?.UserDetails?.Id);
+           throw new NotFoundException(nameof(Domain.Entities.Supervisor), userDetails.Result?.UserDetails.Id!);
        }
 
        SupervisorDto mappedSupervisor = this._mapper.Map<SupervisorDto>(supervisor);
-       return new ResponseDto<GetSupervisionCohortDetails>()
+       return new ResponseDto<GetSupervisionCohortDetails>
        {
            Message = SuccessMessages.DefaultSuccess, IsSuccess = true, Result = new GetSupervisionCohortDetails()
            {
                Id = userDetails.Result.Id,
                UserDetails = userDetails.Result?.UserDetails,
                SupervisorDetails = mappedSupervisor,
-               SupervisionSlot = userDetails.Result.SupervisionSlot,
+               SupervisionSlot = userDetails.Result!.SupervisionSlot,
+               AvailableSupervisionSlot = userDetails.Result.AvailableSupervisionSlot,
                DissertationCohortId = userDetails.Result.DissertationCohortId
            }
        };

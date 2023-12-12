@@ -8,4 +8,6 @@ public class GetSupervisionCohort
     public long DissertationCohortId { get; set; }
 
     public int SupervisionSlot { get; set; }
+
+    public int AvailableSupervisionSlot { get; set; }
 }

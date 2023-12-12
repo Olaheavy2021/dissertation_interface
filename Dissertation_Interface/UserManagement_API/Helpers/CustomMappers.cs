@@ -52,4 +52,24 @@ public static class CustomMappers
                 : applicationUser.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive,
             Department = departments.FirstOrDefault(x => x.Id == applicationUser.DepartmentId)! // Map department
         };
+
+    public static SupervisionRequestListDto MapToSupervisionRequestListDto(
+        SupervisionRequest supervisionRequest, IEnumerable<GetDepartment> departments, IEnumerable<GetCourse> courses) =>
+        new()
+        {
+            Id = supervisionRequest.Id,
+            Status = supervisionRequest.Status,
+            DissertationCohortId = supervisionRequest.DissertationCohortId,
+            StudentDetails = MapToUserDto(supervisionRequest.Student, courses),
+            SupervisorDetails = MapToUserDto(supervisionRequest.Supervisor, departments)
+        };
+    public static SupervisionListDto MapToSupervisionListDto(
+        SupervisionList supervisionList, IEnumerable<GetDepartment> departments, IEnumerable<GetCourse> courses) =>
+        new()
+        {
+            DissertationCohortId = supervisionList.DissertationCohortId,
+            StudentDetails = MapToUserDto(supervisionList.Student, courses),
+            SupervisorDetails = MapToUserDto(supervisionList.Supervisor, departments),
+            Id = supervisionList.Id
+        };
 }

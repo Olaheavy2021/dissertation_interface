@@ -16,7 +16,6 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Dissertation_API.Controllers;
 
-[Authorize(Roles = "Superadmin,Admin")]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
 [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request", typeof(CustomProblemDetails))]
@@ -28,6 +27,7 @@ public class DissertationCohortController : Controller
     public DissertationCohortController(ISender sender) => this._sender = sender;
 
     [HttpPost]
+    [Authorize(Roles = "Superadmin,Admin")]
     [SwaggerOperation(Summary = "Create Dissertation Cohort")]
     [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<ResponseDto<GetDissertationCohort>>))]
     public async Task<IActionResult> CreateDissertationCohort([FromBody] CreateDissertationCohortRequest request)
@@ -38,6 +38,7 @@ public class DissertationCohortController : Controller
     }
 
     [HttpGet("{dissertationCohortId:long}")]
+    [Authorize(Roles = "Superadmin,Admin")]
     [SwaggerOperation(Summary = "Get Dissertation Cohort By Id")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetDissertationCohort>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
@@ -49,6 +50,7 @@ public class DissertationCohortController : Controller
     }
 
     [HttpGet("active")]
+    [Authorize(Roles = "Superadmin,Admin, Student, Supervisor")]
     [SwaggerOperation(Summary = "Get Active Dissertation Cohort")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetDissertationCohort>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
@@ -60,6 +62,7 @@ public class DissertationCohortController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Superadmin,Admin")]
     [SwaggerOperation(Summary = "Get List of Dissertation Cohort")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<PaginatedDissertationCohortListDto>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
@@ -84,6 +87,7 @@ public class DissertationCohortController : Controller
     }
 
     [HttpPut("{dissertationCohortId:long}")]
+    [Authorize(Roles = "Superadmin,Admin")]
     [SwaggerOperation(Summary = "Update Dissertation Cohort")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetDissertationCohort>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]

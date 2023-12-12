@@ -1,8 +1,10 @@
 ﻿namespace Dissertation.Infrastructure.Helpers;
 
-public class SupervisionCohortRoutes
+public static class SupervisionCohortRoutes
 {
     public const string SupervisionCohortRoute = "/supervisioncohort";
 
     public const string UnassignedSupervisors = $"{SupervisionCohortRoute}/inactive";
+
+    public const string UpdateSupervisionSlots = $"{SupervisionCohortRoute}/update-slots";
 }

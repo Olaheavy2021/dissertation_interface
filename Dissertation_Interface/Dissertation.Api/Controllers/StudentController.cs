@@ -1,11 +1,15 @@
 using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;
+using Dissertation.Application.Student.Commands.CancelSupervisionRequest;
+using Dissertation.Application.Student.Commands.InitiateSupervisionRequest;
 using Dissertation.Application.Student.Commands.RegisterStudent;
 using Dissertation.Application.Student.Commands.UpdateResearchTopic;
 using Dissertation.Application.Student.Commands.UpdateStudent;
 using Dissertation.Application.Student.Queries.GetAvailableSupervisors;
 using Dissertation.Application.Student.Queries.GetListOfStudents;
 using Dissertation.Application.Student.Queries.GetStudentById;
+using Dissertation.Application.Student.Queries.GetSupervisionLists;
+using Dissertation.Application.Student.Queries.GetSupervisionRequests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -116,5 +120,54 @@ public class StudentController : Controller
         var command = new UpdateResearchTopicCommand(request.ResearchTopic);
         ResponseDto<StudentDto> response = await this._sender.Send(command);
         return Ok(response);
+    }
+
+    [Authorize(Roles = "Student")]
+    [HttpPost("initiate-request")]
+    [SwaggerOperation(Summary = "Student Initiates a Supervision Request to a Supervisor")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<string>))]
+    public async Task<IActionResult> InitiateSupervisionRequestStudent([FromBody] CreateSupervisionRequest request)
+    {
+        var command = new InitiateSupervisionRequestCommand(
+          request.SupervisorId
+        );
+        ResponseDto<string> result = await this._sender.Send(command);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Student")]
+    [HttpGet("supervision-requests")]
+    [SwaggerOperation(Summary = "Get Supervision Requests for a Student")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetSupervisionRequests([FromQuery] StudentSupervisionRequestParameters parameters)
+    {
+        var query = new GetStudentSupervisionRequestsQuery(parameters);
+        ResponseDto<PaginatedSupervisionRequestListDto> result = await this._sender.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Student")]
+    [HttpPut("supervision-requests/cancel")]
+    [SwaggerOperation(Summary = "Cancel Supervision Requests")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> CancelSupervisionRequest([FromBody] ActionSupervisionRequest request)
+    {
+        var query = new CancelSupervisionRequestCommand(request.RequestId, request.Comment);
+        ResponseDto<string> result = await this._sender.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Student")]
+    [HttpGet("supervision-list")]
+    [SwaggerOperation(Summary = "Get Supervision List for a Student")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetSupervisionList([FromQuery] StudentSupervisionListsParameters parameters)
+    {
+        var query = new GetStudentSupervisionListsQuery(parameters);
+        ResponseDto<PaginatedSupervisionListDto> result = await this._sender.Send(query);
+        return Ok(result);
     }
 }

@@ -20,6 +20,8 @@ public class SupervisionRequest : AuditableEntity<long>
 
     public SupervisionRequestStatus Status { get; set; }
 
+    public string? Comment { get; set; }
+
     private SupervisionRequest(
         string supervisorId,
         string studentId,

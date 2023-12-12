@@ -13,6 +13,7 @@ using Shared.Repository;
 using Shared.Settings;
 using UserManagement_API.Data;
 using UserManagement_API.Data.IRepository;
+using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Repository;
 using UserManagement_API.ExternalServices;
 using UserManagement_API.Helpers;
@@ -43,6 +44,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IRequestHelper, RequestHelper>();
         services.AddScoped<IDissertationApiService, DissertationApiService>();
         services.AddScoped<ISupervisionCohortService, SupervisionCohortService>();
+        services.AddScoped<ISupervisionListService, SupervisionListService>();
+        services.AddScoped<ISupervisionRequestService, SupervisionRequestService>();
         services.AddScoped<IMessageBus, MessageBus>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddAutoMapper(Assembly.GetExecutingAssembly());

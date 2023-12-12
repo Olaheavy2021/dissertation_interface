@@ -15,6 +15,8 @@ public class SupervisionCohort : AuditableEntity<long>
 
     public int SupervisionSlot { get; set; }
 
+    public int AvailableSupervisionSlot { get; set; }
+
     private SupervisionCohort(
         string supervisorId,
         int supervisionSlot,
@@ -24,6 +26,7 @@ public class SupervisionCohort : AuditableEntity<long>
         SupervisorId = supervisorId;
         SupervisionSlot = supervisionSlot;
         DissertationCohortId = dissertationCohortId;
+        AvailableSupervisionSlot = supervisionSlot;
     }
 
     public static SupervisionCohort Create(string supervisorId,

@@ -294,7 +294,7 @@ namespace UserManagement_API.Migrations
                         {
                             Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "15ba2b27-aa87-4f43-890d-c8d1e9845757",
+                            ConcurrencyStamp = "ea7f8af2-e6e2-4eae-b514-6a0a2a84ab74",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "superadmin1@shu.com",
                             EmailConfirmed = true,
@@ -304,11 +304,11 @@ namespace UserManagement_API.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN1@SHU.COM",
                             NormalizedUserName = "SUPERADMIN1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJhjnT10xAVmdLP/QJUjIXaTlSonCQgokjtZcpqfSdQgPs0TCjVEy+gU3HqXQf5WJA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEF4uddGqA5whjZLmi8trMx6uy9ht10OB9b10t9q0rEAhUH/RcsLHE7AwxWcNSqZAXQ==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "0dff038b-9064-49f6-8ebd-883e177c5ffd",
+                            SecurityStamp = "0b3f9b29-ff8a-42d4-a1de-c758f2a84e8d",
                             TwoFactorEnabled = false,
                             UserName = "superadmin1"
                         },
@@ -316,7 +316,7 @@ namespace UserManagement_API.Migrations
                         {
                             Id = "9e224968-33e4-4652-b7b7-8574d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b574e39e-4c93-49e0-9521-0d1ecfe3a009",
+                            ConcurrencyStamp = "4ce24ee3-f1ff-4f57-98d4-34cccd674b9c",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "superadmin2@shu.com",
                             EmailConfirmed = true,
@@ -326,11 +326,11 @@ namespace UserManagement_API.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN2@SHU.COM",
                             NormalizedUserName = "SUPERADMIN2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJI5k/AT1uSnFkp0zOhLfyA/QZZJHJq/tnPunH5OAe8XJBOtRY79BMqvQRfGxA/hfQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEM6pu5UyG3BreIUSiAG7iZEa17avVlRMxmmac5zN1r0v4x8+zQ8u+EfzWY7XJANusw==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "6dfedfa3-6f0f-4c77-a42f-ace207a05dd7",
+                            SecurityStamp = "d6f4d9e1-8e4d-43fe-9a73-bb571564bb76",
                             TwoFactorEnabled = false,
                             UserName = "superadmin2"
                         });
@@ -343,6 +343,9 @@ namespace UserManagement_API.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("AvailableSupervisionSlot")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -371,6 +374,92 @@ namespace UserManagement_API.Migrations
                     b.HasIndex("SupervisorId");
 
                     b.ToTable("SupervisionCohorts");
+                });
+
+            modelBuilder.Entity("UserManagement_API.Data.Models.SupervisionList", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("DissertationCohortId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SupervisorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("SupervisorId");
+
+                    b.ToTable("SupervisionLists");
+                });
+
+            modelBuilder.Entity("UserManagement_API.Data.Models.SupervisionRequest", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("DissertationCohortId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SupervisorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("SupervisorId");
+
+                    b.ToTable("SupervisionRequests");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -431,6 +520,44 @@ namespace UserManagement_API.Migrations
                         .HasForeignKey("SupervisorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Supervisor");
+                });
+
+            modelBuilder.Entity("UserManagement_API.Data.Models.SupervisionList", b =>
+                {
+                    b.HasOne("UserManagement_API.Data.Models.ApplicationUser", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UserManagement_API.Data.Models.ApplicationUser", "Supervisor")
+                        .WithMany()
+                        .HasForeignKey("SupervisorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Supervisor");
+                });
+
+            modelBuilder.Entity("UserManagement_API.Data.Models.SupervisionRequest", b =>
+                {
+                    b.HasOne("UserManagement_API.Data.Models.ApplicationUser", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UserManagement_API.Data.Models.ApplicationUser", "Supervisor")
+                        .WithMany()
+                        .HasForeignKey("SupervisorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
 
                     b.Navigation("Supervisor");
                 });

@@ -1,5 +1,7 @@
 using System.Collections.Specialized;
+using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -24,7 +26,7 @@ public class RequestHelper : IRequestHelper
         Shared.Enums.MediaType? mediaType = null)
     {
         HttpRequestMessage request = BuildRequest(HttpMethod.Post, url, payload, queryParams, headers, mediaType);
-        HttpResponseMessage response = await this._httpClient.SendAsync(request);
+        HttpResponseMessage response = await MakeRequestAndHandleException(request);
         return await GetResponseContent(response, request);
     }
 
@@ -33,7 +35,7 @@ public class RequestHelper : IRequestHelper
         Shared.Enums.MediaType? mediaType = null)
     {
         HttpRequestMessage request = BuildRequest(HttpMethod.Get, url, null!, queryParams, headers);
-        HttpResponseMessage response = await this._httpClient.SendAsync(request);
+        HttpResponseMessage response = await MakeRequestAndHandleException(request);
         return await GetResponseContent(response, request);
     }
 
@@ -111,7 +113,7 @@ public class RequestHelper : IRequestHelper
         }
 
         {
-            foreach ((string key, string value) in headers)
+            foreach ((var key, var value) in headers)
             {
                 request.Headers.Add(key, value);
             }
@@ -128,11 +130,34 @@ public class RequestHelper : IRequestHelper
         }
 
         NameValueCollection query = HttpUtility.ParseQueryString(string.Empty);
-        foreach ((string key, object value) in queryParams)
+        foreach ((var key, var value) in queryParams)
         {
             query.Add(key, value.ToString());
         }
 
         return query.ToString()!;
+    }
+
+    private async Task<HttpResponseMessage> MakeRequestAndHandleException(HttpRequestMessage request)
+    {
+        HttpResponseMessage response;
+
+        try
+        {
+            response = await this._httpClient.SendAsync(request);
+        }
+        catch (HttpRequestException httpRequestException)
+        {
+            if (httpRequestException.InnerException is not SocketException)
+            {
+                throw;
+            }
+
+            httpRequestException.Data.Add("StatusCode", HttpStatusCode.ServiceUnavailable);
+            httpRequestException.Data.Add("Url", request.RequestUri?.ToString());
+
+            throw;
+        }
+        return response;
     }
 }

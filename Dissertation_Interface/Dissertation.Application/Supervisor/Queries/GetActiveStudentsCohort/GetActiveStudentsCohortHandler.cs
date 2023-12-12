@@ -29,12 +29,25 @@ public class GetActiveStudentsCohortHandler : IRequestHandler<GetActiveStudentsC
     {
         this._logger.LogInformation("Attempting to retrieve list of students");
 
-        // Determine the cohort based on the condition
-        Domain.Entities.DissertationCohort? cohort = await this._db.DissertationCohortRepository.GetActiveDissertationCohort();
+        Domain.Entities.DissertationCohort? cohort;
+        if (request.Parameters.FilterByCohort == 0)
+        {
+            // Determine the cohort based on the condition
+            cohort = await this._db.DissertationCohortRepository.GetActiveDissertationCohort();
+        }
+        else
+        {
+            cohort = await this._db.DissertationCohortRepository.GetFirstOrDefaultAsync(x =>
+                x.Id == request.Parameters.FilterByCohort);
+        }
 
         if (cohort == null)
         {
-            throw new NotFoundException(nameof(DissertationCohort), DissertationConfigStatus.Active);
+            return new ResponseDto<PaginatedStudentListDto>()
+            {
+                Message = "Kindly filter by a dissertation cohort as there is no active cohort",
+                IsSuccess = false
+            };
         }
 
         // Map the request parameters to the pagination parameters

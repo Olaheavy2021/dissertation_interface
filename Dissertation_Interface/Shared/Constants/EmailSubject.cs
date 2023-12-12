@@ -10,4 +10,8 @@ public static class EmailSubject
         "Invitation to Register on the Dissertation Management System";
     public const string EmailSubjectForStudentInvite =
         "Invitation to Register on the Dissertation Management System";
+    public const string EmailSubjectForSupervisionRequestInitiatedEmail =
+        "Dissertation Interface - Supervision Request Initiated";
+    public const string EmailSubjectForSupervisionRequestActionedEmail =
+        "Dissertation Interface - Supervision Request";
 }

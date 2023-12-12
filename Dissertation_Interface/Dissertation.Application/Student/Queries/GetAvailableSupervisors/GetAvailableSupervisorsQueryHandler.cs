@@ -29,14 +29,14 @@ public class GetAvailableSupervisorsQueryHandler : IRequestHandler<GetAvailableS
         this._logger.LogInformation("Attempting to retrieve list of Assigned Supervisors");
         var userId = this._httpContextAccessor.HttpContext?.Items["UserId"] as string;
 
-        //get the students
-        Domain.Entities.Student? students = await this._db.StudentRepository.GetFirstOrDefaultAsync(x => x.UserId == userId);
-        if (students == null)
+        //get the student
+        Domain.Entities.Student? student = await this._db.StudentRepository.GetFirstOrDefaultAsync(x => x.UserId == userId);
+        if (student == null)
         {
             throw new NotFoundException(nameof(Student), userId ?? throw new InvalidOperationException());
         }
 
-        request.Parameters.DissertationCohortId = students.DissertationCohortId;
+        request.Parameters.DissertationCohortId = student.DissertationCohortId;
 
         return await this._userApiService.GetSupervisionCohorts(request.Parameters);
     }

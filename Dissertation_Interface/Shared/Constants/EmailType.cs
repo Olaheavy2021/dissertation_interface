@@ -8,4 +8,6 @@ public static class EmailType
     public const string EmailTypeAccountActivationEmail = "accountactivationemail";
     public const string EmailTypeSupervisorInviteEmail = "supervisorinviteemail";
     public const string EmailTypeStudentInviteEmail = "studentinviteemail";
+    public const string EmailTypeSupervisionRequestInitiatedEmail = "supervisionrequestinitiated";
+    public const string EmailTypeSupervisionRequestActionedEmail = "supervisionrequestactioned";
 }

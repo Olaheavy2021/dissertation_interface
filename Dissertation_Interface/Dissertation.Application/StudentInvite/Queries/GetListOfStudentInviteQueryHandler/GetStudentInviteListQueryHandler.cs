@@ -29,16 +29,22 @@ public class GetStudentInviteListQueryHandler : IRequestHandler<GetStudentInvite
         var response = new ResponseDto<PaginatedStudentInvite>();
         this._logger.LogInformation("Attempting to retrieve list of Student Invites");
 
-        //get active cohort
-        Domain.Entities.DissertationCohort? cohort = await this._db.DissertationCohortRepository.GetActiveDissertationCohort();
-        if (cohort == null)
+        //get active cohort if filter is not passed
+        if (request.Parameters.FilterByCohortId == 0)
         {
-            response.IsSuccess = false;
-            response.Message = "Kindly initiate a new and active dissertation cohort before inviting Students";
+            Domain.Entities.DissertationCohort? cohort = await this._db.DissertationCohortRepository.GetActiveDissertationCohort();
+            if (cohort == null)
+            {
+                response.IsSuccess = false;
+                response.Message = "Kindly filter by the cohortId as there is no active cohort at the moment";
 
-            return response;
+                return response;
+            }
+
+            request.Parameters.FilterByCohortId = cohort.Id;
         }
-        PagedList<Domain.Entities.StudentInvite> studentInvites = this._db.StudentInviteRepository.GetListOfStudentInvites(request.Parameters, cohort.Id);
+
+        PagedList<Domain.Entities.StudentInvite> studentInvites = this._db.StudentInviteRepository.GetListOfStudentInvites(request.Parameters);
 
         var mappedStudentInvite = new PagedList<GetStudentInvite>(
             studentInvites.Select(MapToStudentInviteDto).ToList(),

@@ -38,8 +38,8 @@ public class UnitOfWork : IUnitOfWork
 
     public IApplicationUserRepository ApplicationUserRepository => new ApplicationUserRepository(this.Context);
     public ISupervisionCohortRepository SupervisionCohortRepository => new SupervisionCohortRepository(this.Context);
-
     public ISupervisionRequestRepository SupervisionRequestRepository => new SupervisionRequestRepository(this.Context);
+    public ISupervisionListRepository SupervisionListRepository => new SupervisionListRepository(this.Context);
 
     #endregion Repositories
 
