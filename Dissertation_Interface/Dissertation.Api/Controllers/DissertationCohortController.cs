@@ -1,6 +1,7 @@
 using Dissertation.Application.DissertationCohort.Commands.CreateDissertationCohort;
 using Dissertation.Application.DissertationCohort.Commands.UpdateDissertationCohort;
 using Dissertation.Application.DissertationCohort.Queries.GetActiveDissertationCohort;
+using Dissertation.Application.DissertationCohort.Queries.GetAdminMetrics;
 using Dissertation.Application.DissertationCohort.Queries.GetById;
 using Dissertation.Application.DissertationCohort.Queries.GetListOfDissertationCohort;
 using Dissertation.Application.DTO.Request;
@@ -95,6 +96,18 @@ public class DissertationCohortController : Controller
     {
         var command = new UpdateDissertationCohortCommand(request.StartDate, request.EndDate, request.SupervisionChoiceDeadline, request.AcademicYearId, dissertationCohortId);
         ResponseDto<GetDissertationCohort> response = await this._sender.Send(command);
+        return Ok(response);
+    }
+
+    [HttpGet("active/metrics")]
+    [Authorize(Roles = "Superadmin,Admin")]
+    [SwaggerOperation(Summary = "Get Metrics for the Active Dissertation Cohort")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<AdminMetricsResponse>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
+    public async Task<IActionResult> GetSupervisionCohortMetrics()
+    {
+        var command = new GetAdminMetricsQuery();
+        ResponseDto<AdminMetricsResponse> response = await this._sender.Send(command);
         return Ok(response);
     }
 }

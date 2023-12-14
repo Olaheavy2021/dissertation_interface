@@ -6,11 +6,11 @@ using System.Collections.Generic;
 
 public class PagedListConverter<T> : JsonConverter<PagedList<T>>
 {
-    public override void WriteJson(JsonWriter writer, PagedList<T> value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, PagedList<T>? value, JsonSerializer serializer)
     {
         var obj = new JObject
         {
-            ["CurrentPage"] = value.CurrentPage,
+            ["CurrentPage"] = value!.CurrentPage,
             ["TotalPages"] = value.TotalPages,
             ["PageSize"] = value.PageSize,
             ["TotalCount"] = value.TotalCount,
@@ -22,7 +22,7 @@ public class PagedListConverter<T> : JsonConverter<PagedList<T>>
         obj.WriteTo(writer);
     }
 
-    public override PagedList<T> ReadJson(JsonReader reader, Type objectType, PagedList<T> existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override PagedList<T> ReadJson(JsonReader reader, Type objectType, PagedList<T>? existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         var obj = JObject.Load(reader);
         List<T>? items = obj["Items"]?.ToObject<List<T>>(serializer);
@@ -30,6 +30,6 @@ public class PagedListConverter<T> : JsonConverter<PagedList<T>>
         var pageNumber = obj["CurrentPage"]!.Value<int>();
         var pageSize = obj["PageSize"]!.Value<int>();
 
-        return new PagedList<T>(items, count, pageNumber, pageSize);
+        return new PagedList<T>(items!, count, pageNumber, pageSize);
     }
 }

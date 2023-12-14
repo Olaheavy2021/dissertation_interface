@@ -274,6 +274,13 @@ public class UserApiService : IUserApiService
         return JsonSerializer.Deserialize<ResponseDto<string>>(response, this._jsonSerializerOptions)!;
     }
 
+    public async Task<ResponseDto<SupervisionCohortMetricsDto>> GetSupervisionCohortMetrics(long dissertationCohortId)
+    {
+        var url = $"{this._serviceUrlSettings.UserApi}{SupervisionCohortRoutes.GetSupervisionCohortMetrics}{dissertationCohortId}";
+        var response = await this._requestHelper.GetAsync(url, null, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<SupervisionCohortMetricsDto>>(response, this._jsonSerializerOptions)!;
+    }
+
     #endregion
 
     #region SupervisionRequest

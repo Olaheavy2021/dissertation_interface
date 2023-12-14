@@ -4,6 +4,7 @@ using Shared.Constants;
 using Shared.DTO;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
+using UserManagement_API.Data.Models.Dto;
 using UserManagement_API.Service.IService;
 
 namespace UserManagement_API.Controllers;
@@ -90,6 +91,17 @@ public class SupervisionCohortController : Controller
     public async Task<IActionResult> DeleteSupervisionCohort([FromRoute] long supervisionCohortId)
     {
         ResponseDto<string> response = await this._supervisionCohortService.DeleteSupervisionCohort(supervisionCohortId, new CancellationToken());
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpGet("metrics/{cohortId:long}")]
+    [SwaggerOperation(Summary = "Remove a Supervisor from a Supervision Cohort")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<SupervisionCohortMetricsDto>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetSupervisionCohortMetrics([FromRoute] long cohortId)
+    {
+        ResponseDto<SupervisionCohortMetricsDto> response = await this._supervisionCohortService.GetSupervisionCohortMetrics(cohortId);
         return Ok(response);
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Shared.Constants;
 using Shared.DTO;
+using Shared.Enums;
 using Shared.Exceptions;
 using Shared.Helpers;
 using UserManagement_API.Data.IRepository;
@@ -350,6 +351,30 @@ public class SupervisionCohortService : ISupervisionCohortService
             Message = "Supervisor has been removed from the cohort.",
             IsSuccess = true,
             Result = SuccessMessages.DefaultSuccess
+        };
+    }
+
+    public async Task<ResponseDto<SupervisionCohortMetricsDto>> GetSupervisionCohortMetrics(long dissertationCohortId)
+    {
+        this._logger.LogInformation("Attempting to fetch metrics for this Dissertation Cohort with this {id}",
+            dissertationCohortId);
+        var supervisors =
+            await this._db.SupervisionCohortRepository.CountWhere(x => x.DissertationCohortId == dissertationCohortId);
+        var approvedSupervisionRequests = await this._db.SupervisionRequestRepository.CountWhere(x =>
+            x.DissertationCohortId == dissertationCohortId && x.Status == SupervisionRequestStatus.Approved);
+        var declinedSupervisionRequests = await this._db.SupervisionRequestRepository.CountWhere(x =>
+            x.DissertationCohortId == dissertationCohortId && x.Status == SupervisionRequestStatus.Rejected);
+
+        return new ResponseDto<SupervisionCohortMetricsDto>()
+        {
+            IsSuccess = true,
+            Message = SuccessMessages.DefaultSuccess,
+            Result = new SupervisionCohortMetricsDto()
+            {
+                Supervisors = supervisors,
+                ApprovedRequests = approvedSupervisionRequests,
+                DeclinedRequests = declinedSupervisionRequests
+            }
         };
     }
 
