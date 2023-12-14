@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Web;
 using Dissertation.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
+using Shared.Enums;
 using Shared.Helpers;
 
 namespace Dissertation.Infrastructure.Helpers;
@@ -15,11 +16,9 @@ namespace Dissertation.Infrastructure.Helpers;
 public class RequestHelper : IRequestHelper
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<RequestHelper> _logger;
 
-    public RequestHelper(IHttpClientFactory httpClientFactory, ILogger<RequestHelper> logger)
+    public RequestHelper(IHttpClientFactory httpClientFactory)
     {
-        this._logger = logger;
         this._httpClient = httpClientFactory.CreateClient("DissertationApiClient");
         var mediaTypeWithQualityHeaderValue = new MediaTypeWithQualityHeaderValue("application/json");
         this._httpClient.DefaultRequestHeaders.Accept.Add(mediaTypeWithQualityHeaderValue);
@@ -40,6 +39,15 @@ public class RequestHelper : IRequestHelper
         Shared.Enums.MediaType? mediaType = null)
     {
         HttpRequestMessage request = BuildRequest(HttpMethod.Get, url, null!, queryParams, headers);
+        HttpResponseMessage response = await MakeRequestAndHandleException(request);
+        return await GetResponseContent(response, request);
+    }
+
+    public async Task<string> DeleteAsync(string url, object? payload, IDictionary<string, object>? queryParams = null,
+        IDictionary<string, string>? headers = null,
+        MediaType? mediaType = null)
+    {
+        HttpRequestMessage request = BuildRequest(HttpMethod.Delete, url, payload!, queryParams, headers, mediaType);
         HttpResponseMessage response = await MakeRequestAndHandleException(request);
         return await GetResponseContent(response, request);
     }

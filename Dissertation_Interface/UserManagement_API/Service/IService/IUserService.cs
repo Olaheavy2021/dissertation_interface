@@ -5,6 +5,7 @@ namespace UserManagement_API.Service.IService;
 
 public interface IUserService
 {
+    Task<ResponseDto<GetUserDto>> GetUser();
     Task<ResponseDto<GetUserDto>> GetUser(string userId);
     Task<ResponseDto<GetUserDto>> GetUserByEmail(string email);
     Task<ResponseDto<GetUserDto>> GetUserByUserName(string userName);

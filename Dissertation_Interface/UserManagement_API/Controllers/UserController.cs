@@ -49,8 +49,20 @@ public class UserController : Controller
     }
 
     [Authorize(Roles = "Superadmin, Admin, Supervisor, Student")]
+    [HttpGet("access-token")]
+    [SwaggerOperation(Summary = "Get the details for a user using the access token")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetUser()
+    {
+        ResponseDto<GetUserDto> response = await this._userService.GetUser();
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin, Admin, Supervisor, Student")]
     [HttpGet("{id}")]
-    [SwaggerOperation(Summary = "Get the details for a user")]
+    [SwaggerOperation(Summary = "Get the details for a user using the user Id")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetUserDto>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
     [SwaggerResponse(StatusCodes.Status401Unauthorized)]

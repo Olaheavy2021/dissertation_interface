@@ -28,8 +28,9 @@ public class UserService : IUserService
     private readonly IMessageBus _messageBus;
     private readonly ServiceBusSettings _serviceBusSettings;
     private readonly IDissertationApiService _dissertationApiService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserService(IUnitOfWork db, IAppLogger<UserService> logger, IMapper mapper, UserManager<ApplicationUser> userManager, IMessageBus messageBus, IOptions<ServiceBusSettings> serviceBusSettings, IDissertationApiService dissertationApiService)
+    public UserService(IUnitOfWork db, IAppLogger<UserService> logger, IMapper mapper, UserManager<ApplicationUser> userManager, IMessageBus messageBus, IOptions<ServiceBusSettings> serviceBusSettings, IDissertationApiService dissertationApiService, IHttpContextAccessor httpContextAccessor)
     {
         this._db = db;
         this._mapper = mapper;
@@ -37,7 +38,39 @@ public class UserService : IUserService
         this._userManager = userManager;
         this._messageBus = messageBus;
         this._dissertationApiService = dissertationApiService;
+        this._httpContextAccessor = httpContextAccessor;
         this._serviceBusSettings = serviceBusSettings.Value;
+    }
+
+    public async Task<ResponseDto<GetUserDto>> GetUser()
+    {
+        //get the user from the token
+        var userId = this._httpContextAccessor.HttpContext?.Items["UserId"] as string;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return new ResponseDto<GetUserDto>
+            {
+                Message = "Invalid Request", IsSuccess = false
+            };
+        }
+
+        ApplicationUser? user = await this._db.ApplicationUserRepository.GetFirstOrDefaultAsync(a => a.Id == userId);
+        this._logger.LogInformation("Fetching details of this user with userId from the database - {0}", userId);
+        if (user == null) throw new NotFoundException(nameof(ApplicationUser), userId);
+
+        IList<string> roles = await this._userManager.GetRolesAsync(user);
+        UserDto mappedUser = this._mapper.Map<ApplicationUser, UserDto>(user);
+        mappedUser.Status = user.LockoutEnd >= DateTimeOffset.UtcNow
+            ? UserStatus.Deactivated
+            : user.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive;
+
+        var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow };
+        this._logger.LogInformation("User Details returned successfully for userId - {0}", userId);
+
+        return new ResponseDto<GetUserDto>()
+        {
+            IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = getUserDto
+        };
     }
 
     public async Task<ResponseDto<GetUserDto>> GetUser(string userId)

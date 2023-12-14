@@ -320,6 +320,39 @@ public class SupervisionCohortService : ISupervisionCohortService
         };
     }
 
+    public async Task<ResponseDto<string>> DeleteSupervisionCohort(long supervisionCohortId, CancellationToken cancellationToken)
+    {
+        this._logger.LogInformation("Attempting to fetch a Supervision Cohort with this {id}",
+            supervisionCohortId);
+        SupervisionCohort? supervisionCohort =
+            await this._db.SupervisionCohortRepository.GetAsync(x => x.Id == supervisionCohortId);
+
+        if (supervisionCohort == null)
+        {
+            throw new NotFoundException(nameof(SupervisionCohort), supervisionCohortId);
+        }
+
+        //check if the supervisor has accepted any request
+        if (supervisionCohort.SupervisionSlot != supervisionCohort.AvailableSupervisionSlot)
+        {
+            return new ResponseDto<string>()
+            {
+                Message = "This supervisor has already accepted a request already. Please reduce the slots instead",
+                IsSuccess = false,
+                Result = ErrorMessages.DefaultError
+            };
+        }
+
+        this._db.SupervisionCohortRepository.Remove(supervisionCohort);
+        await this._db.SaveAsync(cancellationToken);
+        return new ResponseDto<string>()
+        {
+            Message = "Supervisor has been removed from the cohort.",
+            IsSuccess = true,
+            Result = SuccessMessages.DefaultSuccess
+        };
+    }
+
     private GetSupervisionCohort MapToSupervisionCohortDto(
         SupervisionCohort supervisionCohort, IEnumerable<GetDepartment> departments)
     {

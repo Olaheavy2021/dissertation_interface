@@ -1,6 +1,7 @@
 ﻿using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Application.SupervisionCohort.Commands.CreateSupervisionCohort;
+using Dissertation.Application.SupervisionCohort.Commands.DeleteSupervisionCohort;
 using Dissertation.Application.SupervisionCohort.Commands.UpdateSupervisionSlot;
 using Dissertation.Application.SupervisionCohort.Queries.GetAssignedSupervisors;
 using Dissertation.Application.SupervisionCohort.Queries.GetById;
@@ -91,6 +92,18 @@ public class SupervisionCohortController : Controller
     public async Task<IActionResult> UpdateSupervisionSlots([FromBody] UpdateSupervisionCohortRequest request)
     {
         var query = new UpdateSupervisionSlotCommand(request.SupervisionSlots, request.SupervisionCohortId);
+        ResponseDto<string> result = await this._sender.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpDelete("{supervisionCohortId:long}")]
+    [SwaggerOperation(Summary = "Remove a Supervisor from a Supervision Cohort")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> DeleteSupervisionCohort([FromRoute] long supervisionCohortId)
+    {
+        var query = new DeleteSupervisionCohortCommand(supervisionCohortId);
         ResponseDto<string> result = await this._sender.Send(query);
         return Ok(result);
     }

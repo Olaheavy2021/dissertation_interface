@@ -7,6 +7,7 @@ using UserManagement_API.Service.IService;
 namespace UserManagement_API.Controllers;
 
 [Route("api/v{version:apiVersion}/[controller]")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class SupervisionListController : Controller
 {
     private readonly ISupervisionListService _supervisionListService;

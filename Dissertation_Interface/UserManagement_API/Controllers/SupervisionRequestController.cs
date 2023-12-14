@@ -8,6 +8,7 @@ using UserManagement_API.Service.IService;
 namespace UserManagement_API.Controllers;
 
 [Route("api/v{version:apiVersion}/[controller]")]
+[ApiExplorerSettings(IgnoreApi = true)]
 [ApiVersion("1.0")]
 [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request", typeof(CustomProblemDetails))]
 public class SupervisionRequestController : Controller

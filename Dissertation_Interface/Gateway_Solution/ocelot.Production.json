@@ -219,7 +219,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/v1/supervisioncohort/{id}",
-      "UpstreamHttpMethod": [ "Put","Get"],
+      "UpstreamHttpMethod": [ "Put","Get", "Delete"],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }

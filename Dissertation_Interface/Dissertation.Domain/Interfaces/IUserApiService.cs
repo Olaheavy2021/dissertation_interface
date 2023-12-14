@@ -37,4 +37,5 @@ public interface IUserApiService
         SupervisionListPaginationParameters model);
     Task<ResponseDto<PaginatedSupervisionListDto>> GetSupervisionLists(
         SupervisionListPaginationParameters model);
+    Task<ResponseDto<string>> DeleteSupervisionCohort(long supervisionCohortId);
 }

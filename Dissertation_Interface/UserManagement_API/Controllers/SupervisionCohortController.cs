@@ -9,6 +9,7 @@ using UserManagement_API.Service.IService;
 namespace UserManagement_API.Controllers;
 
 [Route("api/v{version:apiVersion}/[controller]")]
+[ApiExplorerSettings(IgnoreApi = true)]
 [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request", typeof(CustomProblemDetails))]
 public class SupervisionCohortController : Controller
 {
@@ -78,6 +79,17 @@ public class SupervisionCohortController : Controller
     public async Task<IActionResult> UpdateSupervisionSlot([FromBody] UpdateSupervisionCohortRequest request)
     {
         ResponseDto<string> response = await this._supervisionCohortService.UpdateSupervisionSlot(request, new CancellationToken());
+        return Ok(response);
+    }
+
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpDelete("{supervisionCohortId:long}")]
+    [SwaggerOperation(Summary = "Remove a Supervisor from a Supervision Cohort")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> DeleteSupervisionCohort([FromRoute] long supervisionCohortId)
+    {
+        ResponseDto<string> response = await this._supervisionCohortService.DeleteSupervisionCohort(supervisionCohortId, new CancellationToken());
         return Ok(response);
     }
 }

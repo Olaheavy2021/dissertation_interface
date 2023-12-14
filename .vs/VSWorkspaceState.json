@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Dissertation_Interface",
+    "\\Dissertation_Interface\\Dissertation.Api",
+    "\\Dissertation_Interface\\Dissertation.Application",
+    "\\Dissertation_Interface\\Dissertation.Application\\StudentInvite",
+    "\\Dissertation_Interface\\Dissertation.Application\\StudentInvite\\Commands",
+    "\\Dissertation_Interface\\Dissertation.Application\\StudentInvite\\Queries",
+    "\\Dissertation_Interface\\Dissertation.Application\\StudentInvite\\Queries\\GetListOfStudentInviteQueryHandler"
+  ],
+  "SelectedNode": "\\Dissertation_Interface\\Dissertation.Application\\StudentInvite\\Queries\\GetListOfStudentInviteQueryHandler\\GetStudentInviteListQueryHandler.cs",
+  "PreviewInSolutionExplorer": false
+}

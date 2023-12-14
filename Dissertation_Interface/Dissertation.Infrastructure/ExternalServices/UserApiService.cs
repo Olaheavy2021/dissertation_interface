@@ -266,6 +266,14 @@ public class UserApiService : IUserApiService
         var response = await this._requestHelper.PostAsync(url, request, mediaType: MediaType.Json);
         return JsonSerializer.Deserialize<ResponseDto<string>>(response, this._jsonSerializerOptions)!;
     }
+
+    public async Task<ResponseDto<string>> DeleteSupervisionCohort(long supervisionCohortId)
+    {
+        var url = $"{this._serviceUrlSettings.UserApi}{SupervisionCohortRoutes.SupervisionCohortRoute}/{supervisionCohortId}";
+        var response = await this._requestHelper.DeleteAsync(url, null, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<string>>(response, this._jsonSerializerOptions)!;
+    }
+
     #endregion
 
     #region SupervisionRequest
