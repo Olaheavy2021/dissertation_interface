@@ -4,13 +4,13 @@ namespace UserManagement_API.Data.Models;
 
 public class ProfilePicture : AuditableEntity<long>
 {
-    public string ImageData { get; set; } = string.Empty;
+    public string ImageData { get; set; }
 
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
-    public string ContentType { get; set; } = string.Empty;
+    public string ContentType { get; set; }
     // Foreign Key
-    public string UserId { get; set; } = string.Empty;
+    public string UserId { get; set; }
     // Navigation Property
     public virtual ApplicationUser User { get; set; } = null!;
 

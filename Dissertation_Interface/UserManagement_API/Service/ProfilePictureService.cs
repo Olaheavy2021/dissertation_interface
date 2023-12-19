@@ -43,17 +43,17 @@ public class ProfilePictureService : IProfilePictureService
         this._logger.LogInformation("Fetching details of this user with userId from the database - {0}", userId);
         if (user == null) throw new NotFoundException(nameof(ApplicationUser), userId);
 
-        if (request.File.Length == 0)
+        if (request.File == null || request.File?.Length == 0)
         {
            return await UpdateUserDetailsOnly(request, user, cancellationToken);
         }
 
         //validate the uploaded image
         var extension = ValidateUploadedFile(request);
-        var blobName = $"{user.Id}{extension}";
+        var blobName = $"{userId}{extension}";
         BlobResponseDto blobResponse = await this._blobRepository.UploadAsync(blobName,
             this._blobStorageSettings.ProfilePictureContainer,
-            request.File);
+            request.File!);
 
         if (blobResponse.Error)
             return new ResponseDto<string>()
@@ -70,7 +70,6 @@ public class ProfilePictureService : IProfilePictureService
                 Message = "Invalid response from the Blob API",
                 Result = ErrorMessages.DefaultError
             };
-
 
         //update or create a record in the profile picture table as the case may be
         blobResponse.Blob.ContentType = extension;
@@ -110,18 +109,6 @@ public class ProfilePictureService : IProfilePictureService
             userId
         );
         await this._unitOfWork.ProfilePictureRepository.AddAsync(profilePicture);
-    }
-
-    private async Task UpdateProfilePicture(BlobResponseDto blobResponse, string userId)
-    {
-        ProfilePicture? profilePicture =
-            await this._unitOfWork.ProfilePictureRepository.GetFirstOrDefaultAsync(x => x.UserId == userId);
-        if (profilePicture == null) throw new NotFoundException(nameof(ProfilePicture), userId);
-        profilePicture.Name = blobResponse.Blob.Name!;
-        profilePicture.ImageData = blobResponse.Blob.Uri!;
-        profilePicture.ContentType = blobResponse.Blob.ContentType!;
-
-        this._unitOfWork.ProfilePictureRepository.Update(profilePicture);
     }
 
     private void UpdateUser(ProfilePictureUploadRequestDto request, ApplicationUser user)
@@ -178,10 +165,10 @@ public class ProfilePictureService : IProfilePictureService
         const long maxFileSize = 5 * 1024 * 1024;
         string[] permittedExtensions = { ".jpg", ".jpeg", ".png" };
 
-        if (request.File.Length > maxFileSize)
+        if (request.File?.Length > maxFileSize)
             throw new BadRequestException("File size exceeds the permissible limit of 5Mb");
 
-        var extension = Path.GetExtension(request.File.FileName).ToLowerInvariant();
+        var extension = Path.GetExtension(request.File?.FileName)?.ToLowerInvariant();
         if (string.IsNullOrEmpty(extension) || !permittedExtensions.Contains(extension))
         {
             throw new BadRequestException("Invalid file type.");

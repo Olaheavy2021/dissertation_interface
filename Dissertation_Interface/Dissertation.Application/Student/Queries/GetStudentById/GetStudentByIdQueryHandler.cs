@@ -46,15 +46,14 @@ public class GetStudentByIdQueryHandler : IRequestHandler<GetStudentByIdQuery, R
             includes: new Expression<Func<Domain.Entities.Student, object>>[]
             {
                 u => u.Course,
-                u => u.DissertationCohort
+                u => u.DissertationCohort,
+                u => u.ResearchProposal
             });
 
         if (student == null)
         {
             throw new NotFoundException(nameof(Domain.Entities.Student), request.Id);
         }
-
-        //TODO:Check if a student has a supervisor
 
         // Map student details and prepare the response
         StudentDto mappedStudent = this._mapper.Map<StudentDto>(student);

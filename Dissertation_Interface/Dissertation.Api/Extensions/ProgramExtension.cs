@@ -15,6 +15,7 @@ public static class ProgramExtension
             .AddApplication()
             .AddPersistenceInfrastructure(config)
             .AddDissertationHttpClient(config)
+            .ConfigureBlobStorageClient(config)
             .AddCors();
 
     public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder builder, IConfiguration config) =>

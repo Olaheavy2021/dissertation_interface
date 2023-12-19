@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
+using Azure.Storage.Blobs;
 using Dissertation.Application.Utility;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.ExternalServices;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
+using Shared.BlobStorage;
 using Shared.Helpers;
 using Shared.Logging;
 using Shared.MessageBus;
@@ -125,6 +127,7 @@ public static class ServiceCollectionExtension
         services.Configure<ServiceUrlSettings>(config.GetSection(ServiceUrlSettings.SectionName));
         services.Configure<ApplicationUrlSettings>(config.GetSection(ApplicationUrlSettings.SectionName));
         services.Configure<ServiceBusSettings>(config.GetSection(ServiceBusSettings.SectionName));
+        services.Configure<BlobStorageSettings>(config.GetSection(BlobStorageSettings.SectionName));
         return services;
     }
 
@@ -133,6 +136,14 @@ public static class ServiceCollectionExtension
     {
         services.AddHttpClient("DissertationApiClient", u => u.BaseAddress =
             new Uri(configuration["ServiceUrls:UserApi"] ?? throw new InvalidOperationException())).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
+        return services;
+    }
+
+    internal static IServiceCollection ConfigureBlobStorageClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddSingleton<IBlobRepository, BlobRepository>();
+        services.AddSingleton(x => new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));
         return services;
     }
 }

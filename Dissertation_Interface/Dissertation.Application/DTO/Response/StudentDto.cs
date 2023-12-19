@@ -12,7 +12,7 @@ public class StudentDto
 
     public string? ResearchTopic { get; set; }
 
-    public string? ResearchProposal { get; set; }
-
     public GetDissertationCohort DissertationCohort { get; set; }
+
+    public GetResearchProposal ResearchProposal { get; set; }
 }

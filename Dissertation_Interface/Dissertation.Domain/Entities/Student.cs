@@ -11,12 +11,12 @@ public class Student : AuditableEntity<long>
     public Course Course { get; set; }
     public string UserId { get; set; }
     public string? ResearchTopic { get; set; }
-
-    public string? ResearchProposal { get; set; }
     public long DissertationCohortId { get; set; }
 
     [ForeignKey("DissertationCohortId")]
     public DissertationCohort DissertationCohort { get; set; }
+
+    public virtual ResearchProposal ResearchProposal { get; set; } = null!;
 
     private Student(
         string userId,

@@ -5,6 +5,7 @@ using Dissertation.Application.Student.Commands.InitiateSupervisionRequest;
 using Dissertation.Application.Student.Commands.RegisterStudent;
 using Dissertation.Application.Student.Commands.UpdateResearchTopic;
 using Dissertation.Application.Student.Commands.UpdateStudent;
+using Dissertation.Application.Student.Commands.UploadResearchProposal;
 using Dissertation.Application.Student.Queries.GetAvailableSupervisors;
 using Dissertation.Application.Student.Queries.GetListOfStudents;
 using Dissertation.Application.Student.Queries.GetStudentById;
@@ -168,6 +169,18 @@ public class StudentController : Controller
     {
         var query = new GetStudentSupervisionListsQuery(parameters);
         ResponseDto<PaginatedSupervisionListDto> result = await this._sender.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Student")]
+    [HttpPut("upload-research-proposal")]
+    [SwaggerOperation(Summary = "Upload Research Proposal")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> UploadResearchProposal([FromForm] UploadResearchProposalRequest request)
+    {
+        var query = new UploadResearchProposalCommand(request.ResearchProposal);
+        ResponseDto<string> result = await this._sender.Send(query);
         return Ok(result);
     }
 }
