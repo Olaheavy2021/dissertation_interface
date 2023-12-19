@@ -54,7 +54,7 @@ public class UserService : IUserService
             };
         }
 
-        ApplicationUser? user = await this._db.ApplicationUserRepository.GetFirstOrDefaultAsync(a => a.Id == userId);
+        ApplicationUser? user = await this._db.ApplicationUserRepository.GetFirstOrDefaultAsync(a => a.Id == userId, includes: x => x.ProfilePicture);
         this._logger.LogInformation("Fetching details of this user with userId from the database - {0}", userId);
         if (user == null) throw new NotFoundException(nameof(ApplicationUser), userId);
 
@@ -63,8 +63,10 @@ public class UserService : IUserService
         mappedUser.Status = user.LockoutEnd >= DateTimeOffset.UtcNow
             ? UserStatus.Deactivated
             : user.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive;
+        GetProfilePicture mappedProfilePicture =
+            this._mapper.Map<ProfilePicture, GetProfilePicture>(user.ProfilePicture);
 
-        var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow };
+        var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow , ProfilePicture = mappedProfilePicture};
         this._logger.LogInformation("User Details returned successfully for userId - {0}", userId);
 
         return new ResponseDto<GetUserDto>()
@@ -77,7 +79,7 @@ public class UserService : IUserService
     {
         var response = new ResponseDto<GetUserDto>();
 
-        ApplicationUser? user = await this._db.ApplicationUserRepository.GetFirstOrDefaultAsync(a => a.Id == userId);
+        ApplicationUser? user = await this._db.ApplicationUserRepository.GetFirstOrDefaultAsync(a => a.Id == userId, includes: x => x.ProfilePicture);
         this._logger.LogInformation("Fetching details of this user with userId from the database - {0}", userId);
         if (user != null)
         {
@@ -86,8 +88,10 @@ public class UserService : IUserService
             mappedUser.Status = user.LockoutEnd >= DateTimeOffset.UtcNow
                 ? UserStatus.Deactivated
                 : user.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive;
+            GetProfilePicture mappedProfilePicture =
+                this._mapper.Map<ProfilePicture, GetProfilePicture>(user.ProfilePicture);
 
-            var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow };
+            var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow , ProfilePicture = mappedProfilePicture};
 
             response.IsSuccess = true;
             response.Message = SuccessMessages.DefaultSuccess;

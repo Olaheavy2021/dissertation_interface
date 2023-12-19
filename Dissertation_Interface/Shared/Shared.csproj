@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="7.1.0" />
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.16.1" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
     <PackageReference Include="FluentValidation" Version="11.7.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />

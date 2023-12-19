@@ -1,11 +1,13 @@
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Shared.BlobStorage;
 using Shared.Helpers;
 using Shared.Logging;
 using Shared.MessageBus;
@@ -13,7 +15,6 @@ using Shared.Repository;
 using Shared.Settings;
 using UserManagement_API.Data;
 using UserManagement_API.Data.IRepository;
-using UserManagement_API.Data.Models;
 using UserManagement_API.Data.Repository;
 using UserManagement_API.ExternalServices;
 using UserManagement_API.Helpers;
@@ -31,6 +32,7 @@ public static class ApplicationServiceRegistration
         services.Configure<ApplicationUrlSettings>(configuration.GetSection("ApplicationUrlSettings"));
         services.Configure<ServiceBusSettings>(configuration.GetSection("ServiceBusSettings"));
         services.Configure<ServiceUrlSettings>(configuration.GetSection(ServiceUrlSettings.SectionName));
+        services.Configure<BlobStorageSettings>(configuration.GetSection(BlobStorageSettings.SectionName));
 
         //Database Connection
         services.AddDbContext<UserDbContext>(options =>
@@ -51,6 +53,9 @@ public static class ApplicationServiceRegistration
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddHttpContextAccessor();
         services.AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>();
+        services.AddSingleton(x => new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));
+        services.AddSingleton<IBlobRepository, BlobRepository>();
+        services.AddScoped<IProfilePictureService, ProfilePictureService>();
 
         //Swagger Endpoint
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

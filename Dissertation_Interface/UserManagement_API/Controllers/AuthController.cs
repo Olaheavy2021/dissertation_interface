@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTO;
 using Shared.Middleware;
@@ -13,8 +14,13 @@ namespace UserManagement_API.Controllers;
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
+    private readonly IProfilePictureService _profilePictureService;
 
-    public AuthController(IAuthService authService) => this._authService = authService;
+    public AuthController(IAuthService authService, IProfilePictureService profilePictureService)
+    {
+        this._authService = authService;
+        this._profilePictureService = profilePictureService;
+    }
 
 
     [HttpPost("login")]
@@ -65,6 +71,16 @@ public class AuthController : Controller
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto model)
     {
         ResponseDto<RefreshTokenDto> response = await this._authService.GetRefreshToken(model);
+        return Ok(response);
+    }
+
+    [HttpPut("update-profile")]
+    [Authorize(Roles = "Superadmin, Admin, Supervisor, Student")]
+    [SwaggerOperation(Summary = "Update Profile")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Processed", typeof( ResponseDto<string>))]
+    public async Task<IActionResult> UpdateProfile([FromForm] ProfilePictureUploadRequestDto model)
+    {
+        ResponseDto<string> response = await this._profilePictureService.UploadProfilePicture(model, new CancellationToken());
         return Ok(response);
     }
 }

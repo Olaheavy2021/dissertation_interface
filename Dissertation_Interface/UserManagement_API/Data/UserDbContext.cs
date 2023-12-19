@@ -19,6 +19,8 @@ public class UserDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<SupervisionList> SupervisionLists { get; set; }
 
+    public DbSet<ProfilePicture> ProfilePictures { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

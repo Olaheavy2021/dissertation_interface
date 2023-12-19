@@ -16,8 +16,6 @@ public class ApplicationUser : IdentityUser
     public long? DepartmentId { get; set; }
     public long? CourseId { get; set; }
 
-    public string? ProfilePicture { get; set; }
-
-    public ICollection<SupervisionCohort> SupervisedCohorts { get; set; }
-
+    public virtual ProfilePicture ProfilePicture { get; set; } = null!;
+    public ICollection<SupervisionCohort> SupervisedCohorts { get; set; } = null!;
 }
