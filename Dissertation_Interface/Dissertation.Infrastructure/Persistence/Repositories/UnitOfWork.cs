@@ -53,6 +53,8 @@ public class UnitOfWork : IUnitOfWork
 
     public IStudentInviteRepository StudentInviteRepository => new StudentInviteRepository(this.Context);
 
+    public IResearchProposalRepository ResearchProposalRepository => new ResearchProposalRepository(this.Context);
+
     #endregion Repositories
 
     public async Task BeginTransactionAsync() => this._transaction = await this.Context.Database.BeginTransactionAsync().ConfigureAwait(false);

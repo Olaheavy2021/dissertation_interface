@@ -18,6 +18,8 @@ public interface IUnitOfWork
 
     IStudentInviteRepository StudentInviteRepository { get; }
 
+    IResearchProposalRepository ResearchProposalRepository { get; }
+
     Task BeginTransactionAsync();
     Task<int> SaveAsync();
     Task<int> SaveAsync(CancellationToken cancellationToken);
