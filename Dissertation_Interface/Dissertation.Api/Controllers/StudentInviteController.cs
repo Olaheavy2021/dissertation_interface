@@ -4,11 +4,13 @@ using Dissertation.Application.StudentInvite.Commands.ConfirmStudentInvite;
 using Dissertation.Application.StudentInvite.Commands.CreateStudentInvite;
 using Dissertation.Application.StudentInvite.Commands.DeleteStudentInvite;
 using Dissertation.Application.StudentInvite.Commands.UpdateStudentInvite;
+using Dissertation.Application.StudentInvite.Commands.UploadStudentInvite;
 using Dissertation.Application.StudentInvite.Queries.GetById;
 using Dissertation.Application.StudentInvite.Queries.GetListOfStudentInviteQueryHandler;
 using Dissertation.Domain.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.DTO;
@@ -105,6 +107,16 @@ public class StudentInviteController : Controller
             };
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
         }
+        return Ok(response);
+    }
+
+    [HttpPost]
+    [SwaggerOperation(Summary = "Upload Student Invites")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<ResponseDto<string>>))]
+    public async Task<IActionResult> UploadStudentInvite([FromBody] UploadInvitesRequest request)
+    {
+        var command = new UploadStudentInviteCommand(request.Requests);
+        ResponseDto<string> response = await this._sender.Send(command);
         return Ok(response);
     }
 }

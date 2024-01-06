@@ -47,6 +47,8 @@ public class SupervisionListRepository : GenericRepository<SupervisionList>, ISu
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
                 .Include(x => x.Supervisor)
                 .Include(x => x.Student)
+                .Include(x => x.Supervisor.ProfilePicture)
+                .Include(x => x.Student.ProfilePicture)
                 .OrderByDescending(x => x.CreatedAt), parameters.PageNumber,
             parameters.PageSize);
     }
@@ -82,6 +84,8 @@ public class SupervisionListRepository : GenericRepository<SupervisionList>, ISu
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
                 .Include(x => x.Supervisor)
                 .Include(x => x.Student)
+                .Include(x => x.Supervisor.ProfilePicture)
+                .Include(x => x.Student.ProfilePicture)
                 .OrderByDescending(x => x.CreatedAt), parameters.PageNumber,
             parameters.PageSize);
     }
@@ -111,6 +115,8 @@ public class SupervisionListRepository : GenericRepository<SupervisionList>, ISu
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
                 .Include(x => x.Supervisor)
                 .Include(x => x.Student)
+                .Include(x => x.Supervisor.ProfilePicture)
+                .Include(x => x.Student.ProfilePicture)
                 .OrderByDescending(x => x.CreatedAt), parameters.PageNumber,
             parameters.PageSize);
     }

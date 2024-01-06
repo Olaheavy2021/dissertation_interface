@@ -33,7 +33,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
 
         if (!string.IsNullOrEmpty(paginationParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.UserName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByUserName}%"));
         }
 
@@ -43,6 +43,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
         return PagedList<ApplicationUser>.ToPagedList(
             this.Context.Set<ApplicationUser>()
                 .FromSqlRaw(formattedQuery, parametersList.ToArray<object>())
+                .Include(x => x.ProfilePicture)
                 .OrderByDescending(x => x.CreatedOn), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
@@ -64,7 +65,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
 
         if (!string.IsNullOrEmpty(paginationParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.UserName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByUserName}%"));
         }
 
@@ -80,6 +81,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
         return PagedList<ApplicationUser>.ToPagedList(
             this.Context.Set<ApplicationUser>()
                 .FromSqlRaw(formattedQuery, parametersList.ToArray<object>())
+                .Include(x => x.ProfilePicture)
                 .OrderByDescending(x => x.CreatedOn), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }
@@ -100,7 +102,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
 
         if (!string.IsNullOrEmpty(paginationParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.UserName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByUserName}%"));
         }
 
@@ -116,6 +118,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
         return PagedList<ApplicationUser>.ToPagedList(
             this.Context.Set<ApplicationUser>()
                 .FromSqlRaw(formattedQuery, parametersList.ToArray<object>())
+                .Include(x => x.ProfilePicture)
                 .OrderByDescending(x => x.CreatedOn), paginationParameters.PageNumber,
             paginationParameters.PageSize);
     }

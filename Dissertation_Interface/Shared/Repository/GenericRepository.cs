@@ -100,13 +100,14 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         this.Context.Set<T>().Remove(model);
     }
 
-    public async Task RemoveRangeAsync(Expression<Func<T, bool>> predicate)
+    public Task RemoveRangeAsync(IReadOnlyList<T> models)
     {
-        List<T> models = await this.Context.Set<T>().AsNoTracking().Where(predicate).ToListAsync().ConfigureAwait(false);
         foreach (T model in models)
         {
             this.Context.Set<T>().Remove(model);
         }
+
+        return Task.CompletedTask;
     }
 
     public void Remove(long id)

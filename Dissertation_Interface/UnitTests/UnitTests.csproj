@@ -26,6 +26,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Dissertation.Application\Dissertation.Application.csproj" />
       <ProjectReference Include="..\UserManagement_API\UserManagement_API.csproj" />
+        <ProjectReference Include="..\Notification_API\Notification_API.csproj" />
     </ItemGroup>
 
 </Project>

@@ -4,6 +4,7 @@ using Dissertation.Application.SupervisorInvite.Commands.ConfirmSupervisorInvite
 using Dissertation.Application.SupervisorInvite.Commands.CreateSupervisorInvite;
 using Dissertation.Application.SupervisorInvite.Commands.DeleteSupervisorInvite;
 using Dissertation.Application.SupervisorInvite.Commands.UpdateSupervisorInvite;
+using Dissertation.Application.SupervisorInvite.Commands.UploadSupervisorInvite;
 using Dissertation.Application.SupervisorInvite.Queries.GetById;
 using Dissertation.Application.SupervisorInvite.Queries.GetListOfSupervisorInvite;
 using Dissertation.Domain.Pagination;
@@ -106,6 +107,16 @@ public class SupervisorInviteController : Controller
             };
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
         }
+        return Ok(response);
+    }
+
+    [HttpPost]
+    [SwaggerOperation(Summary = "Upload Supervisor Invites")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<ResponseDto<string>>))]
+    public async Task<IActionResult> UploadSupervisorInvite([FromBody] UploadInvitesRequest request)
+    {
+        var command = new UploadSupervisorInviteCommand(request.Requests);
+        ResponseDto<string> response = await this._sender.Send(command);
         return Ok(response);
     }
 }

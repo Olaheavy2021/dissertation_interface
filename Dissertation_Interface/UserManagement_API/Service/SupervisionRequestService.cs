@@ -409,6 +409,14 @@ public class SupervisionRequestService : ISupervisionRequestService
         supervisionCohort.AvailableSupervisionSlot -= 1;
         this._unitOfWork.SupervisionCohortRepository.Update(supervisionCohort);
 
+        //delete the other supervision request for the student
+        IReadOnlyList<SupervisionRequest> studentSupervisionRequests = await this._unitOfWork.SupervisionRequestRepository.GetAllAsync(
+            x => x.StudentId == supervisionRequest.StudentId && x.Status != SupervisionRequestStatus.Approved);
+        if (studentSupervisionRequests.Any())
+        {
+            await this._unitOfWork.SupervisionRequestRepository.RemoveRangeAsync(studentSupervisionRequests);
+        }
+
         //save all changes
         await this._unitOfWork.SaveAsync(cancellationToken);
 

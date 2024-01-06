@@ -18,7 +18,7 @@ public class SupervisionRequestController : Controller
     public SupervisionRequestController(ISupervisionRequestService supervisionRequestService) =>
         this._supervisionRequestService = supervisionRequestService;
 
-    [Authorize(Roles = "Admin, SuperAdmin")]
+    [Authorize(Roles = "Admin, Superadmin")]
     [HttpGet]
     [SwaggerOperation(Summary = "Fetch a List of Supervision Requests")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]

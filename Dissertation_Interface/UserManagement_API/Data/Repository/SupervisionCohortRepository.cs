@@ -33,7 +33,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
 
         if (!string.IsNullOrEmpty(listParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.UserName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{listParameters.SearchByUserName}%"));
         }
 
@@ -43,6 +43,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
         return PagedList<ApplicationUser>.ToPagedList(
             this.Context.Set<ApplicationUser>()
                 .FromSqlRaw(formattedQuery, parametersList.ToArray<object>())
+                .Include(x => x.ProfilePicture)
                 .OrderByDescending(x => x.CreatedOn), listParameters.PageNumber,
             listParameters.PageSize);
     }
@@ -65,7 +66,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
 
         if (!string.IsNullOrEmpty(listParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.UserName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{listParameters.SearchByUserName}%"));
         }
 
@@ -75,6 +76,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
         return PagedList<ApplicationUser>.ToPagedList(
             this.Context.Set<ApplicationUser>()
                 .FromSqlRaw(formattedQuery, parametersList.ToArray<object>())
+                .Include(x => x.ProfilePicture)
                 .OrderByDescending(x => x.CreatedOn), listParameters.PageNumber,
             listParameters.PageSize);
     }
@@ -91,7 +93,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
 
         if (!string.IsNullOrEmpty(listParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.UserName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{listParameters.SearchByUserName}%"));
         }
 
@@ -99,6 +101,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
             this.Context.Set<SupervisionCohort>()
                 .FromSqlRaw(sqlQuery.ToString(), parametersList.ToArray<object>())
                 .Include(x => x.Supervisor)
+                .Include(x => x.Supervisor.ProfilePicture)
                 .OrderByDescending(x => x.CreatedAt), listParameters.PageNumber,
             listParameters.PageSize);
     }

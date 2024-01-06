@@ -12,4 +12,6 @@ public class SupervisionRequestListDto
     public long DissertationCohortId { get; set; }
 
     public SupervisionRequestStatus Status { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }

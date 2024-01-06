@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Dissertation.Application.Utility;
+namespace Dissertation.Infrastructure.Helpers;
 
 public static class InviteCodeGenerator
 {

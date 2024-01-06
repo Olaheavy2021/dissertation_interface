@@ -315,7 +315,7 @@ public class SupervisionCohortService : ISupervisionCohortService
             };
         }
 
-        return new ResponseDto<SupervisionCohort>()
+        return new ResponseDto<SupervisionCohort>
         {
             IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = supervisionCohort
         };

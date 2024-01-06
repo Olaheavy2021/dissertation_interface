@@ -15,6 +15,6 @@ public class ApplicationUser : IdentityUser
     public DateTime CreatedOn { get; set; }
     public long? DepartmentId { get; set; }
     public long? CourseId { get; set; }
-    public virtual ProfilePicture ProfilePicture { get; set; } = null!;
+    public virtual ProfilePicture? ProfilePicture { get; set; } = null!;
     public ICollection<SupervisionCohort> SupervisedCohorts { get; set; } = null!;
 }

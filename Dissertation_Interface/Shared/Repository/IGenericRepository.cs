@@ -31,7 +31,7 @@ public interface IGenericRepository<T> where T : class
     void Update(T model);
     void UpdateRange(List<T> models);
     void Remove(T model);
-    Task RemoveRangeAsync(Expression<Func<T, bool>> predicate);
+    Task RemoveRangeAsync(IReadOnlyList<T> models);
     void Remove(long id);
     Task RemoveAsync(Expression<Func<T, bool>> predicate);
     Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);

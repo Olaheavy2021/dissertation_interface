@@ -1,4 +1,5 @@
-﻿using UserManagement_API.Data.DomainHelper;
+﻿using System.Text.Json.Serialization;
+using UserManagement_API.Data.DomainHelper;
 
 namespace UserManagement_API.Data.Models;
 
@@ -11,7 +12,9 @@ public class ProfilePicture : AuditableEntity<long>
     public string ContentType { get; set; }
     // Foreign Key
     public string UserId { get; set; }
+
     // Navigation Property
+    [JsonIgnore]
     public virtual ApplicationUser User { get; set; } = null!;
 
     private ProfilePicture(

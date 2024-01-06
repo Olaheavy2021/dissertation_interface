@@ -8,4 +8,6 @@ public class ServiceBusSettings
     public string AuditLoggerQueue { get; set; } = string.Empty;
 
     public string EmailLoggerQueue { get; set; } = string.Empty;
+
+    public string BatchUploadQueue { get; set; } = string.Empty;
 }

@@ -18,7 +18,8 @@ public static class CustomMappers
             EmailConfirmed = applicationUser.EmailConfirmed,
             Status = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow
                 ? UserStatus.Deactivated
-                : applicationUser.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive
+                : applicationUser.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive,
+            ProfilePicture = applicationUser?.ProfilePicture
         };
 
     public static StudentListDto MapToUserDto(ApplicationUser applicationUser, IEnumerable<GetCourse> courses) =>
@@ -34,7 +35,8 @@ public static class CustomMappers
             Status = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow
                 ? UserStatus.Deactivated
                 : applicationUser.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive,
-            Course = courses.FirstOrDefault(x => x.Id == applicationUser.CourseId)! // Map courses
+            Course = courses.FirstOrDefault(x => x.Id == applicationUser.CourseId)!, // Map courses
+            ProfilePicture = applicationUser?.ProfilePicture
         };
 
     public static SupervisorListDto MapToUserDto(ApplicationUser applicationUser, IEnumerable<GetDepartment> departments) =>
@@ -50,7 +52,8 @@ public static class CustomMappers
             Status = applicationUser.LockoutEnd >= DateTimeOffset.UtcNow
                 ? UserStatus.Deactivated
                 : applicationUser.EmailConfirmed ? UserStatus.Active : UserStatus.Inactive,
-            Department = departments.FirstOrDefault(x => x.Id == applicationUser.DepartmentId)! // Map department
+            Department = departments.FirstOrDefault(x => x.Id == applicationUser.DepartmentId)!, // Map department
+            ProfilePicture = applicationUser?.ProfilePicture
         };
 
     public static SupervisionRequestListDto MapToSupervisionRequestListDto(
@@ -61,7 +64,8 @@ public static class CustomMappers
             Status = supervisionRequest.Status,
             DissertationCohortId = supervisionRequest.DissertationCohortId,
             StudentDetails = MapToUserDto(supervisionRequest.Student, courses),
-            SupervisorDetails = MapToUserDto(supervisionRequest.Supervisor, departments)
+            SupervisorDetails = MapToUserDto(supervisionRequest.Supervisor, departments),
+            CreatedAt = supervisionRequest.CreatedAt
         };
     public static SupervisionListDto MapToSupervisionListDto(
         SupervisionList supervisionList, IEnumerable<GetDepartment> departments, IEnumerable<GetCourse> courses) =>
@@ -70,6 +74,7 @@ public static class CustomMappers
             DissertationCohortId = supervisionList.DissertationCohortId,
             StudentDetails = MapToUserDto(supervisionList.Student, courses),
             SupervisorDetails = MapToUserDto(supervisionList.Supervisor, departments),
-            Id = supervisionList.Id
+            Id = supervisionList.Id,
+            CreatedAt = supervisionList.CreatedAt
         };
 }

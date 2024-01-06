@@ -1,5 +1,6 @@
 version: '3.8'
 
+#Each services and dependencies for the application
 services:
     dissertation_db:
       build: 

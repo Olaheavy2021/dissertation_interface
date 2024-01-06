@@ -9,4 +9,6 @@ public class SupervisionListDto
     public long DissertationCohortId { get; set; }
 
     public long Id { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }
