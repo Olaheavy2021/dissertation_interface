@@ -31,7 +31,7 @@ public static class ServiceCollectionExtension
             .AddScoped<BackendApiAuthenticationHttpClientHandler>()
             .AddScoped<IMessageBus, MessageBus>()
             .AddScoped<IHtmlSanitizerService, HtmlSanitizerService>()
-            .AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
+            .AddTransient(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
 
     internal static IServiceCollection AddSwagger(this IServiceCollection services)
     {

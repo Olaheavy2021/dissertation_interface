@@ -1,10 +1,12 @@
 using Dissertation_API.Middleware;
 using Dissertation_API.Middleware.Correlation;
+using Dissertation.Infrastructure.Messaging;
 
 namespace Dissertation_API.Extensions;
 
 public static class ConfigurationExtensions
 {
+    private static IAzureServiceBusConsumer? ServiceBusConsumer { get; set; }
     public static IApplicationBuilder ConfigureCors(this IApplicationBuilder app) =>
         app.UseCors(policy => policy.AllowAnyOrigin()
             .AllowAnyMethod()
@@ -38,5 +40,20 @@ public static class ConfigurationExtensions
 
     internal static IApplicationBuilder UseHttpLoggingMiddleware(this IApplicationBuilder app) =>
         app.UseMiddleware<HttpLoggingMiddleware>();
+
+    public static IApplicationBuilder UseAzureServiceBusConsumer(this IApplicationBuilder app)
+    {
+        ServiceBusConsumer = app.ApplicationServices.GetService<IAzureServiceBusConsumer>();
+        IHostApplicationLifetime? hostApplicationLife = app.ApplicationServices.GetService<IHostApplicationLifetime>();
+
+        hostApplicationLife?.ApplicationStarted.Register(OnStart);
+        hostApplicationLife?.ApplicationStopping.Register(OnStop);
+
+        return app;
+    }
+
+    private static void OnStop() => ServiceBusConsumer?.Stop();
+
+    private static void OnStart() => ServiceBusConsumer?.Start();
 
 }

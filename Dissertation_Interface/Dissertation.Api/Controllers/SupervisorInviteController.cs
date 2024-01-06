@@ -1,8 +1,10 @@
 using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;
+using Dissertation.Application.StudentInvite.Commands.ResendStudentInvite;
 using Dissertation.Application.SupervisorInvite.Commands.ConfirmSupervisorInvite;
 using Dissertation.Application.SupervisorInvite.Commands.CreateSupervisorInvite;
 using Dissertation.Application.SupervisorInvite.Commands.DeleteSupervisorInvite;
+using Dissertation.Application.SupervisorInvite.Commands.ResendSupervisorInvite;
 using Dissertation.Application.SupervisorInvite.Commands.UpdateSupervisorInvite;
 using Dissertation.Application.SupervisorInvite.Commands.UploadSupervisorInvite;
 using Dissertation.Application.SupervisorInvite.Queries.GetById;
@@ -110,13 +112,23 @@ public class SupervisorInviteController : Controller
         return Ok(response);
     }
 
-    [HttpPost]
+    [HttpPost("upload")]
     [SwaggerOperation(Summary = "Upload Supervisor Invites")]
     [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<ResponseDto<string>>))]
     public async Task<IActionResult> UploadSupervisorInvite([FromBody] UploadInvitesRequest request)
     {
         var command = new UploadSupervisorInviteCommand(request.Requests);
         ResponseDto<string> response = await this._sender.Send(command);
+        return Ok(response);
+    }
+
+    [HttpPost("resend-invite/{inviteId:long}")]
+    [SwaggerOperation(Summary = "Resend Supervisor Invite")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(  ResponseDto<GetSupervisorInvite>))]
+    public async Task<IActionResult> ResendSupervisorInvite([FromRoute] long inviteId)
+    {
+        var command = new ResendSupervisorInviteCommand(inviteId);
+        ResponseDto<GetSupervisorInvite> response = await this._sender.Send(command);
         return Ok(response);
     }
 }

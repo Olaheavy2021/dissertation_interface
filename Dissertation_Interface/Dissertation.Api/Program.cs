@@ -26,6 +26,7 @@ if (string.IsNullOrEmpty(isRunningInDocker) || !isRunningInDocker.ToLower().Equa
 }
 app.UseInfrastructure(app.Configuration);
 app.ConfigureSwagger();
+app.UseAzureServiceBusConsumer();
 ApplyMigration();
 app.Run();
 

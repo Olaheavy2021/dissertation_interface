@@ -3,6 +3,7 @@ using Dissertation.Application.DTO.Response;
 using Dissertation.Application.StudentInvite.Commands.ConfirmStudentInvite;
 using Dissertation.Application.StudentInvite.Commands.CreateStudentInvite;
 using Dissertation.Application.StudentInvite.Commands.DeleteStudentInvite;
+using Dissertation.Application.StudentInvite.Commands.ResendStudentInvite;
 using Dissertation.Application.StudentInvite.Commands.UpdateStudentInvite;
 using Dissertation.Application.StudentInvite.Commands.UploadStudentInvite;
 using Dissertation.Application.StudentInvite.Queries.GetById;
@@ -110,13 +111,23 @@ public class StudentInviteController : Controller
         return Ok(response);
     }
 
-    [HttpPost]
+    [HttpPost("upload")]
     [SwaggerOperation(Summary = "Upload Student Invites")]
     [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<ResponseDto<string>>))]
     public async Task<IActionResult> UploadStudentInvite([FromBody] UploadInvitesRequest request)
     {
         var command = new UploadStudentInviteCommand(request.Requests);
         ResponseDto<string> response = await this._sender.Send(command);
+        return Ok(response);
+    }
+
+    [HttpPost("resend-invite/{inviteId:long}")]
+    [SwaggerOperation(Summary = "Resend Student Invite")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<GetStudentInvite>))]
+    public async Task<IActionResult> ResendStudentInvite([FromRoute] long inviteId)
+    {
+        var command = new ResendStudentInviteCommand(inviteId);
+        ResponseDto<GetStudentInvite> response = await this._sender.Send(command);
         return Ok(response);
     }
 }

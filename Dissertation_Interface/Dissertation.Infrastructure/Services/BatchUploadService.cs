@@ -35,8 +35,8 @@ public class BatchUploadService : IBatchUploadService
             throw new InvalidOperationException("ServiceBusSettings must be configured in app settings.");
         }
 
-        await using var client = new ServiceBusClient(serviceBusSettings.ServiceBusConnectionString);
-        ServiceBusSender sender = client.CreateSender(serviceBusSettings.BatchUploadQueue);
+        var client = new ServiceBusClient(serviceBusSettings.ServiceBusConnectionString);
+        ServiceBusSender sender = client.CreateSender(serviceBusSettings.EmailLoggerQueue);
 
         foreach (UserUploadRequest request in bulkUserUploadRequest.Requests)
         {
@@ -56,6 +56,8 @@ public class BatchUploadService : IBatchUploadService
             //publish email
             await PublishSupervisionInviteMessage(request, invitationCode, sender, client);
         }
+
+        await client.DisposeAsync();
     }
 
     public async Task ProcessStudentInvites(BulkUserUploadRequest bulkUserUploadRequest)
@@ -66,10 +68,8 @@ public class BatchUploadService : IBatchUploadService
             throw new InvalidOperationException("ServiceBusSettings must be configured in app settings.");
         }
 
-        await using var client = new ServiceBusClient(serviceBusSettings.ServiceBusConnectionString);
-        ServiceBusSender sender = client.CreateSender(serviceBusSettings.BatchUploadQueue);
-
-
+        var client = new ServiceBusClient(serviceBusSettings.ServiceBusConnectionString);
+        ServiceBusSender sender = client.CreateSender(serviceBusSettings.EmailLoggerQueue);
 
         foreach (UserUploadRequest request  in bulkUserUploadRequest.Requests)
         {
@@ -90,6 +90,8 @@ public class BatchUploadService : IBatchUploadService
             //publish email
             await PublishStudentInviteMessage(request, invitationCode, sender, client);
         }
+
+        await client.DisposeAsync();
     }
 
     private async Task PublishSupervisionInviteMessage(UserUploadRequest request,
@@ -123,7 +125,6 @@ public class BatchUploadService : IBatchUploadService
         };
 
         await sender.SendMessageAsync(finalMessage);
-        await client.DisposeAsync();
     }
 
     private async Task PublishStudentInviteMessage(UserUploadRequest request,
@@ -137,7 +138,7 @@ public class BatchUploadService : IBatchUploadService
 
         //send an email to the user's email
         var callbackUrl = CallbackUrlGenerator.GenerateStudentInviteCallBackUrl(
-            applicationUrlSettings.WebClientUrl, applicationUrlSettings.SupervisorConfirmInviteRoute,
+            applicationUrlSettings.WebClientUrl, applicationUrlSettings.StudentConfirmInviteRoute,
             request.Username, invitationCode);
 
         var userDto = new UserDto
@@ -157,6 +158,5 @@ public class BatchUploadService : IBatchUploadService
         };
 
         await sender.SendMessageAsync(finalMessage);
-        await client.DisposeAsync();
     }
 }

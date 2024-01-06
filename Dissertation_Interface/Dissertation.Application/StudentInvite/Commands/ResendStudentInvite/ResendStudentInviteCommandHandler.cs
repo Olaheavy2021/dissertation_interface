@@ -1,5 +1,4 @@
 ﻿using Dissertation.Application.DTO.Response;
-using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Helpers;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -35,30 +34,22 @@ public class ResendStudentInviteCommandHandler : IRequestHandler<ResendStudentIn
     public async Task<ResponseDto<GetStudentInvite>> Handle(ResendStudentInviteCommand request,
         CancellationToken cancellationToken)
     {
-        this._logger.LogInformation("Attempting to Confirm Student Invite for {username}", request.StudentId);
+        this._logger.LogInformation("Attempting to Resend Student Invite for {inviteId}", request.InviteId);
         var response = new ResponseDto<GetStudentInvite>();
         Domain.Entities.StudentInvite? studentInvite =
             await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(x =>
-                x.StudentId == request.StudentId && x.InvitationCode == request.InvitationCode, includes: x=> x.DissertationCohort);
+                x.Id == request.InviteId, includes: x=> x.DissertationCohort);
 
         if (studentInvite == null)
         {
             response.IsSuccess = false;
-            response.Message = "Invalid Invitation Code. Please contact admin";
-            return response;
-        }
-
-        if (studentInvite.ExpiryDate.Date >= DateTime.UtcNow)
-        {
-            response.IsSuccess = false;
-            response.Message = "This invitation is still active. Invalid request";
+            response.Message = "Invalid Student Invitation. Please contact admin";
             return response;
         }
 
         //extend the expiry by 7 days again
         studentInvite.ExpiryDate = DateTime.UtcNow.Date.AddDays(7);
         this._db.StudentInviteRepository.Update(studentInvite);
-
 
         //resend the email
         var callbackUrl = CallbackUrlGenerator.GenerateStudentInviteCallBackUrl(

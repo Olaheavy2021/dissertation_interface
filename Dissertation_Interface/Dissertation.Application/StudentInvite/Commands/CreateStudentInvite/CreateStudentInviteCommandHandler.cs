@@ -1,5 +1,4 @@
 using Dissertation.Application.DTO.Response;
-using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Helpers;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;

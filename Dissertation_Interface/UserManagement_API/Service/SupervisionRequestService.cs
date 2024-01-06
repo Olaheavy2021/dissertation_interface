@@ -411,7 +411,7 @@ public class SupervisionRequestService : ISupervisionRequestService
 
         //delete the other supervision request for the student
         IReadOnlyList<SupervisionRequest> studentSupervisionRequests = await this._unitOfWork.SupervisionRequestRepository.GetAllAsync(
-            x => x.StudentId == supervisionRequest.StudentId && x.Status != SupervisionRequestStatus.Approved);
+            x => x.StudentId == supervisionRequest.StudentId && x.Id != supervisionRequest.Id );
         if (studentSupervisionRequests.Any())
         {
             await this._unitOfWork.SupervisionRequestRepository.RemoveRangeAsync(studentSupervisionRequests);

@@ -31,14 +31,6 @@ public static class ServiceCollectionExtension
         services.Configure<ServiceBusSettings>(configuration.GetSection("ServiceBusSettings"));
         services.Configure<SendGridSettings>(configuration.GetSection("SendGridSettings"));
         services.AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>();
-
-        //Configure Redis Cache
-        services.AddStackExchangeRedisCache(option =>
-        {
-            option.Configuration = configuration.GetConnectionString
-                ("RedisCacheConnectionString");
-            option.InstanceName = "master";
-        });
         services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
         return services;

@@ -1,5 +1,4 @@
 ﻿using Dissertation.Application.DTO.Response;
-using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Helpers;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -35,23 +34,16 @@ public class ResendSupervisorInviteCommandHandler : IRequestHandler<ResendSuperv
     public async Task<ResponseDto<GetSupervisorInvite>> Handle(ResendSupervisorInviteCommand request,
         CancellationToken cancellationToken)
     {
-        this._logger.LogInformation("Attempting to Confirm Supervisor Invite for {username}", request.StaffId);
+        this._logger.LogInformation("Attempting to Confirm Supervisor Invite for {inviteId}", request.InviteId);
         var response = new ResponseDto<GetSupervisorInvite>();
         Domain.Entities.SupervisorInvite? supervisorInvite =
             await this._db.SupervisorInviteRepository.GetFirstOrDefaultAsync(x =>
-                x.StaffId == request.StaffId && x.InvitationCode == request.InvitationCode);
+                x.Id == request.InviteId);
 
         if (supervisorInvite == null)
         {
             response.IsSuccess = false;
-            response.Message = "Invalid Invitation Code. Please contact admin";
-            return response;
-        }
-
-        if (supervisorInvite.ExpiryDate.Date >= DateTime.UtcNow)
-        {
-            response.IsSuccess = false;
-            response.Message = "This invitation is still active. Invalid request";
+            response.Message = "Invalid Supervisor Invitation. Please contact admin";
             return response;
         }
 
@@ -60,7 +52,7 @@ public class ResendSupervisorInviteCommandHandler : IRequestHandler<ResendSuperv
 
         //resend the email
         var callbackUrl = CallbackUrlGenerator.GenerateSupervisionInviteCallBackUrl(
-            this._applicationUrlSettings.WebClientUrl, this._applicationUrlSettings.StudentConfirmInviteRoute,
+            this._applicationUrlSettings.WebClientUrl, this._applicationUrlSettings.SupervisorConfirmInviteRoute,
             supervisorInvite.StaffId, supervisorInvite.InvitationCode);
 
         var userDto = new UserDto
@@ -71,10 +63,11 @@ public class ResendSupervisorInviteCommandHandler : IRequestHandler<ResendSuperv
             Email = supervisorInvite.Email
         };
 
-        var emailDto = new PublishEmailDto { User = userDto, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeStudentInviteEmail };
+        //resend the email
+        var emailDto = new PublishEmailDto { User = userDto, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeSupervisorInviteEmail };
         await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.EmailLoggerQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
-        //resend the email
+
 
         GetSupervisorInvite mappedSupervisorInvite = this._mapper.Map<GetSupervisorInvite>(supervisorInvite);
         response.IsSuccess = true;

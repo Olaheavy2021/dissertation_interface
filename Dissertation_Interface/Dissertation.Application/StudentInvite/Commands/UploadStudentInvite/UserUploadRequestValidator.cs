@@ -9,18 +9,18 @@ public class UserUploadRequestValidator : AbstractValidator<UserUploadRequest>
     {
         RuleFor(request => request.FirstName)
             .NotEmpty()
-            .WithMessage("FirstName is required for each Student.");
+            .WithMessage("FirstName is required for each Invite.");
 
         RuleFor(request => request.LastName)
             .NotEmpty()
-            .WithMessage("LastName is required for each Student");
+            .WithMessage("LastName is required for each Invite.");
 
         RuleFor(request => request.Email)
             .NotEmpty()
-            .WithMessage("Email is required for each Student");
+            .WithMessage("Email is required for each Invite.");
 
         RuleFor(request => request.Username)
             .NotEmpty()
-            .WithMessage("Username is required for each Student");
+            .WithMessage("Username is required for each Invite.");
     }
 }

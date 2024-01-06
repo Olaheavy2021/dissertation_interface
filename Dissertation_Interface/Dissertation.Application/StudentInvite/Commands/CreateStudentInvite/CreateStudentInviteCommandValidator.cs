@@ -71,8 +71,7 @@ public class CreateStudentInviteCommandValidator : AbstractValidator<CreateStude
     {
         Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository
             .GetFirstOrDefaultAsync(x =>
-                (EF.Functions.Like(x.StudentId, request.StudentId) || EF.Functions.Like(x.Email, request.Email))
-                && x.ExpiryDate.Date > DateTime.UtcNow.Date);
+                EF.Functions.Like(x.StudentId, request.StudentId) || EF.Functions.Like(x.Email, request.Email));
         return studentInvite == null;
     }
 }

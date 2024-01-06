@@ -50,7 +50,7 @@ public class CreateSupervisorInviteCommandValidator : AbstractValidator<CreateSu
             .OverridePropertyName("StaffId");
 
         RuleFor(q => q)
-            .MustAsync(DoesRequestHaveActiveInvite)
+            .MustAsync(DoesRequestHaveSupervisorInvite)
             .WithMessage("The supervisor has an active invite.")
             .OverridePropertyName("StaffId");
     }
@@ -67,12 +67,11 @@ public class CreateSupervisorInviteCommandValidator : AbstractValidator<CreateSu
         return !response.IsSuccess;
     }
 
-    private async Task<bool> DoesRequestHaveActiveInvite(CreateSupervisorInviteCommand request, CancellationToken token)
+    private async Task<bool> DoesRequestHaveSupervisorInvite(CreateSupervisorInviteCommand request, CancellationToken token)
     {
         Domain.Entities.SupervisorInvite? supervisorInvite =
             await this._db.SupervisorInviteRepository.GetFirstOrDefaultAsync(x =>
-                (EF.Functions.Like(x.StaffId, request.StaffId) || EF.Functions.Like(x.Email, request.Email))
-                && x.ExpiryDate.Date > DateTime.UtcNow.Date);
+                EF.Functions.Like(x.StaffId, request.StaffId) || EF.Functions.Like(x.Email, request.Email));
 
         return supervisorInvite == null;
     }

@@ -104,6 +104,12 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         foreach (T model in models)
         {
+            // Attach the model if it's not already being tracked
+            if (this.Context.Entry(model).State == EntityState.Detached)
+            {
+                this.Context.Set<T>().Attach(model);
+            }
+
             this.Context.Set<T>().Remove(model);
         }
 

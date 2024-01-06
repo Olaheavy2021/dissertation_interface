@@ -323,10 +323,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/v1/Supervisor/register",
-      "UpstreamHttpMethod": [ "Post"],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      }
+      "UpstreamHttpMethod": [ "Post"]
     },
     {
       "DownstreamPathTemplate": "/api/v1/Supervisor/{id}",
@@ -389,6 +386,33 @@
       }
     },
     {
+      "DownstreamPathTemplate": "/api/v1/StudentInvite/resend-invite/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/StudentInvite/resend-invite/{id}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/StudentInvite/upload",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/StudentInvite/upload",
+      "UpstreamHttpMethod": [ "Post"]
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/StudentInvite/confirm-invite",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -429,6 +453,33 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SupervisorInvite/resend-invite/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/SupervisorInvite/resend-invite/{id}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SupervisorInvite/upload",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "dissertation_interface-dissertation_api-1",
+          "Port": 8001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/SupervisorInvite/upload",
+      "UpstreamHttpMethod": [ "Post"]
     },
     {
       "DownstreamPathTemplate": "/api/v1/SupervisorInvite/confirm-invite",
