@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -33,8 +33,7 @@ public class UpdateResearchTopicCommandHandler : IRequestHandler<UpdateResearchT
         CancellationToken cancellationToken)
     {
         //fetch the student from the database
-        var userId = this._httpContextAccessor.HttpContext?.Items["UserId"] as string;
-        if (userId == null)
+        if (this._httpContextAccessor.HttpContext?.Items["UserId"] is not string userId)
         {
             this._logger.LogError("Invalid token passed to Update Research Topic for Student");
             throw new NotFoundException("HttpContext", "UserId");
@@ -55,7 +54,9 @@ public class UpdateResearchTopicCommandHandler : IRequestHandler<UpdateResearchT
         StudentDto mappedStudent = this._mapper.Map<StudentDto>(student);
         return new ResponseDto<StudentDto>
         {
-            IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = mappedStudent
+            IsSuccess = true,
+            Message = SuccessMessages.DefaultSuccess,
+            Result = mappedStudent
         };
     }
 }

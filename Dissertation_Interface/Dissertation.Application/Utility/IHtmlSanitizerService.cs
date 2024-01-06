@@ -1,4 +1,4 @@
-﻿namespace Dissertation.Application.Utility;
+namespace Dissertation.Application.Utility;
 
 public interface IHtmlSanitizerService
 {

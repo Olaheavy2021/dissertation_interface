@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Supervisor.Commands.UpdateResearchArea;
+using Dissertation.Application.Supervisor.Commands.UpdateResearchArea;
 using FluentValidation;
 
 namespace Dissertation.Application.Student.Commands.UpdateResearchTopic;

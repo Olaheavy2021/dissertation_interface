@@ -50,7 +50,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
 
     public PagedList<ApplicationUser> GetPaginatedStudents(DissertationStudentPaginationParameters paginationParameters)
     {
-        string[] roleNames = { "Student"};
+        string[] roleNames = { "Student" };
         var sqlQuery = new StringBuilder("SELECT U.*, R.Name " +
                                          "FROM AspNetUsers U " +
                                          "INNER JOIN AspNetUserRoles UR ON U.Id = UR.UserId " +
@@ -88,7 +88,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
 
     public PagedList<ApplicationUser> GetPaginatedSupervisors(SupervisorPaginationParameters paginationParameters)
     {
-        string[] roleNames = { "Supervisor"};
+        string[] roleNames = { "Supervisor" };
         var sqlQuery = new StringBuilder("SELECT U.*, R.Name " +
                                          "FROM AspNetUsers U " +
                                          "INNER JOIN AspNetUserRoles UR ON U.Id = UR.UserId " +

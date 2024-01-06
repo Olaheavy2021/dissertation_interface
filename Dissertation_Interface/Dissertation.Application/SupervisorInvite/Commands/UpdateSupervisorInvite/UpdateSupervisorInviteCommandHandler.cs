@@ -55,7 +55,8 @@ public class UpdateSupervisorInviteCommandHandler : IRequestHandler<UpdateSuperv
             {
                 return new ResponseDto<GetSupervisorInvite>()
                 {
-                    Message = $"This email - {request.Email} already has an active invite", IsSuccess = false,
+                    Message = $"This email - {request.Email} already has an active invite",
+                    IsSuccess = false,
                 };
             }
         }
@@ -67,7 +68,8 @@ public class UpdateSupervisorInviteCommandHandler : IRequestHandler<UpdateSuperv
             {
                 return new ResponseDto<GetSupervisorInvite>()
                 {
-                    Message = $"This StaffId - {request.StaffId} already has an active invite", IsSuccess = false,
+                    Message = $"This StaffId - {request.StaffId} already has an active invite",
+                    IsSuccess = false,
                 };
             }
         }

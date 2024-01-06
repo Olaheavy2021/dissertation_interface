@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Shared.DTO;
 
 namespace Dissertation.Application.Department.Queries.GetAllDepartments;

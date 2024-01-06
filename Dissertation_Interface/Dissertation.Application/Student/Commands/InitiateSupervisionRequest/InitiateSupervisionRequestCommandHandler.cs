@@ -1,11 +1,11 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Shared.DTO;
 
 namespace Dissertation.Application.Student.Commands.InitiateSupervisionRequest;
 
-public class InitiateSupervisionRequestCommandHandler :  IRequestHandler<InitiateSupervisionRequestCommand, ResponseDto<string>>
+public class InitiateSupervisionRequestCommandHandler : IRequestHandler<InitiateSupervisionRequestCommand, ResponseDto<string>>
 {
     private readonly IUserApiService _userApiService;
     private readonly ILogger<InitiateSupervisionRequestCommandHandler> _logger;

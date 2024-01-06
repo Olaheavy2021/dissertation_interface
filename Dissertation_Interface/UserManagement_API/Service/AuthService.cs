@@ -203,9 +203,7 @@ public class AuthService : IAuthService
     private async Task ConfirmStudentEmailAndSetCourse(string email, long? courseId)
     {
         //fetch the user
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(email);
-        if (user == null) throw new NotFoundException(nameof(ApplicationUser), email);
-
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(email) ?? throw new NotFoundException(nameof(ApplicationUser), email);
         user.EmailConfirmed = true;
         user.CourseId = courseId;
         await this._userManager.UpdateAsync(user);
@@ -214,9 +212,7 @@ public class AuthService : IAuthService
     private async Task ConfirmSupervisorEmailAndSetDepartment(string email, long? departmentId)
     {
         //fetch the user
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(email);
-        if (user == null) throw new NotFoundException(nameof(ApplicationUser), email);
-
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(email) ?? throw new NotFoundException(nameof(ApplicationUser), email);
         user.EmailConfirmed = true;
         user.DepartmentId = departmentId;
         await this._userManager.UpdateAsync(user);
@@ -265,14 +261,13 @@ public class AuthService : IAuthService
         return response;
     }
 
-    public async Task<ResponseDto<UserDto>> AssignSupervisorRoleToAdmin(AssignSupervisorRoleRequestDto requestDto,  string? loggedInAdminEmail)
+    /*public async Task<ResponseDto<UserDto>> RemoveSupervisorRoleFromAdmin(AssignSupervisorRoleRequestDto requestDto,
+        string? loggedInAdminEmail)
     {
-        this._logger.LogInformation("Attempting to assign supervisor role to an admin user");
+        this._logger.LogInformation("Attempting to remove supervisor role from an admin user");
 
         //check if the user exists already and is an admin
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(requestDto.Email);
-
-        if (user == null) throw new NotFoundException(nameof(ApplicationUser), requestDto.Email);
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(requestDto.Email) ?? throw new NotFoundException(nameof(ApplicationUser), requestDto.Email);
         IList<string> roles = await this._userManager.GetRolesAsync(user);
 
 
@@ -283,20 +278,67 @@ public class AuthService : IAuthService
         if (!user.EmailConfirmed)
             return new ResponseDto<UserDto>
             {
-                IsSuccess = false, Message = "Admin must confirm their email before you assign another role"
+                IsSuccess = false,
+                Message = "Admin must confirm their email before you remove another role"
+            };
+
+        if (!roles.Any(role => role.Equals(Roles.RoleSupervisor, StringComparison.OrdinalIgnoreCase)))
+            return new ResponseDto<UserDto>
+            {
+                IsSuccess = false,
+                Message = "Admin is not assigned the supervisor role"
+            };
+
+        IdentityResult result = await this._userManager.RemoveFromRoleAsync(user, Roles.RoleSupervisor);
+        if (!result.Succeeded)
+            return new ResponseDto<UserDto>
+            {
+                IsSuccess = false,
+                Message = result.Errors.FirstOrDefault()?.Description
+            };
+
+        UserDto? mappedUser = this._mapper.Map<UserDto>(user);
+        return new ResponseDto<UserDto>
+        {
+            IsSuccess = true,
+            Message = SuccessMessages.DefaultSuccess,
+            Result = mappedUser
+        };
+    }*/
+
+    public async Task<ResponseDto<UserDto>> AssignSupervisorRoleToAdmin(AssignSupervisorRoleRequestDto requestDto, string? loggedInAdminEmail)
+    {
+        this._logger.LogInformation("Attempting to assign supervisor role to an admin user");
+
+        //check if the user exists already and is an admin
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(requestDto.Email) ?? throw new NotFoundException(nameof(ApplicationUser), requestDto.Email);
+        IList<string> roles = await this._userManager.GetRolesAsync(user);
+
+
+        if (!roles.Any(role => role.Equals(Roles.RoleAdmin, StringComparison.OrdinalIgnoreCase))
+            && !roles.Any(role => role.Equals(Roles.RoleSuperAdmin, StringComparison.OrdinalIgnoreCase)))
+            return new ResponseDto<UserDto> { IsSuccess = false, Message = "User is not an admin or superadmin" };
+
+        if (!user.EmailConfirmed)
+            return new ResponseDto<UserDto>
+            {
+                IsSuccess = false,
+                Message = "Admin must confirm their email before you assign another role"
             };
 
         if (roles.Any(role => role.Equals(Roles.RoleSupervisor, StringComparison.OrdinalIgnoreCase)))
             return new ResponseDto<UserDto>
             {
-                IsSuccess = false, Message = "User is already assigned the supervisor role"
+                IsSuccess = false,
+                Message = "User is already assigned the supervisor role"
             };
 
         IdentityResult result = await this._userManager.AddToRoleAsync(user, Roles.RoleSupervisor);
         if (!result.Succeeded)
             return new ResponseDto<UserDto>
             {
-                IsSuccess = false, Message = result.Errors.FirstOrDefault()?.Description
+                IsSuccess = false,
+                Message = result.Errors.FirstOrDefault()?.Description
             };
 
         await ConfirmSupervisorEmailAndSetDepartment(requestDto.Email, requestDto.DepartmentId);
@@ -304,18 +346,18 @@ public class AuthService : IAuthService
         //TODO:publish audit log for role
         return new ResponseDto<UserDto>()
         {
-            IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = mappedUser
+            IsSuccess = true,
+            Message = SuccessMessages.DefaultSuccess,
+            Result = mappedUser
         };
     }
 
-    public async Task<ResponseDto<UserDto>> AssignAdminRoleToSupervisor(AssignAdminRoleRequestDto request,  string? loggedInAdminEmail)
+    public async Task<ResponseDto<UserDto>> AssignAdminRoleToSupervisor(AssignAdminRoleRequestDto request, string? loggedInAdminEmail)
     {
         this._logger.LogInformation("Attempting to assign admin role to a supervisor");
 
         //check if the user exists already and is a supervisor
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email);
-
-        if (user == null) throw new NotFoundException(nameof(ApplicationUser), request.Email);
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException(nameof(ApplicationUser), request.Email);
         IList<string> roles = await this._userManager.GetRolesAsync(user);
 
         if (roles.Any(role => role.Equals(Roles.RoleAdmin, StringComparison.OrdinalIgnoreCase))
@@ -329,25 +371,26 @@ public class AuthService : IAuthService
         if (!result.Succeeded)
             return new ResponseDto<UserDto>()
             {
-                IsSuccess = false, Message = result.Errors.FirstOrDefault()?.Description
+                IsSuccess = false,
+                Message = result.Errors.FirstOrDefault()?.Description
             };
 
         UserDto? mappedUser = this._mapper.Map<UserDto>(user);
         //TODO:publish audit log for role
         return new ResponseDto<UserDto>()
         {
-            IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = mappedUser
+            IsSuccess = true,
+            Message = SuccessMessages.DefaultSuccess,
+            Result = mappedUser
         };
     }
 
-    public async Task<ResponseDto<UserDto>> ChangeAdminRole(EmailRequestDto request,  string? loggedInAdminEmail)
+    public async Task<ResponseDto<UserDto>> ChangeAdminRole(EmailRequestDto request, string? loggedInAdminEmail)
     {
         this._logger.LogInformation("Attempting to change an admin role");
 
         //check if the user exists already and is a supervisor
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email);
-
-        if (user == null) throw new NotFoundException(nameof(ApplicationUser), request.Email);
+        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException(nameof(ApplicationUser), request.Email);
         IList<string> roles = await this._userManager.GetRolesAsync(user);
 
         if (roles.Any(role => role.Equals(Roles.RoleAdmin, StringComparison.OrdinalIgnoreCase)))
@@ -356,14 +399,17 @@ public class AuthService : IAuthService
             if (!result.Succeeded)
                 return new ResponseDto<UserDto>
                 {
-                    IsSuccess = false, Message = result.Errors.FirstOrDefault()?.Description
+                    IsSuccess = false,
+                    Message = result.Errors.FirstOrDefault()?.Description
                 };
 
             UserDto? mappedUser = this._mapper.Map<UserDto>(user);
             //TODO:publish audit log for role
             return new ResponseDto<UserDto>
             {
-                IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = mappedUser
+                IsSuccess = true,
+                Message = SuccessMessages.DefaultSuccess,
+                Result = mappedUser
             };
         }
 
@@ -373,14 +419,17 @@ public class AuthService : IAuthService
             if (!result.Succeeded)
                 return new ResponseDto<UserDto>
                 {
-                    IsSuccess = false, Message = result.Errors.FirstOrDefault()?.Description
+                    IsSuccess = false,
+                    Message = result.Errors.FirstOrDefault()?.Description
                 };
 
             UserDto? mappedUser = this._mapper.Map<UserDto>(user);
             //TODO:publish audit log for role
             return new ResponseDto<UserDto>
             {
-                IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = mappedUser
+                IsSuccess = true,
+                Message = SuccessMessages.DefaultSuccess,
+                Result = mappedUser
             };
         }
 
@@ -583,7 +632,8 @@ public class AuthService : IAuthService
             IList<string> roles = await this._userManager.GetRolesAsync(user);
             var responseDto = new ConfirmEmailResponseDto
             {
-                User = userToReturn, Role = roles.FirstOrDefault() ?? string.Empty
+                User = userToReturn,
+                Role = roles.FirstOrDefault() ?? string.Empty
             };
 
             //generate a reset password token if the user is an admin or superadmin
@@ -611,7 +661,9 @@ public class AuthService : IAuthService
 
         ResponseDto<string> response = new()
         {
-            IsSuccess = false, Message = "Invalid Request", Result = ErrorMessages.DefaultError
+            IsSuccess = false,
+            Message = "Invalid Request",
+            Result = ErrorMessages.DefaultError
         };
         ApplicationUser user = await this._userManager.FindByEmailAsync(request.Email) ??
                                throw new NotFoundException(nameof(ApplicationUser), request.Email);
@@ -665,7 +717,8 @@ public class AuthService : IAuthService
         response.Message = "Success";
         response.Result = new RefreshTokenDto
         {
-            AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken), RefreshToken = newRefreshToken
+            AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+            RefreshToken = newRefreshToken
         };
 
         return response;
@@ -720,7 +773,9 @@ public class AuthService : IAuthService
 
         var emailDto = new PublishEmailDto
         {
-            User = userToReturn, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeAdminConfirmationEmail
+            User = userToReturn,
+            CallbackUrl = callbackUrl,
+            EmailType = EmailType.EmailTypeAdminConfirmationEmail
         };
         await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.EmailLoggerQueue,
             this._serviceBusSettings.ServiceBusConnectionString);
@@ -737,7 +792,9 @@ public class AuthService : IAuthService
 
         var emailDto = new PublishEmailDto
         {
-            User = userToReturn, CallbackUrl = callbackUrl, EmailType = EmailType.EmailTypeResetPasswordEmail
+            User = userToReturn,
+            CallbackUrl = callbackUrl,
+            EmailType = EmailType.EmailTypeResetPasswordEmail
         };
         await this._messageBus.PublishMessage(emailDto, this._serviceBusSettings.EmailLoggerQueue,
             this._serviceBusSettings.ServiceBusConnectionString);

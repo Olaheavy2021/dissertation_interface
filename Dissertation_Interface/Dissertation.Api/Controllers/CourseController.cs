@@ -127,7 +127,7 @@ public class CourseController : Controller
     [HttpGet("all-courses")]
     [Authorize(Roles = "Superadmin,Admin,Student, Supervisor")]
     [SwaggerOperation(Summary = "Get All Courses")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof( ResponseDto<IReadOnlyList<GetCourse>>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<IReadOnlyList<GetCourse>>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> GetAllCourses()
     {

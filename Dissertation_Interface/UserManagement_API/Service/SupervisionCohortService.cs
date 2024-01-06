@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Shared.Constants;
 using Shared.DTO;
@@ -113,12 +113,7 @@ public class SupervisionCohortService : ISupervisionCohortService
         this._logger.LogInformation("Attempting to fetch a Supervision Cohort with this {id}",
             request.SupervisionCohortId);
         SupervisionCohort? supervisionCohort =
-            await this._db.SupervisionCohortRepository.GetAsync(x => x.Id == request.SupervisionCohortId);
-
-        if (supervisionCohort == null)
-        {
-            throw new NotFoundException(nameof(SupervisionCohort), request.SupervisionCohortId);
-        }
+            await this._db.SupervisionCohortRepository.GetAsync(x => x.Id == request.SupervisionCohortId) ?? throw new NotFoundException(nameof(SupervisionCohort), request.SupervisionCohortId);
 
         //check the number of accepted requests
         var acceptedSupervisionRequest = supervisionCohort.SupervisionSlot - supervisionCohort.AvailableSupervisionSlot;
@@ -173,13 +168,7 @@ public class SupervisionCohortService : ISupervisionCohortService
     {
         this._logger.LogInformation("Attempting to fetch a Supervision Cohort with this {id}", id);
         SupervisionCohort? supervisionCohort =
-            await this._db.SupervisionCohortRepository.GetAsync(x => x.Id == id, includes: x => x.Supervisor);
-
-        if (supervisionCohort == null)
-        {
-            throw new NotFoundException(nameof(SupervisionCohort), id);
-        }
-
+            await this._db.SupervisionCohortRepository.GetAsync(x => x.Id == id, includes: x => x.Supervisor) ?? throw new NotFoundException(nameof(SupervisionCohort), id);
         ResponseDto<IReadOnlyList<GetDepartment>> departments = await this._dissertationApiService.GetAllDepartments();
         if (departments == null || departments.Result == null) throw new NotFoundException("Departments", "all");
         this._logger.LogInformation("Number of departments - {count}", departments.Result.Count);
@@ -311,13 +300,16 @@ public class SupervisionCohortService : ISupervisionCohortService
         {
             return new ResponseDto<SupervisionCohort>
             {
-                IsSuccess = false, Message = "Supervisor has not been assigned to this cohort"
+                IsSuccess = false,
+                Message = "Supervisor has not been assigned to this cohort"
             };
         }
 
         return new ResponseDto<SupervisionCohort>
         {
-            IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = supervisionCohort
+            IsSuccess = true,
+            Message = SuccessMessages.DefaultSuccess,
+            Result = supervisionCohort
         };
     }
 
@@ -326,12 +318,7 @@ public class SupervisionCohortService : ISupervisionCohortService
         this._logger.LogInformation("Attempting to fetch a Supervision Cohort with this {id}",
             supervisionCohortId);
         SupervisionCohort? supervisionCohort =
-            await this._db.SupervisionCohortRepository.GetAsync(x => x.Id == supervisionCohortId);
-
-        if (supervisionCohort == null)
-        {
-            throw new NotFoundException(nameof(SupervisionCohort), supervisionCohortId);
-        }
+            await this._db.SupervisionCohortRepository.GetAsync(x => x.Id == supervisionCohortId) ?? throw new NotFoundException(nameof(SupervisionCohort), supervisionCohortId);
 
         //check if the supervisor has accepted any request
         if (supervisionCohort.SupervisionSlot != supervisionCohort.AvailableSupervisionSlot)

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using Shared.Enums;
 using UserManagement_API.Data.DomainHelper;
 

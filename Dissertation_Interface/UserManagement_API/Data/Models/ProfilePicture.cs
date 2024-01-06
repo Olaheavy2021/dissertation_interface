@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using UserManagement_API.Data.DomainHelper;
 
 namespace UserManagement_API.Data.Models;

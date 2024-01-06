@@ -95,7 +95,7 @@ public class SupervisorController : Controller
     [SwaggerOperation(Summary = "Update Supervisor")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<GetStudent>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
-    public async Task<IActionResult> EditStudent([FromBody] EditSupervisorRequestDto request,[FromRoute] long id)
+    public async Task<IActionResult> EditStudent([FromBody] EditSupervisorRequestDto request, [FromRoute] long id)
     {
         var command = new UpdateSupervisorCommand(request.LastName, request.FirstName, request.StaffId, request.DepartmentId, id);
         ResponseDto<UserDto> response = await this._sender.Send(command);
@@ -139,7 +139,7 @@ public class SupervisorController : Controller
     [HttpPut("research-area")]
     [SwaggerOperation(Summary = "Update Research Area for a Supervisor")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
-    public async Task<IActionResult> UpdateResearchArea([FromBody] UpdateResearchAreaRequest request )
+    public async Task<IActionResult> UpdateResearchArea([FromBody] UpdateResearchAreaRequest request)
     {
         var command = new UpdateResearchAreaCommand(request.ResearchArea);
         ResponseDto<SupervisorDto> response = await this._sender.Send(command);

@@ -38,7 +38,7 @@ public class UpdateStudentInviteCommandHandler : IRequestHandler<UpdateStudentIn
     {
         var response = new ResponseDto<GetStudentInvite>();
         //fetch the student invite from the database
-        Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id, includes: x=> x.DissertationCohort);
+        Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id, includes: x => x.DissertationCohort);
         if (studentInvite == null)
         {
             this._logger.LogError("No Student Invite found with {ID}", request.Id);
@@ -55,7 +55,8 @@ public class UpdateStudentInviteCommandHandler : IRequestHandler<UpdateStudentIn
             {
                 return new ResponseDto<GetStudentInvite>()
                 {
-                    Message = $"This email - {request.Email} already has an active invite", IsSuccess = false,
+                    Message = $"This email - {request.Email} already has an active invite",
+                    IsSuccess = false,
                 };
             }
         }
@@ -67,7 +68,8 @@ public class UpdateStudentInviteCommandHandler : IRequestHandler<UpdateStudentIn
             {
                 return new ResponseDto<GetStudentInvite>()
                 {
-                    Message = $"This StudentId - {request.StudentId} already has an active invite", IsSuccess = false,
+                    Message = $"This StudentId - {request.StudentId} already has an active invite",
+                    IsSuccess = false,
                 };
             }
         }

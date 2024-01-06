@@ -124,7 +124,7 @@ public class SupervisorInviteController : Controller
 
     [HttpPost("resend-invite/{inviteId:long}")]
     [SwaggerOperation(Summary = "Resend Supervisor Invite")]
-    [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(  ResponseDto<GetSupervisorInvite>))]
+    [SwaggerResponse(StatusCodes.Status201Created, "Request Successful", typeof(ResponseDto<GetSupervisorInvite>))]
     public async Task<IActionResult> ResendSupervisorInvite([FromRoute] long inviteId)
     {
         var command = new ResendSupervisorInviteCommand(inviteId);

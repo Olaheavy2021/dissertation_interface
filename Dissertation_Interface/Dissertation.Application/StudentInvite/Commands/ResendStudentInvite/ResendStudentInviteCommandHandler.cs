@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Helpers;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -21,7 +21,7 @@ public class ResendStudentInviteCommandHandler : IRequestHandler<ResendStudentIn
     private readonly ServiceBusSettings _serviceBusSettings;
     private readonly ApplicationUrlSettings _applicationUrlSettings;
 
-    public ResendStudentInviteCommandHandler(IAppLogger<ResendStudentInviteCommandHandler> logger, IUnitOfWork db, IMessageBus messageBus, IMapper mapper, IOptions<ApplicationUrlSettings> applicationUrlSettings,  IOptions<ServiceBusSettings> serviceBusSettings)
+    public ResendStudentInviteCommandHandler(IAppLogger<ResendStudentInviteCommandHandler> logger, IUnitOfWork db, IMessageBus messageBus, IMapper mapper, IOptions<ApplicationUrlSettings> applicationUrlSettings, IOptions<ServiceBusSettings> serviceBusSettings)
     {
         this._logger = logger;
         this._db = db;
@@ -38,7 +38,7 @@ public class ResendStudentInviteCommandHandler : IRequestHandler<ResendStudentIn
         var response = new ResponseDto<GetStudentInvite>();
         Domain.Entities.StudentInvite? studentInvite =
             await this._db.StudentInviteRepository.GetFirstOrDefaultAsync(x =>
-                x.Id == request.InviteId, includes: x=> x.DissertationCohort);
+                x.Id == request.InviteId, includes: x => x.DissertationCohort);
 
         if (studentInvite == null)
         {

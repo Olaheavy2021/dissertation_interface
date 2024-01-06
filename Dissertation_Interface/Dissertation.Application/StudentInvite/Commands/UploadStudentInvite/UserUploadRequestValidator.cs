@@ -1,4 +1,4 @@
-﻿using Dissertation.Infrastructure.DTO;
+using Dissertation.Infrastructure.DTO;
 using FluentValidation;
 
 namespace Dissertation.Application.StudentInvite.Commands.UploadStudentInvite;

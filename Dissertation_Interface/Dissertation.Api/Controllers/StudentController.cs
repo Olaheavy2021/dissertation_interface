@@ -93,7 +93,7 @@ public class StudentController : Controller
     [SwaggerOperation(Summary = "Update Student")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
-    public async Task<IActionResult> EditStudent([FromBody] EditStudentRequestDto request,[FromRoute] long id)
+    public async Task<IActionResult> EditStudent([FromBody] EditStudentRequestDto request, [FromRoute] long id)
     {
         var query = new UpdateStudentCommand(request.LastName, request.FirstName, request.StudentId, request.CourseId, id);
         ResponseDto<UserDto> response = await this._sender.Send(query);
@@ -116,7 +116,7 @@ public class StudentController : Controller
     [HttpPut("research-topic")]
     [SwaggerOperation(Summary = "Update Research Topic for a Student")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<UserDto>))]
-    public async Task<IActionResult> UpdateResearchTopic([FromBody] UpdateResearchTopicRequest request )
+    public async Task<IActionResult> UpdateResearchTopic([FromBody] UpdateResearchTopicRequest request)
     {
         var command = new UpdateResearchTopicCommand(request.ResearchTopic);
         ResponseDto<StudentDto> response = await this._sender.Send(command);

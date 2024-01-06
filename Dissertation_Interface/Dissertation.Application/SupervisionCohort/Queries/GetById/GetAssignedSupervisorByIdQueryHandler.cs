@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -29,38 +29,35 @@ public class GetAssignedSupervisorByIdQueryHandler : IRequestHandler<GetAssigned
         CancellationToken cancellationToken)
     {
         this._logger.LogInformation("Attempting to retrieve an assigned supervisor");
-       ResponseDto<GetSupervisionCohort> userDetails = await this._userApiService.GetSupervisionCohort(request.Id);
+        ResponseDto<GetSupervisionCohort> userDetails = await this._userApiService.GetSupervisionCohort(request.Id);
 
-       if (!userDetails.IsSuccess || userDetails.Result == null || userDetails.Result?.UserDetails.Id == null)
-       {
-           return new ResponseDto<GetSupervisionCohortDetails>()
-           {
-               Message = "Supervision Cohort not found", IsSuccess = false
-           };
-       }
+        if (!userDetails.IsSuccess || userDetails.Result == null || userDetails.Result?.UserDetails.Id == null)
+        {
+            return new ResponseDto<GetSupervisionCohortDetails>()
+            {
+                Message = "Supervision Cohort not found",
+                IsSuccess = false
+            };
+        }
 
-       //fetch the supervisor details
-       Domain.Entities.Supervisor? supervisor =
-           await this._db.SupervisorRepository.GetFirstOrDefaultAsync(
-               x => x.UserId == userDetails.Result!.UserDetails.Id, includes: x =>x.Department);
-
-       if (supervisor == null)
-       {
-           throw new NotFoundException(nameof(Domain.Entities.Supervisor), userDetails.Result?.UserDetails.Id!);
-       }
-
-       SupervisorDto mappedSupervisor = this._mapper.Map<SupervisorDto>(supervisor);
-       return new ResponseDto<GetSupervisionCohortDetails>
-       {
-           Message = SuccessMessages.DefaultSuccess, IsSuccess = true, Result = new GetSupervisionCohortDetails()
-           {
-               Id = userDetails.Result.Id,
-               UserDetails = userDetails.Result?.UserDetails,
-               SupervisorDetails = mappedSupervisor,
-               SupervisionSlot = userDetails.Result!.SupervisionSlot,
-               AvailableSupervisionSlot = userDetails.Result.AvailableSupervisionSlot,
-               DissertationCohortId = userDetails.Result.DissertationCohortId
-           }
-       };
+        //fetch the supervisor details
+        Domain.Entities.Supervisor? supervisor =
+            await this._db.SupervisorRepository.GetFirstOrDefaultAsync(
+                x => x.UserId == userDetails.Result!.UserDetails.Id, includes: x => x.Department) ?? throw new NotFoundException(nameof(Domain.Entities.Supervisor), userDetails.Result?.UserDetails.Id!);
+        SupervisorDto mappedSupervisor = this._mapper.Map<SupervisorDto>(supervisor);
+        return new ResponseDto<GetSupervisionCohortDetails>
+        {
+            Message = SuccessMessages.DefaultSuccess,
+            IsSuccess = true,
+            Result = new GetSupervisionCohortDetails()
+            {
+                Id = userDetails.Result.Id,
+                UserDetails = userDetails.Result?.UserDetails,
+                SupervisorDetails = mappedSupervisor,
+                SupervisionSlot = userDetails.Result!.SupervisionSlot,
+                AvailableSupervisionSlot = userDetails.Result.AvailableSupervisionSlot,
+                DissertationCohortId = userDetails.Result.DissertationCohortId
+            }
+        };
     }
 }

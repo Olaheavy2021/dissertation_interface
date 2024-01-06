@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -30,12 +30,7 @@ public class GetAvailableSupervisorsQueryHandler : IRequestHandler<GetAvailableS
         var userId = this._httpContextAccessor.HttpContext?.Items["UserId"] as string;
 
         //get the student
-        Domain.Entities.Student? student = await this._db.StudentRepository.GetFirstOrDefaultAsync(x => x.UserId == userId);
-        if (student == null)
-        {
-            throw new NotFoundException(nameof(Student), userId ?? throw new InvalidOperationException());
-        }
-
+        Domain.Entities.Student? student = await this._db.StudentRepository.GetFirstOrDefaultAsync(x => x.UserId == userId) ?? throw new NotFoundException(nameof(Student), userId ?? throw new InvalidOperationException());
         request.Parameters.DissertationCohortId = student.DissertationCohortId;
 
         return await this._userApiService.GetSupervisionCohorts(request.Parameters);

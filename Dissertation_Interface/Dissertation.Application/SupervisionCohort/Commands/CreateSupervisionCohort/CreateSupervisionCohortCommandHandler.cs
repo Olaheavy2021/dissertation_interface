@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
 using Shared.DTO;
@@ -36,7 +36,8 @@ public class CreateSupervisionCohortCommandHandler : IRequestHandler<CreateSuper
 
         var userRequest = new CreateSupervisionCohortListRequest
         {
-            SupervisionCohortRequests = request.SupervisionCohortRequests, DissertationCohortId = cohort.Id
+            SupervisionCohortRequests = request.SupervisionCohortRequests,
+            DissertationCohortId = cohort.Id
         };
         ResponseDto<string> userResponse = await this._userApiService.CreateSupervisionCohortListRequest(userRequest);
 

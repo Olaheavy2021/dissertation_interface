@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Azure.Messaging.ServiceBus;
 using Dissertation.Infrastructure.Context;
 using Dissertation.Infrastructure.DTO;
@@ -29,12 +29,7 @@ public class BatchUploadService : IBatchUploadService
 
     public async Task ProcessSupervisorInvites(BulkUserUploadRequest bulkUserUploadRequest)
     {
-        ServiceBusSettings? serviceBusSettings = this._configuration.GetSection("ServiceBusSettings").Get<ServiceBusSettings>();
-        if (serviceBusSettings == null)
-        {
-            throw new InvalidOperationException("ServiceBusSettings must be configured in app settings.");
-        }
-
+        ServiceBusSettings? serviceBusSettings = this._configuration.GetSection("ServiceBusSettings").Get<ServiceBusSettings>() ?? throw new InvalidOperationException("ServiceBusSettings must be configured in app settings.");
         var client = new ServiceBusClient(serviceBusSettings.ServiceBusConnectionString);
         ServiceBusSender sender = client.CreateSender(serviceBusSettings.EmailLoggerQueue);
 
@@ -62,16 +57,11 @@ public class BatchUploadService : IBatchUploadService
 
     public async Task ProcessStudentInvites(BulkUserUploadRequest bulkUserUploadRequest)
     {
-        ServiceBusSettings? serviceBusSettings = this._configuration.GetSection("ServiceBusSettings").Get<ServiceBusSettings>();
-        if (serviceBusSettings == null)
-        {
-            throw new InvalidOperationException("ServiceBusSettings must be configured in app settings.");
-        }
-
+        ServiceBusSettings? serviceBusSettings = this._configuration.GetSection("ServiceBusSettings").Get<ServiceBusSettings>() ?? throw new InvalidOperationException("ServiceBusSettings must be configured in app settings.");
         var client = new ServiceBusClient(serviceBusSettings.ServiceBusConnectionString);
         ServiceBusSender sender = client.CreateSender(serviceBusSettings.EmailLoggerQueue);
 
-        foreach (UserUploadRequest request  in bulkUserUploadRequest.Requests)
+        foreach (UserUploadRequest request in bulkUserUploadRequest.Requests)
         {
             var invitationCode = InviteCodeGenerator.GenerateCode(8);
             var studentInvite = Domain.Entities.StudentInvite.Create(
@@ -95,13 +85,9 @@ public class BatchUploadService : IBatchUploadService
     }
 
     private async Task PublishSupervisionInviteMessage(UserUploadRequest request,
-        string invitationCode, ServiceBusSender sender,  ServiceBusClient client)
+        string invitationCode, ServiceBusSender sender, ServiceBusClient client)
     {
-        ApplicationUrlSettings? applicationUrlSettings = this._configuration.GetSection("ApplicationUrlSettings").Get<ApplicationUrlSettings>();
-        if (applicationUrlSettings == null)
-        {
-            throw new InvalidOperationException("ApplicationUrlSettings must be configured in app settings.");
-        }
+        ApplicationUrlSettings? applicationUrlSettings = this._configuration.GetSection("ApplicationUrlSettings").Get<ApplicationUrlSettings>() ?? throw new InvalidOperationException("ApplicationUrlSettings must be configured in app settings.");
 
         //send an email to the user's email
         var callbackUrl = CallbackUrlGenerator.GenerateSupervisionInviteCallBackUrl(
@@ -128,13 +114,9 @@ public class BatchUploadService : IBatchUploadService
     }
 
     private async Task PublishStudentInviteMessage(UserUploadRequest request,
-        string invitationCode, ServiceBusSender sender,  ServiceBusClient client)
+        string invitationCode, ServiceBusSender sender, ServiceBusClient client)
     {
-        ApplicationUrlSettings? applicationUrlSettings = this._configuration.GetSection("ApplicationUrlSettings").Get<ApplicationUrlSettings>();
-        if (applicationUrlSettings == null)
-        {
-            throw new InvalidOperationException("ApplicationUrlSettings must be configured in app settings.");
-        }
+        ApplicationUrlSettings? applicationUrlSettings = this._configuration.GetSection("ApplicationUrlSettings").Get<ApplicationUrlSettings>() ?? throw new InvalidOperationException("ApplicationUrlSettings must be configured in app settings.");
 
         //send an email to the user's email
         var callbackUrl = CallbackUrlGenerator.GenerateStudentInviteCallBackUrl(

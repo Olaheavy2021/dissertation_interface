@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Helpers;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -21,7 +21,7 @@ public class ResendSupervisorInviteCommandHandler : IRequestHandler<ResendSuperv
     private readonly ServiceBusSettings _serviceBusSettings;
     private readonly ApplicationUrlSettings _applicationUrlSettings;
 
-    public ResendSupervisorInviteCommandHandler(IAppLogger<ResendSupervisorInviteCommandHandler> logger, IUnitOfWork db, IMessageBus messageBus, IMapper mapper, IOptions<ApplicationUrlSettings> applicationUrlSettings,  IOptions<ServiceBusSettings> serviceBusSettings)
+    public ResendSupervisorInviteCommandHandler(IAppLogger<ResendSupervisorInviteCommandHandler> logger, IUnitOfWork db, IMessageBus messageBus, IMapper mapper, IOptions<ApplicationUrlSettings> applicationUrlSettings, IOptions<ServiceBusSettings> serviceBusSettings)
     {
         this._logger = logger;
         this._db = db;

@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Request;
+using Dissertation.Application.DTO.Request;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Application.SupervisionCohort.Commands.CreateSupervisionCohort;
 using Dissertation.Application.SupervisionCohort.Commands.DeleteSupervisionCohort;
@@ -31,7 +31,7 @@ public class SupervisionCohortController : Controller
     [SwaggerOperation(Summary = "Add supervisors to a cohort")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> CreateSupervisionCohort([FromBody]CreateSupervisionCohort request)
+    public async Task<IActionResult> CreateSupervisionCohort([FromBody] CreateSupervisionCohort request)
     {
         if (request.SupervisionCohortRequests == null)
         {

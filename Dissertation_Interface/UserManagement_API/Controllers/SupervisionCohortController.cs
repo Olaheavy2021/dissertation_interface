@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Constants;
 using Shared.DTO;
@@ -23,7 +23,7 @@ public class SupervisionCohortController : Controller
     [SwaggerOperation(Summary = "Add supervisors to a cohort")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> CreateSupervisionCohort([FromBody]CreateSupervisionCohortListRequest model)
+    public async Task<IActionResult> CreateSupervisionCohort([FromBody] CreateSupervisionCohortListRequest model)
     {
         if (model.SupervisionCohortRequests != null)
         {
@@ -68,7 +68,7 @@ public class SupervisionCohortController : Controller
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
     public Task<IActionResult> GetInActiveSupervisorsForCohort([FromQuery] SupervisionCohortListParameters parameters)
     {
-        ResponseDto<PaginatedUserListDto> response =  this._supervisionCohortService.GetInActiveSupervisorsForCohort(parameters);
+        ResponseDto<PaginatedUserListDto> response = this._supervisionCohortService.GetInActiveSupervisorsForCohort(parameters);
         return Task.FromResult<IActionResult>(Ok(response));
     }
 

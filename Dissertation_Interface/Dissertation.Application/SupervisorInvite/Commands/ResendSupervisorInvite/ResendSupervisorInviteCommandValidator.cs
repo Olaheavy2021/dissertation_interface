@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Shared.Constants;
 
 namespace Dissertation.Application.SupervisorInvite.Commands.ResendSupervisorInvite;

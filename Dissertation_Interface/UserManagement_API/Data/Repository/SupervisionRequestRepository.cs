@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Shared.DTO;

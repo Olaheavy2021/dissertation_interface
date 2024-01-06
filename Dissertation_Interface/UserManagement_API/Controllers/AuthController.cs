@@ -77,7 +77,7 @@ public class AuthController : Controller
     [HttpPut("update-profile")]
     [Authorize(Roles = "Superadmin, Admin, Supervisor, Student")]
     [SwaggerOperation(Summary = "Update Profile")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Processed", typeof( ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Processed", typeof(ResponseDto<string>))]
     public async Task<IActionResult> UpdateProfile([FromForm] ProfilePictureUploadRequestDto model)
     {
         ResponseDto<string> response = await this._profilePictureService.UploadProfilePicture(model, new CancellationToken());

@@ -1,4 +1,4 @@
-﻿namespace Dissertation.Application.DTO.Request;
+namespace Dissertation.Application.DTO.Request;
 
 public class UpdateResearchTopicRequest
 {

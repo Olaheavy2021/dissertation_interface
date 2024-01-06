@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -43,7 +43,7 @@ public class UpdateStudentCommandHandler : IRequestHandler<UpdateStudentCommand,
             CourseId = request.CourseId
 
         };
-       ResponseDto<UserDto> userResponse = await this._userApiService.EditStudent(userApiRequest);
+        ResponseDto<UserDto> userResponse = await this._userApiService.EditStudent(userApiRequest);
 
         if (!userResponse.IsSuccess)
         {
@@ -54,7 +54,9 @@ public class UpdateStudentCommandHandler : IRequestHandler<UpdateStudentCommand,
         if (student.CourseId == request.CourseId)
             return new ResponseDto<UserDto>()
             {
-                IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = userResponse.Result
+                IsSuccess = true,
+                Message = SuccessMessages.DefaultSuccess,
+                Result = userResponse.Result
             };
 
         student.CourseId = request.CourseId;
@@ -63,7 +65,9 @@ public class UpdateStudentCommandHandler : IRequestHandler<UpdateStudentCommand,
 
         return new ResponseDto<UserDto>
         {
-            IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = userResponse.Result
+            IsSuccess = true,
+            Message = SuccessMessages.DefaultSuccess,
+            Result = userResponse.Result
         };
     }
 }

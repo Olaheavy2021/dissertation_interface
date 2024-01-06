@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Supervisor.Commands.AssignAdminRole;
+using Dissertation.Application.Supervisor.Commands.AssignAdminRole;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
@@ -27,7 +27,8 @@ public class AssignSupervisorRoleCommandHandler : IRequestHandler<AssignSupervis
         this._logger.LogInformation("Attempting to assign admin role to a supervisor");
         var userApiRequest = new AssignSupervisorRoleRequestDto()
         {
-            Email = request.Email, DepartmentId = request.DepartmentId
+            Email = request.Email,
+            DepartmentId = request.DepartmentId
         };
         ResponseDto<UserDto> userApiResponse = await this._userApiService.AssignSupervisorRoleToAdmin(userApiRequest);
 

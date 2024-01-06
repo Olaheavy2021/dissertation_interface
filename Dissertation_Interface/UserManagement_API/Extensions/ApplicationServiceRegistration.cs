@@ -124,8 +124,8 @@ public static class ApplicationServiceRegistration
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
 
-            services.AddHttpClient("UserApiClient", u => u.BaseAddress =
-                new Uri(configuration["ServiceUrls:DissertationApi"] ?? throw new InvalidOperationException())).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
+        services.AddHttpClient("UserApiClient", u => u.BaseAddress =
+            new Uri(configuration["ServiceUrls:DissertationApi"] ?? throw new InvalidOperationException())).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
         return services;
     }

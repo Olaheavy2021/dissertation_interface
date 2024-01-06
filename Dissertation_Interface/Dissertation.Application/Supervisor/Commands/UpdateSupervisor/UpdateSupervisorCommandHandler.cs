@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -44,14 +44,16 @@ public class UpdateSupervisorCommandHandler : IRequestHandler<UpdateSupervisorCo
 
         if (!userResponse.IsSuccess)
         {
-            return new  ResponseDto<UserDto> { IsSuccess = false, Message = userResponse.Message };
+            return new ResponseDto<UserDto> { IsSuccess = false, Message = userResponse.Message };
         }
 
         //update the department if necessary
         if (supervisor.DepartmentId == request.DepartmentId)
             return new ResponseDto<UserDto>()
             {
-                IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = userResponse.Result
+                IsSuccess = true,
+                Message = SuccessMessages.DefaultSuccess,
+                Result = userResponse.Result
             };
 
         supervisor.DepartmentId = request.DepartmentId;
@@ -60,7 +62,9 @@ public class UpdateSupervisorCommandHandler : IRequestHandler<UpdateSupervisorCo
 
         return new ResponseDto<UserDto>
         {
-            IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = userResponse.Result
+            IsSuccess = true,
+            Message = SuccessMessages.DefaultSuccess,
+            Result = userResponse.Result
         };
     }
 }

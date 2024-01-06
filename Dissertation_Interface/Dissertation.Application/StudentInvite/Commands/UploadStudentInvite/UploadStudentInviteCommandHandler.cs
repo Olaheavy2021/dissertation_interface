@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.DTO;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
@@ -104,7 +104,7 @@ public class UploadStudentInviteCommandHandler : IRequestHandler<UploadStudentIn
         Domain.Entities.StudentInvite? studentInvite = await this._db.StudentInviteRepository
             .GetFirstOrDefaultAsync(x =>
                 EF.Functions.Like(x.StudentId, userName) || EF.Functions.Like(x.Email, email));
-        var doesStudentInviteExists= studentInvite == null;
+        var doesStudentInviteExists = studentInvite == null;
         this._logger.LogInformation("DoesRequestHaveActiveInvite - {response}", !doesStudentInviteExists);
         return studentInvite == null;
     }

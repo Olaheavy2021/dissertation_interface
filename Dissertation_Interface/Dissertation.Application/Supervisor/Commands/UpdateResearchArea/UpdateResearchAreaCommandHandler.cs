@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Application.Utility;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -33,8 +33,7 @@ public class UpdateResearchAreaCommandHandler : IRequestHandler<UpdateResearchAr
         CancellationToken cancellationToken)
     {
         //fetch the supervision invite from the database
-        var userId = this._httpContextAccessor.HttpContext?.Items["UserId"] as string;
-        if (userId == null)
+        if (this._httpContextAccessor.HttpContext?.Items["UserId"] is not string userId)
         {
             this._logger.LogError("Invalid token passed to Update Research Area for Supervisor");
             throw new NotFoundException("HttpContext", "UserId");
@@ -55,7 +54,9 @@ public class UpdateResearchAreaCommandHandler : IRequestHandler<UpdateResearchAr
         SupervisorDto mappedSupervisor = this._mapper.Map<SupervisorDto>(supervisor);
         return new ResponseDto<SupervisorDto>()
         {
-            IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = mappedSupervisor
+            IsSuccess = true,
+            Message = SuccessMessages.DefaultSuccess,
+            Result = mappedSupervisor
         };
     }
 }

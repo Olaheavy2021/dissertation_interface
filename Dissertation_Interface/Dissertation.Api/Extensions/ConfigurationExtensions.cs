@@ -1,6 +1,6 @@
+using Dissertation.Infrastructure.Messaging;
 using Dissertation_API.Middleware;
 using Dissertation_API.Middleware.Correlation;
-using Dissertation.Infrastructure.Messaging;
 
 namespace Dissertation_API.Extensions;
 

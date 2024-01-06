@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Request;
+using Dissertation.Application.DTO.Request;
 using Dissertation.Application.Student.Queries.GetSupervisionRequests;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -32,8 +32,7 @@ public class GetSupervisorSupervisionRequestsQueryHandler : IRequestHandler<GetS
     {
         this._logger.LogInformation("Fetching Supervision Requests for a Supervisor");
         //fetch the supervisor from the database
-        var userId = this._httpContextAccessor.HttpContext?.Items["UserId"] as string;
-        if (userId == null)
+        if (this._httpContextAccessor.HttpContext?.Items["UserId"] is not string userId)
         {
             this._logger.LogError("Invalid token passed to fetch list of supervision request");
             throw new NotFoundException("HttpContext", "UserId");
@@ -48,16 +47,17 @@ public class GetSupervisorSupervisionRequestsQueryHandler : IRequestHandler<GetS
         if (request.Parameters.FilterByCohort == 0)
         {
             //fetch the active cohort
-          Domain.Entities.DissertationCohort? activeCohort = await this._unitOfWork.DissertationCohortRepository.GetActiveDissertationCohort();
-          if (activeCohort == null)
-          {
-              return new ResponseDto<PaginatedSupervisionRequestListDto>()
-              {
-                  IsSuccess = false, Message = "Please filter by a dissertation cohort. There is no active cohort"
-              };
-          }
+            Domain.Entities.DissertationCohort? activeCohort = await this._unitOfWork.DissertationCohortRepository.GetActiveDissertationCohort();
+            if (activeCohort == null)
+            {
+                return new ResponseDto<PaginatedSupervisionRequestListDto>()
+                {
+                    IsSuccess = false,
+                    Message = "Please filter by a dissertation cohort. There is no active cohort"
+                };
+            }
 
-          request.Parameters.FilterByCohort = activeCohort.Id;
+            request.Parameters.FilterByCohort = activeCohort.Id;
         }
 
         var apiRequest = new SupervisionRequestPaginationParameters()

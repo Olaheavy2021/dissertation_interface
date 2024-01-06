@@ -1,4 +1,4 @@
-﻿namespace UserManagement_API.Helpers;
+namespace UserManagement_API.Helpers;
 
 public class DissertationCohortRoutes
 {

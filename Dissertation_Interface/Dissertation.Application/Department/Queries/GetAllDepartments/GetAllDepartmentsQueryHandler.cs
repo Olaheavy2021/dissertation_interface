@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Course.Queries.GetAllCourses;
+using Dissertation.Application.Course.Queries.GetAllCourses;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
 using MediatR;
@@ -8,7 +8,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.Department.Queries.GetAllDepartments;
 
-public class GetAllDepartmentsQueryHandler: IRequestHandler<GetAllDepartmentsQuery, ResponseDto<IReadOnlyList<GetDepartment>>>
+public class GetAllDepartmentsQueryHandler : IRequestHandler<GetAllDepartmentsQuery, ResponseDto<IReadOnlyList<GetDepartment>>>
 {
     private readonly IAppLogger<GetAllDepartmentsQueryHandler> _logger;
     private readonly IUnitOfWork _db;

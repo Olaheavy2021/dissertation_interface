@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Shared.DTO;
@@ -14,13 +14,14 @@ public class UpdateSupervisionSlotCommandHandler : IRequestHandler<UpdateSupervi
         this._userApiService = userApiService;
         this._logger = logger;
     }
-    
+
     public Task<ResponseDto<string>> Handle(UpdateSupervisionSlotCommand request, CancellationToken cancellationToken)
     {
         this._logger.LogInformation("Attempting to update a supervision slot for a supervision cohort");
         var apiRequest = new UpdateSupervisionCohortRequest
         {
-            SupervisionCohortId = request.SupervisionCohortId, SupervisionSlots = request.SupervisionSlots
+            SupervisionCohortId = request.SupervisionCohortId,
+            SupervisionSlots = request.SupervisionSlots
         };
         return this._userApiService.UpdateSupervisionSlots(apiRequest);
     }

@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -46,12 +46,7 @@ public class GetSupervisorByIdQueryHandler : IRequestHandler<GetSupervisorByIdQu
             includes: new Expression<Func<Domain.Entities.Supervisor, object>>[]
             {
                 u => u.Department
-            });
-
-        if (supervisor == null)
-        {
-            throw new NotFoundException(nameof(Domain.Entities.Supervisor), request.Id);
-        }
+            }) ?? throw new NotFoundException(nameof(Domain.Entities.Supervisor), request.Id);
 
         // Map supervisor details and prepare the response
         SupervisorDto mappedSupervisor = this._mapper.Map<SupervisorDto>(supervisor);

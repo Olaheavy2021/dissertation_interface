@@ -73,7 +73,9 @@ public class RegisterSupervisorCommandHandler : IRequestHandler<RegisterSupervis
 
         var response = new ResponseDto<string>
         {
-            IsSuccess = false, Result = ErrorMessages.DefaultError, Message = "Invalid Invitation code"
+            IsSuccess = false,
+            Result = ErrorMessages.DefaultError,
+            Message = "Invalid Invitation code"
         };
         return response;
     }

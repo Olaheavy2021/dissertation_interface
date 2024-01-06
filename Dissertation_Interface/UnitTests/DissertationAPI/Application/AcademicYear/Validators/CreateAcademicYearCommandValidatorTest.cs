@@ -24,7 +24,7 @@ public class CreateAcademicYearCommandValidatorTest
         this._unitOfWork
             .Setup(x => x.AcademicYearRepository.IsAcademicYearUnique(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
             .ReturnsAsync(true);
-        var command = new CreateAcademicYearCommand( DateTime.MinValue, DateTime.UtcNow.AddYears(1) );
+        var command = new CreateAcademicYearCommand(DateTime.MinValue, DateTime.UtcNow.AddYears(1));
 
         // Act
         TestValidationResult<CreateAcademicYearCommand>? result = await this._createAcademicYearCommandValidator.TestValidateAsync(command);
@@ -86,7 +86,7 @@ public class CreateAcademicYearCommandValidatorTest
         this._unitOfWork
             .Setup(x => x.AcademicYearRepository.IsAcademicYearUnique(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
             .ReturnsAsync(true);
-        var command = new CreateAcademicYearCommand( DateTime.UtcNow, DateTime.UtcNow.AddDays(-1));
+        var command = new CreateAcademicYearCommand(DateTime.UtcNow, DateTime.UtcNow.AddDays(-1));
 
         TestValidationResult<CreateAcademicYearCommand>? result = await this._createAcademicYearCommandValidator.TestValidateAsync(command);
         Assert.Multiple(() =>
@@ -102,7 +102,7 @@ public class CreateAcademicYearCommandValidatorTest
         this._unitOfWork
             .Setup(x => x.AcademicYearRepository.IsAcademicYearUnique(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
             .ReturnsAsync(true);
-        var command = new CreateAcademicYearCommand( DateTime.UtcNow, DateTime.UtcNow);
+        var command = new CreateAcademicYearCommand(DateTime.UtcNow, DateTime.UtcNow);
 
         TestValidationResult<CreateAcademicYearCommand>? result = await this._createAcademicYearCommandValidator.TestValidateAsync(command);
         Assert.Multiple(() =>
@@ -118,7 +118,7 @@ public class CreateAcademicYearCommandValidatorTest
         this._unitOfWork
             .Setup(x => x.AcademicYearRepository.IsAcademicYearUnique(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
             .ReturnsAsync(true);
-        var command = new CreateAcademicYearCommand( new DateTime(DateTime.UtcNow.Year, 9, 1), new DateTime(DateTime.UtcNow.Year + 1, 9, 1));
+        var command = new CreateAcademicYearCommand(new DateTime(DateTime.UtcNow.Year, 9, 1), new DateTime(DateTime.UtcNow.Year + 1, 9, 1));
 
         TestValidationResult<CreateAcademicYearCommand>? result = await this._createAcademicYearCommandValidator.TestValidateAsync(command);
         Assert.Multiple(() =>
@@ -134,7 +134,7 @@ public class CreateAcademicYearCommandValidatorTest
         this._unitOfWork
             .Setup(x => x.AcademicYearRepository.IsAcademicYearUnique(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
             .ReturnsAsync(true);
-        var command = new CreateAcademicYearCommand( DateTime.UtcNow, DateTime.MinValue );
+        var command = new CreateAcademicYearCommand(DateTime.UtcNow, DateTime.MinValue);
 
         TestValidationResult<CreateAcademicYearCommand>? result = await this._createAcademicYearCommandValidator.TestValidateAsync(command);
         Assert.Multiple(() =>
@@ -161,7 +161,7 @@ public class CreateAcademicYearCommandValidatorTest
         mockUnitOfWork.Setup(m => m.AcademicYearRepository.IsAcademicYearUnique(startDate, endDate)).ReturnsAsync(true);
 
         var validator = new CreateAcademicYearCommandValidator(mockUnitOfWork.Object);
-        var command = new CreateAcademicYearCommand( startDate, endDate );
+        var command = new CreateAcademicYearCommand(startDate, endDate);
 
         // Act
         TestValidationResult<CreateAcademicYearCommand>? result = await this._createAcademicYearCommandValidator.TestValidateAsync(command);

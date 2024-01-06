@@ -1,11 +1,11 @@
-﻿using Dissertation.Infrastructure.Persistence.IRepository;
+using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 using Shared.Constants;
 using Shared.Enums;
 
 namespace Dissertation.Application.Supervisor.Commands.AssignAdminRole;
 
-public class AssignAdminRoleCommandValidator: AbstractValidator<AssignAdminRoleCommand>
+public class AssignAdminRoleCommandValidator : AbstractValidator<AssignAdminRoleCommand>
 {
     private readonly IUnitOfWork _db;
 

@@ -1,4 +1,4 @@
-﻿using Shared.DTO;
+using Shared.DTO;
 
 namespace UserManagement_API.Service.IService;
 

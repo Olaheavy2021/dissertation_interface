@@ -1,4 +1,4 @@
-﻿using Dissertation.Infrastructure.Persistence.IRepository;
+using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 using Shared.Constants;
 
@@ -7,7 +7,7 @@ namespace Dissertation.Application.Supervisor.Commands.UpdateSupervisor;
 public class UpdateSupervisorCommandValidator : AbstractValidator<UpdateSupervisorCommand>
 {
     private readonly IUnitOfWork _db;
-     public UpdateSupervisorCommandValidator(IUnitOfWork db)
+    public UpdateSupervisorCommandValidator(IUnitOfWork db)
     {
         this._db = db;
         RuleFor(p => p.FirstName)
@@ -40,9 +40,9 @@ public class UpdateSupervisorCommandValidator : AbstractValidator<UpdateSupervis
             .NotEmpty().WithMessage(ErrorMessages.RequiredField);
     }
 
-     private async Task<bool> DoesDepartmentExist(UpdateSupervisorCommand request, CancellationToken token)
-     {
-         Domain.Entities.Department? department = await this._db.DepartmentRepository.GetAsync(x => x.Id == request.DepartmentId);
-         return department != null;
-     }
+    private async Task<bool> DoesDepartmentExist(UpdateSupervisorCommand request, CancellationToken token)
+    {
+        Domain.Entities.Department? department = await this._db.DepartmentRepository.GetAsync(x => x.Id == request.DepartmentId);
+        return department != null;
+    }
 }

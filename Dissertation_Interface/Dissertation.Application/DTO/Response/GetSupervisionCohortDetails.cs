@@ -1,11 +1,11 @@
-﻿using Shared.DTO;
+using Shared.DTO;
 
 namespace Dissertation.Application.DTO.Response;
 
 public class GetSupervisionCohortDetails
 {
     public long Id { get; set; }
-    public UserDto? UserDetails  { get; set; }
+    public UserDto? UserDetails { get; set; }
 
     public long DissertationCohortId { get; set; }
 

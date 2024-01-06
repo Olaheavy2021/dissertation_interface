@@ -31,7 +31,7 @@ public class CreateDissertationCohortCommandValidatorTests
                 It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, object>>[]>()))
             .ReturnsAsync(DissertationCohortMocks.GetPaginatedResponse);
 
-        var command = new CreateDissertationCohortCommand (DateTime.MinValue, DateTime.UtcNow.AddDays(20), DateTime.UtcNow.AddDays(30), 2 );
+        var command = new CreateDissertationCohortCommand(DateTime.MinValue, DateTime.UtcNow.AddDays(20), DateTime.UtcNow.AddDays(30), 2);
 
         // Act
         TestValidationResult<CreateDissertationCohortCommand>? result = await this._createDissertationCohortCommandValidator.TestValidateAsync(command);
@@ -57,7 +57,7 @@ public class CreateDissertationCohortCommandValidatorTests
             .Setup(x => x.DissertationCohortRepository.GetAllAsync(It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, bool>>>(), It.IsAny<Func<IQueryable<Dissertation.Domain.Entities.DissertationCohort>, IOrderedQueryable<Dissertation.Domain.Entities.DissertationCohort>>>(),
                 It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, object>>[]>()))
             .ReturnsAsync(DissertationCohortMocks.GetPaginatedResponse);
-        var command = new CreateDissertationCohortCommand (DateTime.UtcNow.AddDays(1),  DateTime.UtcNow, DateTime.UtcNow.AddDays(30), 2 );
+        var command = new CreateDissertationCohortCommand(DateTime.UtcNow.AddDays(1), DateTime.UtcNow, DateTime.UtcNow.AddDays(30), 2);
 
         TestValidationResult<CreateDissertationCohortCommand>? result = await this._createDissertationCohortCommandValidator.TestValidateAsync(command);
 
@@ -127,7 +127,7 @@ public class CreateDissertationCohortCommandValidatorTests
                 It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, object>>[]>()))
             .ReturnsAsync(new List<Dissertation.Domain.Entities.DissertationCohort>());
 
-        var command = new CreateDissertationCohortCommand(DateTime.UtcNow, DateTime.UtcNow.AddYears(1),  DateTime.UtcNow.AddYears(2), 2);
+        var command = new CreateDissertationCohortCommand(DateTime.UtcNow, DateTime.UtcNow.AddYears(1), DateTime.UtcNow.AddYears(2), 2);
 
         TestValidationResult<CreateDissertationCohortCommand>? result = await this._createDissertationCohortCommandValidator.TestValidateAsync(command);
 
@@ -155,7 +155,7 @@ public class CreateDissertationCohortCommandValidatorTests
                 It.IsAny<Expression<Func<Dissertation.Domain.Entities.DissertationCohort, object>>[]>()))
             .ReturnsAsync(new List<Dissertation.Domain.Entities.DissertationCohort>());
 
-        var command = new CreateDissertationCohortCommand(DateTime.UtcNow, DateTime.UtcNow.AddYears(1),  DateTime.MinValue, 2);
+        var command = new CreateDissertationCohortCommand(DateTime.UtcNow, DateTime.UtcNow.AddYears(1), DateTime.MinValue, 2);
 
         TestValidationResult<CreateDissertationCohortCommand>? result = await this._createDissertationCohortCommandValidator.TestValidateAsync(command);
 

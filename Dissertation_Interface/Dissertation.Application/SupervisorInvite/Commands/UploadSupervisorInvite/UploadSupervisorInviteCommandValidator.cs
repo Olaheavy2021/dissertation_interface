@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.StudentInvite.Commands.UploadStudentInvite;
+using Dissertation.Application.StudentInvite.Commands.UploadStudentInvite;
 using FluentValidation;
 
 namespace Dissertation.Application.SupervisorInvite.Commands.UploadSupervisorInvite;

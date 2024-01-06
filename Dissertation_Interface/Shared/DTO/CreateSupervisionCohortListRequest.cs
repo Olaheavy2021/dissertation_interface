@@ -1,8 +1,8 @@
-﻿namespace Shared.DTO;
+namespace Shared.DTO;
 
 public class CreateSupervisionCohortListRequest
 {
-   public List<CreateSupervisionCohortRequest>? SupervisionCohortRequests { get; set; }
+    public List<CreateSupervisionCohortRequest>? SupervisionCohortRequests { get; set; }
 
-   public long DissertationCohortId { get; set; }
+    public long DissertationCohortId { get; set; }
 }

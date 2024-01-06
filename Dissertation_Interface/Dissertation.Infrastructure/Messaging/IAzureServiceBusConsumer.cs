@@ -1,4 +1,4 @@
-﻿namespace Dissertation.Infrastructure.Messaging;
+namespace Dissertation.Infrastructure.Messaging;
 
 public interface IAzureServiceBusConsumer
 {

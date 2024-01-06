@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.Extensions.Options;
 using Shared.Constants;
 using Shared.DTO;
@@ -28,7 +28,7 @@ public class SupervisionRequestService : ISupervisionRequestService
 
     public SupervisionRequestService(IUnitOfWork unitOfWork, ISupervisionCohortService supervisionCohortService,
         IDissertationApiService dissertationApiService, IHttpContextAccessor httpContextAccessor, IMapper mapper,
-        ILogger<SupervisionRequestService> logger, IMessageBus messageBus,  IOptions<ServiceBusSettings> serviceBusSettings)
+        ILogger<SupervisionRequestService> logger, IMessageBus messageBus, IOptions<ServiceBusSettings> serviceBusSettings)
     {
         this._unitOfWork = unitOfWork;
         this._supervisionCohortService = supervisionCohortService;
@@ -73,7 +73,8 @@ public class SupervisionRequestService : ISupervisionRequestService
         //check if the supervision cohort exists and supervision slot has not been exceeded
         var parameters = new SupervisionCohortParameters
         {
-            DissertationCohortId = dissertationCohort.Result.Id, SupervisorId = request.SupervisorId
+            DissertationCohortId = dissertationCohort.Result.Id,
+            SupervisorId = request.SupervisorId
         };
 
         ResponseDto<SupervisionCohort> supervisionCohort =
@@ -82,7 +83,9 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>
             {
-                Message = supervisionCohort.Message, IsSuccess = false, Result = ErrorMessages.DefaultError
+                Message = supervisionCohort.Message,
+                IsSuccess = false,
+                Result = ErrorMessages.DefaultError
             };
         }
 
@@ -105,7 +108,9 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>
             {
-                Message = "Invalid Request", Result = ErrorMessages.DefaultError, IsSuccess = false
+                Message = "Invalid Request",
+                Result = ErrorMessages.DefaultError,
+                IsSuccess = false
             };
         }
 
@@ -115,7 +120,9 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>
             {
-                Message = "You can only have 3 pending requests at a time", Result = ErrorMessages.DefaultError, IsSuccess = false
+                Message = "You can only have 3 pending requests at a time",
+                Result = ErrorMessages.DefaultError,
+                IsSuccess = false
             };
         }
 
@@ -126,7 +133,9 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>
             {
-                Message = "You have a pending request sent to this supervisor", Result = ErrorMessages.DefaultError, IsSuccess = false
+                Message = "You have a pending request sent to this supervisor",
+                Result = ErrorMessages.DefaultError,
+                IsSuccess = false
             };
         }
 
@@ -136,7 +145,9 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>
             {
-                Message = "This Student is paired to a supervisor already", Result = ErrorMessages.DefaultError, IsSuccess = false
+                Message = "This Student is paired to a supervisor already",
+                Result = ErrorMessages.DefaultError,
+                IsSuccess = false
             };
         }
         #endregion
@@ -323,7 +334,8 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>()
             {
-                Message = "You are not authorized to action this request", IsSuccess = false,
+                Message = "You are not authorized to action this request",
+                IsSuccess = false,
             };
         }
 
@@ -332,7 +344,8 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>()
             {
-                Message = "Supervision Request is not in the Pending State", IsSuccess = false,
+                Message = "Supervision Request is not in the Pending State",
+                IsSuccess = false,
             };
         }
 
@@ -370,7 +383,8 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>
             {
-                Message = "You are not authorized to action this request", IsSuccess = false,
+                Message = "You are not authorized to action this request",
+                IsSuccess = false,
             };
         }
 
@@ -379,7 +393,8 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>()
             {
-                Message = "Supervision Request is not in the Pending State", IsSuccess = false,
+                Message = "Supervision Request is not in the Pending State",
+                IsSuccess = false,
             };
         }
 
@@ -388,7 +403,8 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>
             {
-                Message = "You have reached the maximum supervision slots allocated to you", IsSuccess = false,
+                Message = "You have reached the maximum supervision slots allocated to you",
+                IsSuccess = false,
             };
         }
 
@@ -411,7 +427,7 @@ public class SupervisionRequestService : ISupervisionRequestService
 
         //delete the other supervision request for the student
         IReadOnlyList<SupervisionRequest> studentSupervisionRequests = await this._unitOfWork.SupervisionRequestRepository.GetAllAsync(
-            x => x.StudentId == supervisionRequest.StudentId && x.Id != supervisionRequest.Id );
+            x => x.StudentId == supervisionRequest.StudentId && x.Id != supervisionRequest.Id);
         if (studentSupervisionRequests.Any())
         {
             await this._unitOfWork.SupervisionRequestRepository.RemoveRangeAsync(studentSupervisionRequests);
@@ -445,7 +461,8 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>()
             {
-                Message = "You are not authorized to action this request", IsSuccess = false,
+                Message = "You are not authorized to action this request",
+                IsSuccess = false,
             };
         }
 
@@ -454,7 +471,8 @@ public class SupervisionRequestService : ISupervisionRequestService
         {
             return new ResponseDto<string>()
             {
-                Message = "Supervision Request is not in the Pending State", IsSuccess = false,
+                Message = "Supervision Request is not in the Pending State",
+                IsSuccess = false,
             };
         }
 
@@ -494,14 +512,10 @@ public class SupervisionRequestService : ISupervisionRequestService
         return supervisionRequest;
     }
 
-    private async Task<SupervisionCohort> GetSupervisionCohort(string supervisorId, long cohortId )
+    private async Task<SupervisionCohort> GetSupervisionCohort(string supervisorId, long cohortId)
     {
         SupervisionCohort? supervisionCohort =
-            await this._unitOfWork.SupervisionCohortRepository.GetFirstOrDefaultAsync(x => x.DissertationCohortId == cohortId && x.SupervisorId == supervisorId);
-        if (supervisionCohort == null)
-        {
-            throw new NotFoundException(nameof(SupervisionCohort), supervisorId);
-        }
+            await this._unitOfWork.SupervisionCohortRepository.GetFirstOrDefaultAsync(x => x.DissertationCohortId == cohortId && x.SupervisorId == supervisorId) ?? throw new NotFoundException(nameof(SupervisionCohort), supervisorId);
         return supervisionCohort;
     }
 
@@ -511,7 +525,7 @@ public class SupervisionRequestService : ISupervisionRequestService
 
     private async Task<bool> CheckIfStudentHasASupervisor(string studentId, long cohortId)
     {
-        var doesStudentHaveASupervisor =  await this._unitOfWork.SupervisionListRepository.AnyAsync(x =>
+        var doesStudentHaveASupervisor = await this._unitOfWork.SupervisionListRepository.AnyAsync(x =>
             x.StudentId == studentId && x.DissertationCohortId == cohortId);
         return doesStudentHaveASupervisor;
     }

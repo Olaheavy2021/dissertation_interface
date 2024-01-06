@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Azure.Messaging.ServiceBus;
 using Dissertation.Infrastructure.DTO;
 using Dissertation.Infrastructure.Services;
@@ -59,7 +59,8 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
                 case BatchUploadType.SupervisorInvite:
                     await this._batchUploadService.ProcessSupervisorInvites(request);
                     break;
-                default: this._logger.LogInformation("An invalid Upload Type was passed");
+                default:
+                    this._logger.LogInformation("An invalid Upload Type was passed");
                     break;
             }
 

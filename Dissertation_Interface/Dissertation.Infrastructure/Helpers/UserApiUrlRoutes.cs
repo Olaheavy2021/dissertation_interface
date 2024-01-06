@@ -12,7 +12,7 @@ public static class UserApiUrlRoutes
 
     public const string RegisterStudentRoute = $"{UserRoute}register-student";
 
-    public const string GetSupervisors =$"{UserRoute}get-supervisors";
+    public const string GetSupervisors = $"{UserRoute}get-supervisors";
 
     public const string GetStudents = $"{UserRoute}get-students";
 

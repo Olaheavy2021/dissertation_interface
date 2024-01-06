@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Shared.DTO;
 
 namespace UserManagement_API.Data.Models.Validators;

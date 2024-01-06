@@ -1,4 +1,4 @@
-﻿namespace Dissertation.Infrastructure.Helpers;
+namespace Dissertation.Infrastructure.Helpers;
 
 public class SupervisionListRoutes
 {

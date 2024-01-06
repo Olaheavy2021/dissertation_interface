@@ -17,7 +17,7 @@ public class GetStudentInvite
 
     public DissertationConfigStatus Status { get; set; }
 
-    public GetDissertationCohort DissertationCohort  { get; set; }
+    public GetDissertationCohort DissertationCohort { get; set; }
 
     public DateTime ExpiryDate { get; set; }
 

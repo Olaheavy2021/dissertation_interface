@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -25,12 +25,7 @@ public class GetSupervisionRequestListQueryHandler : IRequestHandler<GetSupervis
         this._logger.LogInformation("Fetching List of Supervision Request");
         if (request.Parameters.DissertationCohortId == 0)
         {
-            Domain.Entities.DissertationCohort? activeCohort = await this._unitOfWork.DissertationCohortRepository.GetActiveDissertationCohort();
-            if (activeCohort == null)
-            {
-                throw new NotFoundException(nameof(DissertationCohort), "Active");
-            }
-
+            Domain.Entities.DissertationCohort? activeCohort = await this._unitOfWork.DissertationCohortRepository.GetActiveDissertationCohort() ?? throw new NotFoundException(nameof(DissertationCohort), "Active");
             request.Parameters.DissertationCohortId = activeCohort.Id;
         }
 

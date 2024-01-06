@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -8,7 +8,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.Supervisor.Queries.GetListOfSupervisors;
 
-public class GetListOfSupervisorsQueryHandler: IRequestHandler<GetListOfSupervisorsQuery, ResponseDto<PaginatedSupervisorListDto>>
+public class GetListOfSupervisorsQueryHandler : IRequestHandler<GetListOfSupervisorsQuery, ResponseDto<PaginatedSupervisorListDto>>
 {
     private readonly IAppLogger<GetListOfSupervisorsQueryHandler> _logger;
     private readonly IUnitOfWork _db;

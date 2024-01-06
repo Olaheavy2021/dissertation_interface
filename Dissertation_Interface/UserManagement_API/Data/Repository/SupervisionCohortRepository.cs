@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Shared.DTO;
@@ -18,7 +18,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
 
     public PagedList<ApplicationUser> GetActiveSupervisors(SupervisionCohortListParameters listParameters)
     {
-        string[] roleNames = { "Supervisor"};
+        string[] roleNames = { "Supervisor" };
         var sqlQuery = new StringBuilder("SELECT U.*, R.Name " +
                                          " FROM AspNetUsers U " +
                                          " INNER JOIN AspNetUserRoles UR ON U.Id = UR.UserId " +
@@ -50,7 +50,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
 
     public PagedList<ApplicationUser> GetInActiveSupervisors(SupervisionCohortListParameters listParameters)
     {
-        string[] roleNames = { "Supervisor"};
+        string[] roleNames = { "Supervisor" };
         var sqlQuery = new StringBuilder("SELECT U.*, R.Name " +
                                          " FROM AspNetUsers U " +
                                          " INNER JOIN AspNetUserRoles UR ON U.Id = UR.UserId " +

@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +43,7 @@ public class BlobRepository : IBlobRepository
             }
         }
         catch (RequestFailedException ex)
-            when(ex.ErrorCode == BlobErrorCode.BlobNotFound)
+            when (ex.ErrorCode == BlobErrorCode.BlobNotFound)
         {
             this._logger.LogError("File {blobName} was not found.", blobName);
         }

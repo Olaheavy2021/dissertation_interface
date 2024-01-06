@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using Shared.BlobStorage;
 using Shared.Constants;
 using Shared.DTO;
@@ -19,7 +19,7 @@ public class ProfilePictureService : IProfilePictureService
     private readonly IBlobRepository _blobRepository;
     private readonly BlobStorageSettings _blobStorageSettings;
 
-    public ProfilePictureService(IUnitOfWork unitOfWork, ILogger<ProfilePictureService> logger, IHttpContextAccessor httpContextAccessor, IBlobRepository blobRepository, IOptions<BlobStorageSettings>  blobStorageSettings)
+    public ProfilePictureService(IUnitOfWork unitOfWork, ILogger<ProfilePictureService> logger, IHttpContextAccessor httpContextAccessor, IBlobRepository blobRepository, IOptions<BlobStorageSettings> blobStorageSettings)
     {
         this._unitOfWork = unitOfWork;
         this._logger = logger;
@@ -45,7 +45,7 @@ public class ProfilePictureService : IProfilePictureService
 
         if (request.File == null || request.File?.Length == 0)
         {
-           return await UpdateUserDetailsOnly(request, user, cancellationToken);
+            return await UpdateUserDetailsOnly(request, user, cancellationToken);
         }
 
         //validate the uploaded image
@@ -144,7 +144,9 @@ public class ProfilePictureService : IProfilePictureService
         {
             return new ResponseDto<string>()
             {
-                Message = "Invalid Request", IsSuccess = false, Result = ErrorMessages.DefaultError
+                Message = "Invalid Request",
+                IsSuccess = false,
+                Result = ErrorMessages.DefaultError
             };
         }
 

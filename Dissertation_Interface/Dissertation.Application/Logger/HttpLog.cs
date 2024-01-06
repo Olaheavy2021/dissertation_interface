@@ -1,4 +1,4 @@
-﻿
+
 namespace Dissertation.Application.Logger;
 
 public class HttpLog

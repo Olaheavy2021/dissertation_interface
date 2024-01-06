@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -48,12 +48,7 @@ public class GetStudentByIdQueryHandler : IRequestHandler<GetStudentByIdQuery, R
                 u => u.Course,
                 u => u.DissertationCohort,
                 u => u.ResearchProposal
-            });
-
-        if (student == null)
-        {
-            throw new NotFoundException(nameof(Domain.Entities.Student), request.Id);
-        }
+            }) ?? throw new NotFoundException(nameof(Domain.Entities.Student), request.Id);
 
         // Map student details and prepare the response
         StudentDto mappedStudent = this._mapper.Map<StudentDto>(student);

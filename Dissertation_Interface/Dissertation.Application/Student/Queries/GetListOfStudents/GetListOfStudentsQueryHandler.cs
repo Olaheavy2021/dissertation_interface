@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -10,7 +10,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.Student.Queries.GetListOfStudents;
 
-public class GetListOfStudentsQueryHandler: IRequestHandler<GetListOfStudentsQuery, ResponseDto<PaginatedStudentListDto>>
+public class GetListOfStudentsQueryHandler : IRequestHandler<GetListOfStudentsQuery, ResponseDto<PaginatedStudentListDto>>
 {
     private readonly IAppLogger<GetListOfStudentsQueryHandler> _logger;
     private readonly IUnitOfWork _db;
@@ -46,7 +46,8 @@ public class GetListOfStudentsQueryHandler: IRequestHandler<GetListOfStudentsQue
         {
             return new ResponseDto<PaginatedStudentListDto>()
             {
-                Message = "Please select a dissertation cohort. There is no active cohort", IsSuccess = false
+                Message = "Please select a dissertation cohort. There is no active cohort",
+                IsSuccess = false
             };
         }
 

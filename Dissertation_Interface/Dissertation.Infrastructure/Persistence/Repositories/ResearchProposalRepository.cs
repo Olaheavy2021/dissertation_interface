@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Entities;
+using Dissertation.Domain.Entities;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Shared.Repository;

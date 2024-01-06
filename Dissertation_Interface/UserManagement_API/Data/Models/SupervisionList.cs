@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using UserManagement_API.Data.DomainHelper;
 
 namespace UserManagement_API.Data.Models;

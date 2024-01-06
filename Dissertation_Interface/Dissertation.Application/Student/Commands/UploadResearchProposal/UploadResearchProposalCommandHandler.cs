@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Entities;
+using Dissertation.Domain.Entities;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +20,7 @@ public class UploadResearchProposalCommandHandler : IRequestHandler<UploadResear
     private readonly IBlobRepository _blobRepository;
     private readonly BlobStorageSettings _blobStorageSettings;
 
-    public UploadResearchProposalCommandHandler(IUnitOfWork db, ILogger<UploadResearchProposalCommandHandler> logger, IHttpContextAccessor httpContextAccessor, IBlobRepository blobRepository, IOptions<BlobStorageSettings>  blobStorageSettings)
+    public UploadResearchProposalCommandHandler(IUnitOfWork db, ILogger<UploadResearchProposalCommandHandler> logger, IHttpContextAccessor httpContextAccessor, IBlobRepository blobRepository, IOptions<BlobStorageSettings> blobStorageSettings)
     {
         this._db = db;
         this._logger = logger;
@@ -94,7 +94,7 @@ public class UploadResearchProposalCommandHandler : IRequestHandler<UploadResear
     {
         //validate the uploaded image
         const long maxFileSize = 5 * 1024 * 1024;
-        string[] permittedExtensions = { ".pdf"};
+        string[] permittedExtensions = { ".pdf" };
 
         if (request.File == null)
         {

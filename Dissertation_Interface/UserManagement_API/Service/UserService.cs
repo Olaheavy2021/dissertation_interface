@@ -50,7 +50,8 @@ public class UserService : IUserService
         {
             return new ResponseDto<GetUserDto>
             {
-                Message = "Invalid Request", IsSuccess = false
+                Message = "Invalid Request",
+                IsSuccess = false
             };
         }
 
@@ -66,12 +67,14 @@ public class UserService : IUserService
         GetProfilePicture mappedProfilePicture =
             this._mapper.Map<ProfilePicture, GetProfilePicture>(user.ProfilePicture);
 
-        var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow , ProfilePicture = mappedProfilePicture};
+        var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow, ProfilePicture = mappedProfilePicture };
         this._logger.LogInformation("User Details returned successfully for userId - {0}", userId);
 
         return new ResponseDto<GetUserDto>()
         {
-            IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = getUserDto
+            IsSuccess = true,
+            Message = SuccessMessages.DefaultSuccess,
+            Result = getUserDto
         };
     }
 
@@ -91,7 +94,7 @@ public class UserService : IUserService
             GetProfilePicture mappedProfilePicture =
                 this._mapper.Map<ProfilePicture, GetProfilePicture>(user.ProfilePicture);
 
-            var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow , ProfilePicture = mappedProfilePicture};
+            var getUserDto = new GetUserDto() { User = mappedUser, Role = roles, IsLockedOut = user.LockoutEnd >= DateTimeOffset.UtcNow, ProfilePicture = mappedProfilePicture };
 
             response.IsSuccess = true;
             response.Message = SuccessMessages.DefaultSuccess;

@@ -126,7 +126,7 @@ public class DepartmentController : Controller
     [HttpGet("all-departments")]
     [Authorize(Roles = "Superadmin,Admin,Supervisor, Student")]
     [SwaggerOperation(Summary = "Get All Departments")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof( ResponseDto<IReadOnlyList<GetDepartment>>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<IReadOnlyList<GetDepartment>>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Not Found", typeof(CustomProblemDetails))]
     public async Task<IActionResult> GetAllDepartments()
     {

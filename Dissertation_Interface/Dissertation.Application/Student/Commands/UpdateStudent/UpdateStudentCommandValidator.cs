@@ -1,4 +1,4 @@
-﻿using Dissertation.Infrastructure.Persistence.IRepository;
+using Dissertation.Infrastructure.Persistence.IRepository;
 using FluentValidation;
 using Shared.Constants;
 
@@ -8,7 +8,7 @@ public class UpdateStudentCommandValidator : AbstractValidator<UpdateStudentComm
 {
     private readonly IUnitOfWork _db;
 
-     public UpdateStudentCommandValidator(IUnitOfWork db)
+    public UpdateStudentCommandValidator(IUnitOfWork db)
     {
         this._db = db;
 
@@ -39,9 +39,9 @@ public class UpdateStudentCommandValidator : AbstractValidator<UpdateStudentComm
             .NotEmpty().WithMessage(ErrorMessages.RequiredField);
     }
 
-     private async Task<bool> DoesCourseExist(UpdateStudentCommand request, CancellationToken token)
-     {
-         Domain.Entities.Course? course = await this._db.CourseRepository.GetAsync(x => x.Id == request.CourseId);
-         return course != null;
-     }
+    private async Task<bool> DoesCourseExist(UpdateStudentCommand request, CancellationToken token)
+    {
+        Domain.Entities.Course? course = await this._db.CourseRepository.GetAsync(x => x.Id == request.CourseId);
+        return course != null;
+    }
 }

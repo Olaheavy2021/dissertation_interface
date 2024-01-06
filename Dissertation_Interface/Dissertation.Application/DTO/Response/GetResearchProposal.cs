@@ -1,4 +1,4 @@
-﻿namespace Dissertation.Application.DTO.Response;
+namespace Dissertation.Application.DTO.Response;
 
 public class GetResearchProposal
 {

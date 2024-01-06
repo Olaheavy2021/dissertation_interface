@@ -1,4 +1,4 @@
-﻿namespace Shared.Settings;
+namespace Shared.Settings;
 
 public class BlobStorageSettings
 {

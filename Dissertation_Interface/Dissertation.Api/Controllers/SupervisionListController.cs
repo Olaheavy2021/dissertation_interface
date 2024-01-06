@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Request;
+using Dissertation.Application.DTO.Request;
 using Dissertation.Application.SupervisionList.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

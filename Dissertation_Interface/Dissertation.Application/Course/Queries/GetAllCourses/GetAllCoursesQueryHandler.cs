@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Course.Queries.GetListOfCourse;
+using Dissertation.Application.Course.Queries.GetListOfCourse;
 using Dissertation.Application.DTO.Response;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MapsterMapper;
@@ -10,7 +10,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.Course.Queries.GetAllCourses;
 
-public class GetAllCoursesQueryHandler: IRequestHandler<GetAllCoursesQuery, ResponseDto<IReadOnlyList<GetCourse>>>
+public class GetAllCoursesQueryHandler : IRequestHandler<GetAllCoursesQuery, ResponseDto<IReadOnlyList<GetCourse>>>
 {
     private readonly IAppLogger<GetAllCoursesQueryHandler> _logger;
     private readonly IUnitOfWork _db;

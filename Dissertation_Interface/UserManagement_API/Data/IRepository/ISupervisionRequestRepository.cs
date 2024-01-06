@@ -1,4 +1,4 @@
-﻿using Shared.DTO;
+using Shared.DTO;
 using Shared.Helpers;
 using Shared.Repository;
 using UserManagement_API.Data.Models;

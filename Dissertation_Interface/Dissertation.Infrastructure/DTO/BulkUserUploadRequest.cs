@@ -1,4 +1,4 @@
-﻿namespace Dissertation.Infrastructure.DTO;
+namespace Dissertation.Infrastructure.DTO;
 
 public class BulkUserUploadRequest
 {

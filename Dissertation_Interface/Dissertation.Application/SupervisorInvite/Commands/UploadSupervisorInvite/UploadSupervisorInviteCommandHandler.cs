@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.DTO;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
@@ -91,7 +91,7 @@ public class UploadSupervisorInviteCommandHandler : IRequestHandler<UploadSuperv
         Domain.Entities.SupervisorInvite? supervisorInvite = await this._db.SupervisorInviteRepository
             .GetFirstOrDefaultAsync(x =>
                 EF.Functions.Like(x.StaffId, userName) || EF.Functions.Like(x.Email, email));
-        var doesSupervisorInviteExists= supervisorInvite == null;
+        var doesSupervisorInviteExists = supervisorInvite == null;
         this._logger.LogInformation("DoesRequestHaveActiveInvite - {response}", !doesSupervisorInviteExists);
         return doesSupervisorInviteExists;
     }

@@ -1,4 +1,4 @@
-﻿using Dissertation.Domain.Interfaces;
+using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -26,8 +26,7 @@ public class GetSupervisionListQueryHandler : IRequestHandler<GetStudentSupervis
         CancellationToken cancellationToken)
     {
         //fetch the student from the database
-        var userId = this._httpContextAccessor.HttpContext?.Items["UserId"] as string;
-        if (userId == null)
+        if (this._httpContextAccessor.HttpContext?.Items["UserId"] is not string userId)
         {
             this._logger.LogError("Invalid token passed to fetch list of supervision request");
             throw new NotFoundException("HttpContext", "UserId");

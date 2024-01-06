@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace Dissertation.Application.StudentInvite.Commands.UploadStudentInvite;
 

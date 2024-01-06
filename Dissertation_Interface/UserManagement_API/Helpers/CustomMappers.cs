@@ -1,4 +1,4 @@
-﻿using Shared.DTO;
+using Shared.DTO;
 using Shared.Enums;
 using UserManagement_API.Data.Models;
 

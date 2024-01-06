@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
 using MediatR;
@@ -29,7 +29,8 @@ public class GetAdminMetricsQueryHandler : IRequestHandler<GetAdminMetricsQuery,
         {
             return new ResponseDto<AdminMetricsResponse>()
             {
-                Message = "There is no active cohort at the moment", IsSuccess = false
+                Message = "There is no active cohort at the moment",
+                IsSuccess = false
             };
         }
 

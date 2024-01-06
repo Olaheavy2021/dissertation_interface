@@ -1,9 +1,9 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Shared.DTO;
 
 namespace Dissertation.Application.SupervisionCohort.Commands.CreateSupervisionCohort;
 
-public class CreateSupervisionCohortRequestValidator :  AbstractValidator<CreateSupervisionCohortRequest>
+public class CreateSupervisionCohortRequestValidator : AbstractValidator<CreateSupervisionCohortRequest>
 {
     public CreateSupervisionCohortRequestValidator()
     {

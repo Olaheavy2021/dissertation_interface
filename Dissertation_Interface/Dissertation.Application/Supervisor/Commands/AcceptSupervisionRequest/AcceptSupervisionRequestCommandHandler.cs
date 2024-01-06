@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.Utility;
+using Dissertation.Application.Utility;
 using Dissertation.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
