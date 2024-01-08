@@ -50,6 +50,7 @@ public class ResendStudentInviteCommandHandler : IRequestHandler<ResendStudentIn
         //extend the expiry by 7 days again
         studentInvite.ExpiryDate = DateTime.UtcNow.Date.AddDays(7);
         this._db.StudentInviteRepository.Update(studentInvite);
+        await this._db.SaveAsync(cancellationToken);
 
         //resend the email
         var callbackUrl = CallbackUrlGenerator.GenerateStudentInviteCallBackUrl(

@@ -33,7 +33,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
 
         if (!string.IsNullOrEmpty(paginationParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.LastName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search OR U.FirstName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByUserName}%"));
         }
 
@@ -65,7 +65,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
 
         if (!string.IsNullOrEmpty(paginationParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.LastName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search OR U.FirstName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByUserName}%"));
         }
 
@@ -102,7 +102,7 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
 
         if (!string.IsNullOrEmpty(paginationParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.LastName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search OR U.FirstName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByUserName}%"));
         }
 

@@ -33,7 +33,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
 
         if (!string.IsNullOrEmpty(listParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.LastName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search OR U.FirstName LIKE @search ");
             parametersList.Add(new SqlParameter("@search", $"%{listParameters.SearchByUserName}%"));
         }
 
@@ -66,7 +66,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
 
         if (!string.IsNullOrEmpty(listParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.LastName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search OR U.FirstName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{listParameters.SearchByUserName}%"));
         }
 
@@ -93,7 +93,7 @@ public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>,
 
         if (!string.IsNullOrEmpty(listParameters.SearchByUserName))
         {
-            sqlQuery.Append(" AND U.LastName LIKE @search");
+            sqlQuery.Append(" AND U.LastName LIKE @search OR U.FirstName LIKE @search ");
             parametersList.Add(new SqlParameter("@search", $"%{listParameters.SearchByUserName}%"));
         }
 

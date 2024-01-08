@@ -23,7 +23,7 @@ public class StudentInviteRepository : GenericRepository<StudentInvite>, IStuden
         // Apply search
         if (!string.IsNullOrEmpty(paginationParameters.SearchByStudentId))
         {
-            sqlQuery.Append(" WHERE StudentId LIKE @search");
+            sqlQuery.Append(" WHERE LastName LIKE @search OR FirstName LIKE @search ");
             parametersList.Add(new SqlParameter("@search", $"%{paginationParameters.SearchByStudentId}%"));
         }
 

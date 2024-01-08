@@ -38,7 +38,7 @@ public class SupervisionListRepository : GenericRepository<SupervisionList>, ISu
 
         if (!string.IsNullOrEmpty(parameters.SearchByStudent))
         {
-            sqlQuery.Append(" AND U2.Lastname LIKE @search");
+            sqlQuery.Append(" AND U2.Lastname LIKE @search OR U2.FirstName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{parameters.SearchByStudent}%"));
         }
 
@@ -75,7 +75,7 @@ public class SupervisionListRepository : GenericRepository<SupervisionList>, ISu
 
         if (!string.IsNullOrEmpty(parameters.SearchBySupervisor))
         {
-            sqlQuery.Append(" AND U1.Lastname LIKE @search");
+            sqlQuery.Append(" AND U1.Lastname LIKE @search OR U1.FirstName LIKE @search ");
             parametersList.Add(new SqlParameter("@search", $"%{parameters.SearchBySupervisor}%"));
         }
 
@@ -106,7 +106,7 @@ public class SupervisionListRepository : GenericRepository<SupervisionList>, ISu
 
         if (!string.IsNullOrEmpty(parameters.SearchBySupervisor))
         {
-            sqlQuery.Append(" AND U1.LastName LIKE @search");
+            sqlQuery.Append(" AND U1.LastName LIKE @search OR U1.FirstName LIKE @search");
             parametersList.Add(new SqlParameter("@search", $"%{parameters.SearchBySupervisor}%"));
         }
 

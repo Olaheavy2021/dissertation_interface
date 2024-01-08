@@ -49,6 +49,7 @@ public class ResendSupervisorInviteCommandHandler : IRequestHandler<ResendSuperv
 
         supervisorInvite.ExpiryDate = DateTime.UtcNow.Date.AddDays(7);
         this._db.SupervisorInviteRepository.Update(supervisorInvite);
+        await this._db.SaveAsync(cancellationToken);
 
         //resend the email
         var callbackUrl = CallbackUrlGenerator.GenerateSupervisionInviteCallBackUrl(
