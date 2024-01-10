@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace UserManagement_API.Migrations
 {
+    [ExcludeFromCodeCoverage]
     /// <inheritdoc />
     public partial class InitialMigration : Migration
     {
