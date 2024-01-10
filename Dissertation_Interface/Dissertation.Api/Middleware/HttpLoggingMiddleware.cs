@@ -64,7 +64,7 @@ public class HttpLoggingMiddleware
     private IReadOnlyDictionary<string, string> FilterHeaders(IHeaderDictionary headers)
     {
         var filteredHeaders = new Dictionary<string, string>();
-        foreach ((string key, Microsoft.Extensions.Primitives.StringValues value) in headers)
+        foreach ((var key, Microsoft.Extensions.Primitives.StringValues value) in headers)
         {
             if (this._redactHeaders.Contains(key))
             {

@@ -133,21 +133,6 @@ public class UserController : Controller
             paginationParameters.LoggedInAdminId = adminUserId;
 
         ResponseDto<PaginatedUserListDto> users = this._userService.GetPaginatedAdminUsers(paginationParameters);
-
-        if (users.Result != null)
-        {
-            var metadata = new
-            {
-                users.Result.TotalCount,
-                users.Result.PageSize,
-                users.Result.CurrentPage,
-                users.Result.TotalPages,
-                users.Result.HasNext,
-                users.Result.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-        }
-
         return Ok(users);
     }
 
@@ -158,21 +143,6 @@ public class UserController : Controller
     public async Task<ActionResult> GetStudents([FromQuery] DissertationStudentPaginationParameters paginationParameters)
     {
         ResponseDto<PaginatedStudentListDto> users = await this._userService.GetPaginatedStudents(paginationParameters);
-
-        if (users.Result != null)
-        {
-            var metadata = new
-            {
-                users.Result.TotalCount,
-                users.Result.PageSize,
-                users.Result.CurrentPage,
-                users.Result.TotalPages,
-                users.Result.HasNext,
-                users.Result.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-        }
-
         return Ok(users);
     }
 
@@ -183,21 +153,6 @@ public class UserController : Controller
     public async Task<IActionResult> GetSupervisors([FromQuery] SupervisorPaginationParameters paginationParameters)
     {
         ResponseDto<PaginatedSupervisorListDto> users = await this._userService.GetPaginatedSupervisors(paginationParameters);
-
-        if (users.Result != null)
-        {
-            var metadata = new
-            {
-                users.Result.TotalCount,
-                users.Result.PageSize,
-                users.Result.CurrentPage,
-                users.Result.TotalPages,
-                users.Result.HasNext,
-                users.Result.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-        }
-
         return Ok(users);
     }
 

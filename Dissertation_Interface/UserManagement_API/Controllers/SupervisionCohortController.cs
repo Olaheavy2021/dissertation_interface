@@ -4,7 +4,6 @@ using Shared.Constants;
 using Shared.DTO;
 using Shared.Middleware;
 using Swashbuckle.AspNetCore.Annotations;
-using UserManagement_API.Data.Models.Dto;
 using UserManagement_API.Service.IService;
 
 namespace UserManagement_API.Controllers;
