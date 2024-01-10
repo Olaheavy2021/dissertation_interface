@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Primitives;
 
 namespace UserManagement_API.Middleware.Correlation;
 
+[ExcludeFromCodeCoverage]
 public class CorrelationIdMiddleware
 {
     private readonly RequestDelegate _next;

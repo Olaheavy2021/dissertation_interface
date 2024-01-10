@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace UserManagement_API.Middleware.Correlation;
 
+[ExcludeFromCodeCoverage]
 public class CorrelationIdGenerator : ICorrelationIdGenerator
 {
     private string _correlationId = Guid.NewGuid().ToString("D");

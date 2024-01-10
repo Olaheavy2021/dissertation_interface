@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Identity;
 
 namespace UserManagement_API.Data.Models;
 
+[ExcludeFromCodeCoverage]
 public class ApplicationUser : IdentityUser
 {
     [StringLength(50)]
