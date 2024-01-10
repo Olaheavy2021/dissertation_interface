@@ -1,4 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace UserManagement_API.Data.DomainHelper;
+
 
 public interface IAuditableEntity<TId> : IAuditableEntity, IEntity<TId>
 {

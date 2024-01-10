@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Storage;
 using UserManagement_API.Data.IRepository;
 
 namespace UserManagement_API.Data.Repository;
 
+[ExcludeFromCodeCoverage]
 public class UnitOfWork : IUnitOfWork
 {
     private IDbContextTransaction _transaction;

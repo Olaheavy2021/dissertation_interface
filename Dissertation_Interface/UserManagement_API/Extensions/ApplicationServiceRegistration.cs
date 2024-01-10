@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -24,6 +25,7 @@ using UserManagement_API.Service.IService;
 
 namespace UserManagement_API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class ApplicationServiceRegistration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)

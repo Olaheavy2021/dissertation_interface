@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace UserManagement_API.Helpers;
 
 public interface IRequestHelper

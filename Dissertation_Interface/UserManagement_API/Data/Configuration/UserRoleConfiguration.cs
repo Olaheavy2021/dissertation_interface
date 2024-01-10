@@ -1,9 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace UserManagement_API.Data.Configuration;
-
+[ExcludeFromCodeCoverage]
 public class UserRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<string>>
 {
     public void Configure(EntityTypeBuilder<IdentityUserRole<string>> builder) =>

@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace UserManagement_API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class HttpContextExtensions
 {
     public static string? GetUserId(this HttpContext context) => context.Items["UserId"] as string;

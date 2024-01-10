@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Destructurama.Attributed;
 
 namespace UserManagement_API.Data.Models.Dto;
 
+[ExcludeFromCodeCoverage]
 public class ConfirmPasswordResetDto
 {
     [NotLogged]

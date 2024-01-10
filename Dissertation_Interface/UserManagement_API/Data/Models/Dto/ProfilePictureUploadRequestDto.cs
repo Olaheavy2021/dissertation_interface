@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace UserManagement_API.Data.Models.Dto;
 
+[ExcludeFromCodeCoverage]
 public class ProfilePictureUploadRequestDto
 {
     public IFormFile? File { get; set; } = null!;

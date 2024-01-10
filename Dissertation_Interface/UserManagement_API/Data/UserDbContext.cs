@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -6,6 +7,7 @@ using UserManagement_API.Data.Models;
 
 namespace UserManagement_API.Data;
 
+[ExcludeFromCodeCoverage]
 public class UserDbContext : IdentityDbContext<ApplicationUser>
 {
     private readonly IHttpContextAccessor _httpContextAccessor;

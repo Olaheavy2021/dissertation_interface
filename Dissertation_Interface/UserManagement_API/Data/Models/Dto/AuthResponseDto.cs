@@ -1,7 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using Shared.DTO;
 
 namespace UserManagement_API.Data.Models.Dto;
-
+[ExcludeFromCodeCoverage]
 public class AuthResponseDto
 {
     public UserDto? User { get; set; }

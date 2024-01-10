@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
@@ -9,6 +10,7 @@ using System.Web;
 
 namespace UserManagement_API.Helpers;
 
+[ExcludeFromCodeCoverage]
 public class RequestHelper : IRequestHelper
 {
     private readonly HttpClient _httpClient;

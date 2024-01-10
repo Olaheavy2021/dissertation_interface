@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using UserManagement_API.Data.Models;
 
 namespace UserManagement_API.Data.Repository;
 
+[ExcludeFromCodeCoverage]
 public class SupervisionRequestRepository : GenericRepository<SupervisionRequest>, ISupervisionRequestRepository
 {
     public SupervisionRequestRepository(DbContext dbContext) : base(dbContext)

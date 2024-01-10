@@ -1,17 +1,14 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Shared.Settings;
 using UserManagement_API.Data;
 using UserManagement_API.Data.Models;
-using UserManagement_API.Extensions;
 using UserManagement_API.Service;
 using UserManagement_API.Service.IService;
 
-namespace UserManagement_API;
+namespace UserManagement_API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class IdentityServiceRegistration
 {
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)

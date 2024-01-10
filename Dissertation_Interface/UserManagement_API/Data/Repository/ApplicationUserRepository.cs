@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using UserManagement_API.Data.Models.Dto;
 
 namespace UserManagement_API.Data.Repository;
 
+[ExcludeFromCodeCoverage]
 public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IApplicationUserRepository
 {
     public ApplicationUserRepository(DbContext dbContext) : base(dbContext)

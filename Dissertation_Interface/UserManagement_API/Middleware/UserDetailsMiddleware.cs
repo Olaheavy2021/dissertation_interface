@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Mime;
@@ -8,6 +9,7 @@ using Shared.Helpers;
 
 namespace UserManagement_API.Middleware;
 
+[ExcludeFromCodeCoverage]
 public class UserDetailsMiddleware
 {
     private readonly RequestDelegate _next;

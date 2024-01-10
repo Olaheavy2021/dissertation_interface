@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
@@ -11,6 +12,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace UserManagement_API.ExternalServices;
 
+[ExcludeFromCodeCoverage]
 public class DissertationApiService : IDissertationApiService
 {
     private readonly IRequestHelper _requestHelper;

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using UserManagement_API.Data.Models;
 
 namespace UserManagement_API.Data.Repository;
 
+[ExcludeFromCodeCoverage]
 public class SupervisionCohortRepository : GenericRepository<SupervisionCohort>, ISupervisionCohortRepository
 {
     public SupervisionCohortRepository(DbContext dbContext) : base(dbContext)

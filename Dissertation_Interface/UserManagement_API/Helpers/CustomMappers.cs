@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Shared.DTO;
 using Shared.Enums;
 using UserManagement_API.Data.Models;
 
 namespace UserManagement_API.Helpers;
 
+[ExcludeFromCodeCoverage]
 public static class CustomMappers
 {
     public static UserListDto MapToUserDto(ApplicationUser applicationUser) =>

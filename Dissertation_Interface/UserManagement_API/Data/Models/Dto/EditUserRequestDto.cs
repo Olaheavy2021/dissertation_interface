@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace UserManagement_API.Data.Models.Dto;
 
+[ExcludeFromCodeCoverage]
 public class EditUserRequestDto
 {
     public string UserId { get; set; } = string.Empty;

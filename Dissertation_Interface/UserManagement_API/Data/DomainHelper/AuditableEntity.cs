@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace UserManagement_API.Data.DomainHelper;
 
+[ExcludeFromCodeCoverage]
 public class AuditableEntity<TId> : IAuditableEntity<TId>
 {
     private DateTime? _createdDate;
