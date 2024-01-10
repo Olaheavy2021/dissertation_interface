@@ -25,6 +25,13 @@ public static class TestData
         IsLockedOutByAdmin = false
     };
 
+    internal static readonly ProfilePicture ProfilePicture = ProfilePicture.Create(
+        "jhahaj",
+        "abndbnadbn",
+        "jdshjshd",
+        UserId
+    );
+
     internal static readonly JwtSettings JwtSettings = new()
     {
         Audience = "SHUDissertationInterfaceUser",

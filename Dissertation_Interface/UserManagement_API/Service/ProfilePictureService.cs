@@ -39,7 +39,7 @@ public class ProfilePictureService : IProfilePictureService
 
         ApplicationUser? user =
             await this._unitOfWork.ApplicationUserRepository.GetFirstOrDefaultAsync(a => a.Id == userId,
-                includes: x => x.ProfilePicture);
+                includes: x => x.ProfilePicture!);
         this._logger.LogInformation("Fetching details of this user with userId from the database - {0}", userId);
         if (user == null) throw new NotFoundException(nameof(ApplicationUser), userId);
 
@@ -125,7 +125,7 @@ public class ProfilePictureService : IProfilePictureService
 
     private void UpdateUserAndProfilePicture(ProfilePictureUploadRequestDto request, ApplicationUser user, BlobResponseDto blobResponse)
     {
-        user.ProfilePicture.Name = blobResponse.Blob.Name!;
+        user.ProfilePicture!.Name = blobResponse.Blob.Name!;
         user.ProfilePicture.ImageData = blobResponse.Blob.Uri!;
         user.ProfilePicture.ContentType = blobResponse.Blob.ContentType!;
 

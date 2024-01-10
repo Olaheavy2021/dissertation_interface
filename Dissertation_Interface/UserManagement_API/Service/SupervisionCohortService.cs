@@ -112,7 +112,7 @@ public class SupervisionCohortService : ISupervisionCohortService
     {
         this._logger.LogInformation("Attempting to fetch a Supervision Cohort with this {id}",
             request.SupervisionCohortId);
-        SupervisionCohort? supervisionCohort =
+        SupervisionCohort supervisionCohort =
             await this._db.SupervisionCohortRepository.GetAsync(x => x.Id == request.SupervisionCohortId) ?? throw new NotFoundException(nameof(SupervisionCohort), request.SupervisionCohortId);
 
         //check the number of accepted requests
@@ -167,7 +167,7 @@ public class SupervisionCohortService : ISupervisionCohortService
     public async Task<ResponseDto<GetSupervisionCohort>> GetSupervisionCohort(long id)
     {
         this._logger.LogInformation("Attempting to fetch a Supervision Cohort with this {id}", id);
-        SupervisionCohort? supervisionCohort =
+        SupervisionCohort supervisionCohort =
             await this._db.SupervisionCohortRepository.GetAsync(x => x.Id == id, includes: x => x.Supervisor) ?? throw new NotFoundException(nameof(SupervisionCohort), id);
         ResponseDto<IReadOnlyList<GetDepartment>> departments = await this._dissertationApiService.GetAllDepartments();
         if (departments == null || departments.Result == null) throw new NotFoundException("Departments", "all");
@@ -317,7 +317,7 @@ public class SupervisionCohortService : ISupervisionCohortService
     {
         this._logger.LogInformation("Attempting to fetch a Supervision Cohort with this {id}",
             supervisionCohortId);
-        SupervisionCohort? supervisionCohort =
+        SupervisionCohort supervisionCohort =
             await this._db.SupervisionCohortRepository.GetAsync(x => x.Id == supervisionCohortId) ?? throw new NotFoundException(nameof(SupervisionCohort), supervisionCohortId);
 
         //check if the supervisor has accepted any request
