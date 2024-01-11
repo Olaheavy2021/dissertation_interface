@@ -1,7 +1,6 @@
 using Destructurama;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using UserManagement_API;
 using UserManagement_API.Data;
 using UserManagement_API.Extensions;
 using UserManagement_API.Middleware;

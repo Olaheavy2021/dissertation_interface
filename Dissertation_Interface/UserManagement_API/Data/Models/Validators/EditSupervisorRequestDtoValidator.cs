@@ -33,5 +33,4 @@ public class EditSupervisorRequestDtoValidator : AbstractValidator<EditSuperviso
         RuleFor(p => p.DepartmentId)
             .NotEmpty().WithMessage(ErrorMessages.RequiredField);
     }
-
 }
