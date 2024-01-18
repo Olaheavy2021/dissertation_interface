@@ -43,13 +43,14 @@ public static class ApplicationServiceRegistration
         // Interfaces and Services
         services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IUserService, UserService>();
         services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
         services.AddScoped<IRequestHelper, RequestHelper>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IDissertationApiService, DissertationApiService>();
         services.AddScoped<ISupervisionCohortService, SupervisionCohortService>();
         services.AddScoped<ISupervisionListService, SupervisionListService>();
         services.AddScoped<ISupervisionRequestService, SupervisionRequestService>();
+        services.AddScoped<IProfilePictureService, ProfilePictureService>();
         services.AddScoped<IMessageBus, MessageBus>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -57,7 +58,6 @@ public static class ApplicationServiceRegistration
         services.AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>();
         services.AddSingleton(x => new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));
         services.AddSingleton<IBlobRepository, BlobRepository>();
-        services.AddScoped<IProfilePictureService, ProfilePictureService>();
 
         //Swagger Endpoint
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

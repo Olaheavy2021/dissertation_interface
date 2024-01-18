@@ -391,6 +391,52 @@ namespace Dissertation.Infrastructure.Migrations
                     b.ToTable("SupervisorInvites");
                 });
 
+            modelBuilder.Entity("Dissertation.Domain.Entities.SupervisorSuggestion", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("AvailableSlot")
+                        .HasColumnType("int");
+
+                    b.Property<double>("CompatibilityScore")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResearchArea")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StudentTopic")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupervisorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SupervisorSuggestions");
+                });
+
             modelBuilder.Entity("Dissertation.Domain.Entities.Course", b =>
                 {
                     b.HasOne("Dissertation.Domain.Entities.Department", "Department")

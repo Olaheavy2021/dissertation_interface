@@ -11,6 +11,7 @@ using Dissertation.Application.Student.Queries.GetListOfStudents;
 using Dissertation.Application.Student.Queries.GetStudentById;
 using Dissertation.Application.Student.Queries.GetSupervisionLists;
 using Dissertation.Application.Student.Queries.GetSupervisionRequests;
+using Dissertation.Application.SupervisorSuggestion.Queries.GetSuggestionsForStudent;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -181,6 +182,18 @@ public class StudentController : Controller
     {
         var query = new UploadResearchProposalCommand(request.ResearchProposal);
         ResponseDto<string> result = await this._sender.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Student")]
+    [HttpGet("supervision-suggestions")]
+    [SwaggerOperation(Summary = "Get Supervision Suggestions for a Student")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<string>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetSupervisionSuggestions()
+    {
+        var query = new GetSuggestionsForStudentsQuery();
+        ResponseDto<List<GetSupervisorSuggestion>> result = await this._sender.Send(query);
         return Ok(result);
     }
 }

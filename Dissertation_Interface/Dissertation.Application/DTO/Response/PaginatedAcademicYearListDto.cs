@@ -5,7 +5,7 @@ namespace Dissertation.Application.DTO.Response;
 
 public class PaginatedAcademicYearListDto
 {
-    public PagedList<GetAcademicYear> Data { get; set; }
+    public PagedList<GetAcademicYear> Data { get; set; } = null!;
 
     public int TotalCount { get; set; }
 

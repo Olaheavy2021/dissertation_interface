@@ -17,7 +17,9 @@ public class AzureServiceBusConsumer : IAzureServiceBusConsumer
     private readonly ServiceBusProcessor _batchUploadProcessor;
     private readonly IAppLogger<AzureServiceBusConsumer> _logger;
 
-    public AzureServiceBusConsumer(BatchUploadService batchUploadService, IOptions<ServiceBusSettings> serviceBusSettings, IAppLogger<AzureServiceBusConsumer> logger)
+    public AzureServiceBusConsumer
+        (BatchUploadService batchUploadService, IOptions<ServiceBusSettings> serviceBusSettings,
+            IAppLogger<AzureServiceBusConsumer> logger)
     {
         this._batchUploadService = batchUploadService;
         this._logger = logger;

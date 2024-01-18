@@ -9,4 +9,6 @@ public static class SupervisionCohortRoutes
     public const string UpdateSupervisionSlots = $"{SupervisionCohortRoute}/update-slots";
 
     public const string GetSupervisionCohortMetrics = $"{SupervisionCohortRoute}/metrics/";
+
+    public const string GetAllSupervisionCohortRoute = $"{SupervisionCohortRoute}/get-all/";
 }

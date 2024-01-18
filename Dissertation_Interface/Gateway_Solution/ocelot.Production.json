@@ -1,6 +1,45 @@
 ﻿{
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/v1/student/supervision-suggestions",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/student/supervision-suggestions",
+      "UpstreamHttpMethod": [ "Get"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/supervisorsuggestion/callback/{taskId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/supervisorsuggestion/callback/{taskId}",
+      "UpstreamHttpMethod": [ "Post"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/supervisorsuggestion/initiate",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "difdissertationapi.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/supervisorsuggestion/initiate",
+      "UpstreamHttpMethod": [ "Post"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/supervisionlist",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [

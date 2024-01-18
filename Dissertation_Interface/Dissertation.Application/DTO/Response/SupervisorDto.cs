@@ -6,7 +6,7 @@ public class SupervisorDto
 {
     public long Id { get; set; }
 
-    public GetDepartment Department { get; set; }
+    public GetDepartment Department { get; set; } = null!;
 
     public string UserId { get; set; } = default!;
 

@@ -5,7 +5,7 @@ namespace Dissertation.Application.DTO.Response;
 
 public class PaginatedDissertationCohortListDto
 {
-    public PagedList<GetDissertationCohort> Data { get; set; }
+    public PagedList<GetDissertationCohort> Data { get; set; } = null!;
 
     public int TotalCount { get; set; }
 

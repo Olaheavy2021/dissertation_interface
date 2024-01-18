@@ -365,6 +365,31 @@ public class SupervisionCohortService : ISupervisionCohortService
         };
     }
 
+    public async Task<ResponseDto<IReadOnlyList<GetSupervisionCohort>>> GetAllSupervisionCohort(long cohortId)
+    {
+        ResponseDto<IReadOnlyList<GetDepartment>> departments = await this._dissertationApiService.GetAllDepartments();
+        if (departments == null || departments.Result == null) throw new NotFoundException("Departments", "all");
+        this._logger.LogInformation("Number of departments - {count}", departments.Result.Count);
+
+        IReadOnlyList<SupervisionCohort> supervisionCohorts =await  this._db.SupervisionCohortRepository.GetAllAsync(x => x.DissertationCohortId == cohortId, includes:x=>x.Supervisor);
+
+        if (supervisionCohorts.Any())
+        {
+            var mappedSupervisionCohort = supervisionCohorts
+                .Select(supervisionCohort => MapToSupervisionCohortDto(supervisionCohort, departments.Result)).ToList();
+
+            return new ResponseDto<IReadOnlyList<GetSupervisionCohort>>
+            {
+                IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = mappedSupervisionCohort
+            };
+        }
+
+        return new ResponseDto<IReadOnlyList<GetSupervisionCohort>>
+        {
+            Message = ErrorMessages.DefaultError, IsSuccess = false,
+        };
+    }
+
     private GetSupervisionCohort MapToSupervisionCohortDto(
         SupervisionCohort supervisionCohort, IEnumerable<GetDepartment> departments)
     {

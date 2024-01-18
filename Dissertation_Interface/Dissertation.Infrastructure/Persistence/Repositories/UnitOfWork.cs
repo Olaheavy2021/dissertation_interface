@@ -55,6 +55,9 @@ public class UnitOfWork : IUnitOfWork
 
     public IResearchProposalRepository ResearchProposalRepository => new ResearchProposalRepository(this.Context);
 
+    public ISupervisorSuggestionRepository SupervisorSuggestionRepository =>
+        new SupervisorSuggestionRepository(this.Context);
+
     #endregion Repositories
 
     public async Task BeginTransactionAsync() => this._transaction = await this.Context.Database.BeginTransactionAsync().ConfigureAwait(false);

@@ -11,7 +11,8 @@ namespace UserManagement_API.Data;
 public class UserDbContext : IdentityDbContext<ApplicationUser>
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public UserDbContext(DbContextOptions<UserDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options) => this._httpContextAccessor = httpContextAccessor;
+    public UserDbContext(DbContextOptions<UserDbContext> options, IHttpContextAccessor httpContextAccessor) :
+        base(options) => this._httpContextAccessor = httpContextAccessor;
 
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 

@@ -19,6 +19,7 @@ public interface IUnitOfWork
     IStudentInviteRepository StudentInviteRepository { get; }
 
     IResearchProposalRepository ResearchProposalRepository { get; }
+    ISupervisorSuggestionRepository SupervisorSuggestionRepository { get; }
 
     Task BeginTransactionAsync();
     Task<int> SaveAsync();

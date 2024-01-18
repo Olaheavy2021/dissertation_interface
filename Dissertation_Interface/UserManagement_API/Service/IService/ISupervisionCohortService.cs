@@ -19,8 +19,8 @@ public interface ISupervisionCohortService
     ResponseDto<PaginatedUserListDto> GetActiveSupervisorsForCohort(SupervisionCohortListParameters paginationParameters);
 
     ResponseDto<PaginatedUserListDto> GetInActiveSupervisorsForCohort(SupervisionCohortListParameters paginationParameters);
-
     Task<ResponseDto<SupervisionCohort>> GetSupervisionCohort(SupervisionCohortParameters parameters);
     Task<ResponseDto<string>> DeleteSupervisionCohort(long supervisionCohortId, CancellationToken cancellationToken);
     Task<ResponseDto<SupervisionCohortMetricsDto>> GetSupervisionCohortMetrics(long dissertationCohortId);
+    Task<ResponseDto<IReadOnlyList<GetSupervisionCohort>>> GetAllSupervisionCohort(long cohortId);
 }

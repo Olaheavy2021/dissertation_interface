@@ -331,7 +331,7 @@ public class UserService : IUserService
             this._logger.LogWarning("Edit User - Validation errors in whilst editing user for {0} - {1}", nameof(ApplicationUser), request.UserName);
             await this._messageBus.PublishAuditLog(EventType.EditUser,
                 this._serviceBusSettings.ServiceBusConnectionString, loggedInAdminEmail, ErrorMessages.DefaultError, request.Email);
-            throw new BadRequestException("Invalid Login Request", validationResult);
+            throw new BadRequestException("Invalid Edit Request", validationResult);
         }
 
         //check if the user exists
@@ -414,7 +414,7 @@ public class UserService : IUserService
             this._logger.LogWarning("Edit Supervisor - Validation errors in whilst editing user for {0} - {1}", nameof(ApplicationUser), request.StaffId);
             await this._messageBus.PublishAuditLog(EventType.EditUser,
                 this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, ErrorMessages.DefaultError, request.StaffId);
-            throw new BadRequestException("Invalid Login Request", validationResult);
+            throw new BadRequestException("Invalid Edit Request", validationResult);
         }
 
         //check if the user exists

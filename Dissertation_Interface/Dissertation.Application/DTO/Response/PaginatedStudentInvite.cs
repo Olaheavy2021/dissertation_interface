@@ -4,7 +4,7 @@ namespace Dissertation.Application.DTO.Response;
 
 public class PaginatedStudentInvite
 {
-    public PagedList<GetStudentInvite> Data { get; set; }
+    public PagedList<GetStudentInvite> Data { get; set; } = null!;
 
     public int TotalCount { get; set; }
 

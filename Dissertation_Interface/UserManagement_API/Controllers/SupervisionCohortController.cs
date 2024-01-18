@@ -95,7 +95,7 @@ public class SupervisionCohortController : Controller
 
     [Authorize(Roles = "Superadmin, Admin")]
     [HttpGet("metrics/{cohortId:long}")]
-    [SwaggerOperation(Summary = "Remove a Supervisor from a Supervision Cohort")]
+    [SwaggerOperation(Summary = "Get Metrics for a Supervision Cohort")]
     [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<SupervisionCohortMetricsDto>))]
     [SwaggerResponse(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetSupervisionCohortMetrics([FromRoute] long cohortId)
@@ -103,4 +103,16 @@ public class SupervisionCohortController : Controller
         ResponseDto<SupervisionCohortMetricsDto> response = await this._supervisionCohortService.GetSupervisionCohortMetrics(cohortId);
         return Ok(response);
     }
+
+    [Authorize(Roles = "Superadmin, Admin")]
+    [HttpGet("get-all/{cohortId:long}")]
+    [SwaggerOperation(Summary = "Get All Supervision Cohorts")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Request Successful", typeof(ResponseDto<SupervisionCohortMetricsDto>))]
+    [SwaggerResponse(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetAllSupervisionCohort([FromRoute] long cohortId)
+    {
+        ResponseDto<IReadOnlyList<GetSupervisionCohort>> response = await this._supervisionCohortService.GetAllSupervisionCohort(cohortId);
+        return Ok(response);
+    }
+
 }

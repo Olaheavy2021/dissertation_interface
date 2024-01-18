@@ -28,6 +28,7 @@ public static class ServiceCollectionExtension
             .AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>()
             .AddScoped<IRequestHelper, RequestHelper>()
             .AddScoped<IUserApiService, UserApiService>()
+            .AddScoped<IDissertationMatchingService, DissertationMatchingService>()
             .AddScoped<BackendApiAuthenticationHttpClientHandler>()
             .AddScoped<IMessageBus, MessageBus>()
             .AddScoped<IHtmlSanitizerService, HtmlSanitizerService>()

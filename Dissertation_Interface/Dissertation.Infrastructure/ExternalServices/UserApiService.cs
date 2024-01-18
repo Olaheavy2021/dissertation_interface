@@ -127,7 +127,7 @@ public class UserApiService : IUserApiService
 
     public async Task<ResponseDto<string>> RejectSupervisionRequest(ActionSupervisionRequest request)
     {
-        var url = $"{this._serviceUrlSettings.UserApi}{SupervisionRequestRoutes.RejectSupervisionRequest}";
+        var url = $"{this._serviceUrlSettings.DissertationMatchingApi}{SupervisionRequestRoutes.RejectSupervisionRequest}";
         var response = await this._requestHelper.PostAsync(url, request, null, mediaType: MediaType.Json);
         return JsonSerializer.Deserialize<ResponseDto<string>>(response, this._jsonSerializerOptions)!;
     }
@@ -279,6 +279,13 @@ public class UserApiService : IUserApiService
         var url = $"{this._serviceUrlSettings.UserApi}{SupervisionCohortRoutes.GetSupervisionCohortMetrics}{dissertationCohortId}";
         var response = await this._requestHelper.GetAsync(url, null, mediaType: MediaType.Json);
         return JsonSerializer.Deserialize<ResponseDto<SupervisionCohortMetricsDto>>(response, this._jsonSerializerOptions)!;
+    }
+
+    public async Task<ResponseDto<List<GetSupervisionCohort>>> GetAllSupervisionCohort(long cohortId)
+    {
+        var url = $"{this._serviceUrlSettings.UserApi}{SupervisionCohortRoutes.GetAllSupervisionCohortRoute}{cohortId}";
+        var response = await this._requestHelper.GetAsync(url, null, mediaType: MediaType.Json);
+        return JsonSerializer.Deserialize<ResponseDto<List<GetSupervisionCohort>>>(response, this._jsonSerializerOptions)!;
     }
 
     #endregion

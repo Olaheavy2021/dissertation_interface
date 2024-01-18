@@ -7,4 +7,6 @@ public class ServiceUrlSettings
     public string UserApi { get; set; } = default!;
 
     public string DissertationApi { get; set; } = default!;
+
+    public string DissertationMatchingApi { get; set; } = default!;
 }

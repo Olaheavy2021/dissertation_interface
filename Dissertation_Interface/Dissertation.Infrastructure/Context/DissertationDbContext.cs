@@ -3,7 +3,6 @@ using Dissertation.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Dissertation.Infrastructure.Context;
 
@@ -27,6 +26,8 @@ public class DissertationDbContext : DbContext
     public DbSet<Student> Students { get; set; }
 
     public DbSet<StudentInvite> StudentInvites { get; set; }
+
+    public DbSet<SupervisorSuggestion> SupervisorSuggestions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) => ModelBuilderConfiguration.Configure(modelBuilder);
 

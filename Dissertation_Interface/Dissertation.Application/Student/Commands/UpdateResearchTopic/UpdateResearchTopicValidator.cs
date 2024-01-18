@@ -12,6 +12,6 @@ public class UpdateResearchTopicValidator :
             .NotEmpty()
             .WithMessage("HTML content is required.");
 
-        RuleFor(x => x.ResearchTopic).MaximumLength(200).WithMessage("Research Topic has a limit of 200 characters");
+        RuleFor(x => x.ResearchTopic).MaximumLength(300).WithMessage("Research Topic has a limit of 300 characters");
     }
 }
