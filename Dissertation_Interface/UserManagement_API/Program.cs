@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Destructurama;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -67,3 +68,6 @@ void ApplyMigration()
         db.Database.Migrate();
     }
 }
+
+[ExcludeFromCodeCoverage]
+public partial class Program { }

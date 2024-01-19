@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.SupervisorSuggestion.Commands.InitiateMatching;
+using Dissertation.Application.SupervisorSuggestion.Commands.InitiateMatching;
 using Dissertation.Application.SupervisorSuggestion.Commands.ProcessMatching;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

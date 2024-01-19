@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Dissertation.Application.DissertationCohort.Queries.GetActiveDissertationCohort;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -75,14 +75,17 @@ public class InitiateMatchingCommandHandler : IRequestHandler<InitiateMatchingCo
 
         var initiatingMatchingRequest = new InitiateMatchingRequest
         {
-            Supervisor = supervisorRequest, Student = studentRequest
+            Supervisor = supervisorRequest,
+            Student = studentRequest
         };
 
         InitiateMatchingResponse initiatingMatchingResponse = await this._dissertationMatchingService.ProcessData(initiatingMatchingRequest);
         this._logger.LogInformation(JsonSerializer.Serialize(initiatingMatchingRequest));
         return new ResponseDto<string>
         {
-            Message = $"{initiatingMatchingRequest.Supervisor.Count} Supervisors and {initiatingMatchingRequest.Student.Count} Students data are currently being processed.", IsSuccess = true, Result = initiatingMatchingResponse.Task
+            Message = $"{initiatingMatchingRequest.Supervisor.Count} Supervisors and {initiatingMatchingRequest.Student.Count} Students data are currently being processed.",
+            IsSuccess = true,
+            Result = initiatingMatchingResponse.Task
         };
     }
 

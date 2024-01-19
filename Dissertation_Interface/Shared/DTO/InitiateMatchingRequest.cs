@@ -1,10 +1,10 @@
-﻿namespace Shared.DTO;
+namespace Shared.DTO;
 
 public class InitiateMatchingRequest
 {
-    public List<StudentMatchingRequest>  Student { get; set; } = null!;
+    public List<StudentMatchingRequest> Student { get; set; } = null!;
 
-    public List<SupervisorMatchingRequest>  Supervisor { get; set; } = null!;
+    public List<SupervisorMatchingRequest> Supervisor { get; set; } = null!;
 
 }
 

@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using FluentValidation.TestHelper;
 using Moq;
 using UserManagement_API.Data.IRepository;

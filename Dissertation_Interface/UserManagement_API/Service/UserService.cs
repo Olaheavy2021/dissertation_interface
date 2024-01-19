@@ -475,7 +475,7 @@ public class UserService : IUserService
             this._logger.LogWarning("Edit Student - Validation errors in whilst editing user for {0} - {1}", nameof(ApplicationUser), request.StudentId);
             await this._messageBus.PublishAuditLog(EventType.EditUser,
                 this._serviceBusSettings.ServiceBusConnectionString, loggedInUser, ErrorMessages.DefaultError, request.StudentId);
-            throw new BadRequestException("Invalid Login Request", validationResult);
+            throw new BadRequestException("Invalid Edit Request", validationResult);
         }
 
         //check if the user exists

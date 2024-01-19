@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Notification_API.Data.Models;
 
+[ExcludeFromCodeCoverage]
 public class AuditLog
 {
     [Key]

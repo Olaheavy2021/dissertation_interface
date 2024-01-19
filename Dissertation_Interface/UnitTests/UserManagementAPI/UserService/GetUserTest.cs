@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -45,7 +45,7 @@ public class GetUserTest
         this._messageBus = new Mock<IMessageBus>();
         this._serviceBusSettings = new Mock<IOptions<ServiceBusSettings>>();
         this._dissertationApi = new Mock<IDissertationApiService>();
-        this._userService = new UserManagement_API.Service.UserService(this._mockUnitOfWork.Object,this._logger.Object,this._mapper.Object,
+        this._userService = new UserManagement_API.Service.UserService(this._mockUnitOfWork.Object, this._logger.Object, this._mapper.Object,
             this._userManager.Object, this._messageBus.Object, this._serviceBusSettings.Object, this._dissertationApi.Object, this._httpContextAccessor.Object);
 
         #region TestData
@@ -85,7 +85,7 @@ public class GetUserTest
             .ReturnsAsync((ApplicationUser)null!);
 
         // Act & Assert
-         Assert.ThrowsAsync<NotFoundException>(() => this._userService.GetUser());
+        Assert.ThrowsAsync<NotFoundException>(() => this._userService.GetUser());
 
     }
 

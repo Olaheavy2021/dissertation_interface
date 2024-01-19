@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using SendGrid;
 
 namespace Notification_API.Data.Models.Dto;
 
+[ExcludeFromCodeCoverage]
 public class EmailResponseDto
 {
     public Response? Result { get; set; }

@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -38,7 +38,7 @@ public class SupervisionCohortServiceTest
     {
         // Arrange
         const int cohortId = 1;
-        var department = new GetDepartment() { Name = "Computing", Id = 4};
+        var department = new GetDepartment() { Name = "Computing", Id = 4 };
         var supervisionCohort = SupervisionCohort.Create(
             "supervisorId",
             5,
@@ -57,7 +57,7 @@ public class SupervisionCohortServiceTest
             .ReturnsAsync(new ResponseDto<IReadOnlyList<GetDepartment>> { Result = departments, IsSuccess = true });
 
         this._mockMapper.Setup(m => m.Map<SupervisorListDto>(It.IsAny<ApplicationUser>()))
-            .Returns(new SupervisorListDto {Department = department, });
+            .Returns(new SupervisorListDto { Department = department, });
 
         // Act
         ResponseDto<GetSupervisionCohort> result = await this._service.GetSupervisionCohort(cohortId);
@@ -75,7 +75,7 @@ public class SupervisionCohortServiceTest
     {
         // Arrange
         const int invalidCohortId = 99;
-        this._mockUnitOfWork.Setup(u => u.SupervisionCohortRepository.GetAsync(It.IsAny<Expression<Func<SupervisionCohort, bool>>>(),null, null))
+        this._mockUnitOfWork.Setup(u => u.SupervisionCohortRepository.GetAsync(It.IsAny<Expression<Func<SupervisionCohort, bool>>>(), null, null))
             .ReturnsAsync((SupervisionCohort)null!);
 
         // Act & Assert

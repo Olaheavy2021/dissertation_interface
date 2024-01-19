@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Notification_API.Data.Models;
 
 namespace Notification_API.Data;
 
+[ExcludeFromCodeCoverage]
 public class NotificationDbContext : DbContext
 {
     public NotificationDbContext(DbContextOptions<NotificationDbContext> options) : base(options)

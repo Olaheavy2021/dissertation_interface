@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Shared.DTO;
 using Shared.Exceptions;
-using Shared.Helpers;
 using Shared.Logging;
 using Shared.MessageBus;
 using Shared.Settings;
@@ -16,6 +15,7 @@ using UserManagement_API.Data.Models.Dto;
 
 namespace UnitTests.UserManagementAPI.AuthService;
 
+[TestFixture]
 public class RegisterAdminUnitTest
 {
     private Mock<FakeUserManager>? _userManagerMock;

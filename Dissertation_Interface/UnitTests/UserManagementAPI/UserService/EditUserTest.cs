@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
@@ -47,7 +47,7 @@ public class EditUserTest
         this._serviceBusSettings = new Mock<IOptions<ServiceBusSettings>>();
         this._dissertationApi = new Mock<IDissertationApiService>();
         this._serviceBusSettings.Setup(settings => settings.Value).Returns(this._serviceBusSettingsValue);
-        this._userService = new UserManagement_API.Service.UserService(this._mockUnitOfWork.Object,this._logger.Object,this._mapper.Object,
+        this._userService = new UserManagement_API.Service.UserService(this._mockUnitOfWork.Object, this._logger.Object, this._mapper.Object,
             this._userManager.Object, this._messageBus.Object, this._serviceBusSettings.Object, this._dissertationApi.Object, this._httpContextAccessor.Object);
 
         #region TestData

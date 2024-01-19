@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -44,7 +44,7 @@ public class GetPaginatedTests
         this._messageBus = new Mock<IMessageBus>();
         this._serviceBusSettings = new Mock<IOptions<ServiceBusSettings>>();
         this._dissertationApi = new Mock<IDissertationApiService>();
-        this._userService = new UserManagement_API.Service.UserService(this._mockUnitOfWork.Object,this._logger.Object,this._mapper.Object,
+        this._userService = new UserManagement_API.Service.UserService(this._mockUnitOfWork.Object, this._logger.Object, this._mapper.Object,
             this._userManager.Object, this._messageBus.Object, this._serviceBusSettings.Object, this._dissertationApi.Object, this._httpContextAccessor.Object);
 
         #region TestData
@@ -64,7 +64,7 @@ public class GetPaginatedTests
             {
                 this._applicationUser!
             },
-            count:1,
+            count: 1,
             pageNumber: paginationParameters.PageNumber,
             pageSize: paginationParameters.PageSize
         );
@@ -119,7 +119,7 @@ public class GetPaginatedTests
             {
                 this._applicationUser!
             },
-            count:1,
+            count: 1,
             pageNumber: paginationParameters.PageNumber,
             pageSize: paginationParameters.PageSize
         );
@@ -128,7 +128,7 @@ public class GetPaginatedTests
             .Returns(users);
 
         // Act & Assert
-         Assert.ThrowsAsync<NotFoundException>(async () => await this._userService.GetPaginatedStudents(paginationParameters));
+        Assert.ThrowsAsync<NotFoundException>(async () => await this._userService.GetPaginatedStudents(paginationParameters));
     }
 
     [Test]
@@ -138,11 +138,12 @@ public class GetPaginatedTests
         var paginationParameters = new DissertationStudentPaginationParameters { /* ... populate test pagination parameters ... */ };
         var users = new PagedList<ApplicationUser>(
             new List<ApplicationUser> { /* ... populate test users ... */ },
-            count:1,
+            count: 1,
             pageNumber: paginationParameters.PageNumber,
             pageSize: paginationParameters.PageSize
         );
-        var courses = new ResponseDto<IReadOnlyList<GetCourse>> {
+        var courses = new ResponseDto<IReadOnlyList<GetCourse>>
+        {
             IsSuccess = true,
             Result = new List<GetCourse> { /* ... populate test courses ... */ }
         };
@@ -181,7 +182,7 @@ public class GetPaginatedTests
             {
                 this._applicationUser!
             },
-            count:1,
+            count: 1,
             pageNumber: paginationParameters.PageNumber,
             pageSize: paginationParameters.PageSize
         );
@@ -197,14 +198,15 @@ public class GetPaginatedTests
     public async Task GetPaginatedSupervisors_ShouldReturnPaginatedSupervisorsSuccessfully()
     {
         // Arrange
-        var paginationParameters = new  SupervisorPaginationParameters{ /* ... populate test pagination parameters ... */ };
+        var paginationParameters = new SupervisorPaginationParameters { /* ... populate test pagination parameters ... */ };
         var users = new PagedList<ApplicationUser>(
             new List<ApplicationUser> { /* ... populate test users ... */ },
-            count:1,
+            count: 1,
             pageNumber: paginationParameters.PageNumber,
             pageSize: paginationParameters.PageSize
         );
-        var departments = new ResponseDto<IReadOnlyList<GetDepartment>> {
+        var departments = new ResponseDto<IReadOnlyList<GetDepartment>>
+        {
             IsSuccess = true,
             Result = new List<GetDepartment> { /* ... populate test courses ... */ }
         };

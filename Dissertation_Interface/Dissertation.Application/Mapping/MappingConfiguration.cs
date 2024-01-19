@@ -17,7 +17,7 @@ public static class MappingConfiguration
         services.AddScoped<IMapper, ServiceMapper>();
 
         TypeAdapterConfig<Domain.Entities.AcademicYear, GetAcademicYear>.NewConfig();
-        TypeAdapterConfig<Domain.Entities.Student,StudentMatchingRequest >.NewConfig()
+        TypeAdapterConfig<Domain.Entities.Student, StudentMatchingRequest>.NewConfig()
             .Map(dest => dest.StudentTopic, src => src.ResearchTopic);
 
         config.Scan(Assembly.GetExecutingAssembly());

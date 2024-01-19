@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mime;
 using System.Text;
@@ -9,6 +10,7 @@ using Shared.DTO;
 
 namespace Notification_API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class AuthenticationExtension
 {
     public static void SetupAuthentication(this IServiceCollection services, IConfiguration configuration) =>

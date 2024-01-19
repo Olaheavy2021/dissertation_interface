@@ -9,7 +9,6 @@ using Shared.MessageBus;
 using Shared.Settings;
 using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Models;
-using UserManagement_API.Data.Models.Dto;
 using UserManagement_API.Helpers;
 using UserManagement_API.Service.IService;
 
@@ -427,7 +426,8 @@ public class SupervisionRequestService : ISupervisionRequestService
 
         //delete the other supervision request for the student
         IReadOnlyList<SupervisionRequest> studentSupervisionRequests = await this._unitOfWork.SupervisionRequestRepository.GetAllAsync(
-            x => x.StudentId == supervisionRequest.StudentId && x.Id != supervisionRequest.Id);
+            x => x.StudentId == supervisionRequest.StudentId && x.Id != supervisionRequest.Id, null, null);
+
         if (studentSupervisionRequests.Any())
         {
             await this._unitOfWork.SupervisionRequestRepository.RemoveRangeAsync(studentSupervisionRequests);
@@ -514,8 +514,8 @@ public class SupervisionRequestService : ISupervisionRequestService
 
     private async Task<SupervisionCohort> GetSupervisionCohort(string supervisorId, long cohortId)
     {
-        SupervisionCohort? supervisionCohort =
-            await this._unitOfWork.SupervisionCohortRepository.GetFirstOrDefaultAsync(x => x.DissertationCohortId == cohortId && x.SupervisorId == supervisorId) ?? throw new NotFoundException(nameof(SupervisionCohort), supervisorId);
+        SupervisionCohort supervisionCohort =
+            await this._unitOfWork.SupervisionCohortRepository.GetFirstOrDefaultAsync(x => x.DissertationCohortId == cohortId && x.SupervisorId == supervisorId, null, null, null) ?? throw new NotFoundException(nameof(SupervisionCohort), supervisorId);
         return supervisionCohort;
     }
 

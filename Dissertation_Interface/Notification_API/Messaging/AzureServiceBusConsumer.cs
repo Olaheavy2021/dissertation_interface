@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Options;
@@ -16,6 +17,7 @@ using Shared.Settings;
 
 namespace Notification_API.Messaging;
 
+[ExcludeFromCodeCoverage]
 public class AzureServiceBusConsumer : IAzureServiceBusConsumer
 {
     private readonly EmailService _emailService;

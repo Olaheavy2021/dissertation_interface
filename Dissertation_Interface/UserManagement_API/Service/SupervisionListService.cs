@@ -2,6 +2,7 @@ using Shared.Constants;
 using Shared.DTO;
 using Shared.Exceptions;
 using Shared.Helpers;
+using Shared.Logging;
 using UserManagement_API.Data.IRepository;
 using UserManagement_API.Data.Models;
 using UserManagement_API.Helpers;
@@ -11,11 +12,11 @@ namespace UserManagement_API.Service;
 
 public class SupervisionListService : ISupervisionListService
 {
-    private readonly ILogger<SupervisionRequestService> _logger;
+    private readonly IAppLogger<SupervisionListService> _logger;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IDissertationApiService _dissertationApiService;
 
-    public SupervisionListService(IUnitOfWork unitOfWork, ILogger<SupervisionRequestService> logger, IDissertationApiService dissertationApiService)
+    public SupervisionListService(IUnitOfWork unitOfWork, IAppLogger<SupervisionListService> logger, IDissertationApiService dissertationApiService)
     {
         this._unitOfWork = unitOfWork;
         this._logger = logger;

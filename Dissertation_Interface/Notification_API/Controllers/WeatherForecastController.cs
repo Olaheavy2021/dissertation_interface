@@ -1,8 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Notification_API.Data.Models;
 using Notification_API.Data.Models.Dto;
 using Notification_API.Services;
-using Notification_API.Services.IServices;
 using Shared.DTO;
 using Shared.Helpers;
 
@@ -10,6 +10,7 @@ namespace Notification_API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [ExcludeFromCodeCoverage]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]

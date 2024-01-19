@@ -40,7 +40,7 @@ public class AuditLogService : IAuditLogService
         return response;
     }
 
-    public async Task<ResponseDto<PagedList<AuditLog>>> GetListOfAuditLogs(AuditLogPaginationParameters paginationParameters)
+    public virtual async Task<ResponseDto<PagedList<AuditLog>>> GetListOfAuditLogs(AuditLogPaginationParameters paginationParameters)
     {
         var parametersList = new List<SqlParameter>();
         var sqlQuery = new StringBuilder("SELECT * FROM AuditLogs");
@@ -75,7 +75,7 @@ public class AuditLogService : IAuditLogService
         return response;
     }
 
-    public async Task<ResponseDto<AuditLog>> GetAuditLog(long userId)
+    public virtual async Task<ResponseDto<AuditLog>> GetAuditLog(long userId)
     {
         var response = new ResponseDto<AuditLog>();
         await using var db = new NotificationDbContext(this._dbOptions);

@@ -371,7 +371,7 @@ public class SupervisionCohortService : ISupervisionCohortService
         if (departments == null || departments.Result == null) throw new NotFoundException("Departments", "all");
         this._logger.LogInformation("Number of departments - {count}", departments.Result.Count);
 
-        IReadOnlyList<SupervisionCohort> supervisionCohorts =await  this._db.SupervisionCohortRepository.GetAllAsync(x => x.DissertationCohortId == cohortId, includes:x=>x.Supervisor);
+        IReadOnlyList<SupervisionCohort> supervisionCohorts = await this._db.SupervisionCohortRepository.GetAllAsync(x => x.DissertationCohortId == cohortId, includes: x => x.Supervisor);
 
         if (supervisionCohorts.Any())
         {
@@ -380,13 +380,16 @@ public class SupervisionCohortService : ISupervisionCohortService
 
             return new ResponseDto<IReadOnlyList<GetSupervisionCohort>>
             {
-                IsSuccess = true, Message = SuccessMessages.DefaultSuccess, Result = mappedSupervisionCohort
+                IsSuccess = true,
+                Message = SuccessMessages.DefaultSuccess,
+                Result = mappedSupervisionCohort
             };
         }
 
         return new ResponseDto<IReadOnlyList<GetSupervisionCohort>>
         {
-            Message = ErrorMessages.DefaultError, IsSuccess = false,
+            Message = ErrorMessages.DefaultError,
+            IsSuccess = false,
         };
     }
 

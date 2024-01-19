@@ -1,4 +1,4 @@
-﻿using Shared.Enums;
+using Shared.Enums;
 using UserManagement_API.Data.Models;
 
 namespace UnitTests.UserManagementAPI.Models;

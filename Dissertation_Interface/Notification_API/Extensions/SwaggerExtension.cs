@@ -1,8 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 
 namespace Notification_API.Extensions;
-
+[ExcludeFromCodeCoverage]
 public static class SwaggerExtension
 {
     public static void SetupSwaggerBearerAuthentication(this IServiceCollection services) =>

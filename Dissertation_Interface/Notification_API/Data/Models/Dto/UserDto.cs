@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Notification_API.Data.Models.Dto;
 
+[ExcludeFromCodeCoverage]
 public class UserDto
 {
     public string Id { get; set; } = string.Empty;

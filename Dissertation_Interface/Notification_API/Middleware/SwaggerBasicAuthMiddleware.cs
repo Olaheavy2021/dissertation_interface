@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
@@ -5,6 +6,7 @@ using Shared.Constants;
 
 namespace Notification_API.Middleware;
 
+[ExcludeFromCodeCoverage]
 public class SwaggerBasicAuthMiddleware
 {
     private readonly RequestDelegate _next;

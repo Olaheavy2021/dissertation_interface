@@ -203,7 +203,7 @@ public class AuthService : IAuthService
     private async Task ConfirmStudentEmailAndSetCourse(string email, long? courseId)
     {
         //fetch the user
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(email) ?? throw new NotFoundException(nameof(ApplicationUser), email);
+        ApplicationUser user = await this._userManager.FindByEmailAsync(email) ?? throw new NotFoundException(nameof(ApplicationUser), email);
         user.EmailConfirmed = true;
         user.CourseId = courseId;
         await this._userManager.UpdateAsync(user);
@@ -212,7 +212,7 @@ public class AuthService : IAuthService
     private async Task ConfirmSupervisorEmailAndSetDepartment(string email, long? departmentId)
     {
         //fetch the user
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(email) ?? throw new NotFoundException(nameof(ApplicationUser), email);
+        ApplicationUser user = await this._userManager.FindByEmailAsync(email) ?? throw new NotFoundException(nameof(ApplicationUser), email);
         user.EmailConfirmed = true;
         user.DepartmentId = departmentId;
         await this._userManager.UpdateAsync(user);
@@ -311,7 +311,7 @@ public class AuthService : IAuthService
         this._logger.LogInformation("Attempting to assign supervisor role to an admin user");
 
         //check if the user exists already and is an admin
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(requestDto.Email) ?? throw new NotFoundException(nameof(ApplicationUser), requestDto.Email);
+        ApplicationUser user = await this._userManager.FindByEmailAsync(requestDto.Email) ?? throw new NotFoundException(nameof(ApplicationUser), requestDto.Email);
         IList<string> roles = await this._userManager.GetRolesAsync(user);
 
 
@@ -357,7 +357,7 @@ public class AuthService : IAuthService
         this._logger.LogInformation("Attempting to assign admin role to a supervisor");
 
         //check if the user exists already and is a supervisor
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException(nameof(ApplicationUser), request.Email);
+        ApplicationUser user = await this._userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException(nameof(ApplicationUser), request.Email);
         IList<string> roles = await this._userManager.GetRolesAsync(user);
 
         if (roles.Any(role => role.Equals(Roles.RoleAdmin, StringComparison.OrdinalIgnoreCase))
@@ -390,7 +390,7 @@ public class AuthService : IAuthService
         this._logger.LogInformation("Attempting to change an admin role");
 
         //check if the user exists already and is a supervisor
-        ApplicationUser? user = await this._userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException(nameof(ApplicationUser), request.Email);
+        ApplicationUser user = await this._userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException(nameof(ApplicationUser), request.Email);
         IList<string> roles = await this._userManager.GetRolesAsync(user);
 
         if (roles.Any(role => role.Equals(Roles.RoleAdmin, StringComparison.OrdinalIgnoreCase)))

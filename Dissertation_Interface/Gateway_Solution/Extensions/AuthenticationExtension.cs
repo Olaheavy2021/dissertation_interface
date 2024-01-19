@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Gateway_Solution.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class AuthenticationExtension
 {
     public static void SetupAuthentication(this IServiceCollection services, IConfiguration configuration) =>

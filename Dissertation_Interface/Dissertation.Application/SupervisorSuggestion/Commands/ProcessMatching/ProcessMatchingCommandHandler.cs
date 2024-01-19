@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.SupervisorSuggestion.Commands.InitiateMatching;
+using Dissertation.Application.SupervisorSuggestion.Commands.InitiateMatching;
 using Dissertation.Application.Utility;
 using Dissertation.Domain.Interfaces;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -8,7 +8,7 @@ using Shared.Logging;
 
 namespace Dissertation.Application.SupervisorSuggestion.Commands.ProcessMatching;
 
-public class ProcessMatchingCommandHandler : IRequestHandler<ProcessMatchingCommand,InitiateMatchingResponse>
+public class ProcessMatchingCommandHandler : IRequestHandler<ProcessMatchingCommand, InitiateMatchingResponse>
 {
     private readonly IDissertationMatchingService _dissertationMatchingService;
     private readonly IAppLogger<InitiateMatchingCommandHandler> _logger;

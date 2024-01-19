@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Notification_API.Data.Models.Dto;
 
+[ExcludeFromCodeCoverage]
 public class AuditLogListDto
 {
     public long Id { get; set; }

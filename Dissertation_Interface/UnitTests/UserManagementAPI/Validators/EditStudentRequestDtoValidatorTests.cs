@@ -1,4 +1,4 @@
-﻿using FluentValidation.TestHelper;
+using FluentValidation.TestHelper;
 using Shared.DTO;
 using UserManagement_API.Data.Models.Validators;
 

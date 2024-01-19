@@ -1,4 +1,4 @@
-﻿using Dissertation.Application.DTO.Response;
+using Dissertation.Application.DTO.Response;
 using Dissertation.Application.Student.Queries.GetStudentById;
 using Dissertation.Application.Supervisor.Queries.GetSupervisorById;
 using Dissertation.Infrastructure.Persistence.IRepository;
@@ -59,7 +59,8 @@ public class GetSuggestionsForStudentsQueryHandler : IRequestHandler<GetSuggesti
             this._logger.LogWarning("There are no supervisor suggestions for this student - ");
             return new ResponseDto<List<GetSupervisorSuggestion>>()
             {
-                IsSuccess = false, Message = "There are no suggestions for you at the moment",
+                IsSuccess = false,
+                Message = "There are no suggestions for you at the moment",
             };
         }
 
@@ -72,20 +73,23 @@ public class GetSuggestionsForStudentsQueryHandler : IRequestHandler<GetSuggesti
 
             if (!supervisor.IsSuccess || supervisor.Result?.SupervisorDetails == null)
             {
-                this._logger.LogWarning("Failed to fetch supervisors details - {userId}",supervisorSuggestion.SupervisorId );
+                this._logger.LogWarning("Failed to fetch supervisors details - {userId}", supervisorSuggestion.SupervisorId);
                 continue;
             }
 
-            resultList.Add( new GetSupervisorSuggestion
+            resultList.Add(new GetSupervisorSuggestion
             {
-                CompatibilityScore = supervisorSuggestion.CompatibilityScore, Supervisor = supervisor.Result
+                CompatibilityScore = supervisorSuggestion.CompatibilityScore,
+                Supervisor = supervisor.Result
             });
         }
 
         this._logger.LogInformation($"Successfully processed {resultList.Count} supervisor suggestions");
         return new ResponseDto<List<GetSupervisorSuggestion>>()
         {
-            Message = SuccessMessages.DefaultSuccess, Result = resultList, IsSuccess = true
+            Message = SuccessMessages.DefaultSuccess,
+            Result = resultList,
+            IsSuccess = true
         };
     }
 }

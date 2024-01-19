@@ -18,7 +18,7 @@ using UserManagement_API.Service.IService;
 
 namespace UnitTests.UserManagementAPI.UserService;
 
-public class EditSupervisorTest
+public class EditStudentTest
 {
     private Mock<IHttpContextAccessor> _httpContextAccessor = null!;
     private Mock<FakeUserManager> _userManager = null!;
@@ -30,6 +30,7 @@ public class EditSupervisorTest
     private Mock<IDissertationApiService> _dissertationApi = null!;
     private ApplicationUser? _applicationUser = new();
     private ServiceBusSettings _serviceBusSettingsValue = new();
+    private UserDto _userDto = new();
     private UserManagement_API.Service.UserService _userService = null!;
 
 
@@ -49,50 +50,52 @@ public class EditSupervisorTest
         this._userService = new UserManagement_API.Service.UserService(this._mockUnitOfWork.Object, this._logger.Object, this._mapper.Object,
             this._userManager.Object, this._messageBus.Object, this._serviceBusSettings.Object, this._dissertationApi.Object, this._httpContextAccessor.Object);
 
+
         #region TestData
         this._applicationUser = TestData.User;
         this._applicationUser.ProfilePicture = TestData.ProfilePicture;
         this._serviceBusSettingsValue = TestData.ServiceBusSettings;
+        this._userDto = TestData.UserDtoResponse;
         #endregion
     }
 
     [Test]
-    public void EditSupervisor_ShouldThrowUnauthorizedException_WhenLoggedInUserIsNull()
+    public void EditStudent_ShouldThrowUnauthorizedException_WhenLoggedInUserIsNull()
     {
         // Arrange
-        var request = new EditSupervisorRequestDto { /* ... populate request data ... */ };
+        var request = new EditStudentRequestDto { /* ... populate request data ... */ };
 
         // Act & Assert
-        UnauthorizedException? ex = Assert.ThrowsAsync<UnauthorizedException>(async () => await this._userService.EditSupervisor(request, null));
+        UnauthorizedException? ex = Assert.ThrowsAsync<UnauthorizedException>(async () => await this._userService.EditStudent(request, null));
         Assert.That(ex!.Message, Is.Not.Null);
     }
 
     [Test]
-    public void EditSupervisor_ShouldThrowBadRequestException_WhenValidationFails()
+    public void EditStudent_ShouldThrowBadRequestException_WhenValidationFails()
     {
         // Arrange
-        var request = new EditSupervisorRequestDto { /* ... populate request data ... */ };
+        var request = new EditStudentRequestDto { };
         var loggedInUser = "user@test.com";
         var validationResult = new ValidationResult(new List<ValidationFailure>
         {
             new ValidationFailure("Field", "Error message")
         });
-        var validator = new Mock<IValidator<EditSupervisorRequestDto>>();
+        var validator = new Mock<IValidator<EditStudentRequestDto>>();
         validator.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>())).ReturnsAsync(validationResult);
 
         // Act & Assert
-        BadRequestException? ex = Assert.ThrowsAsync<BadRequestException>(async () => await this._userService.EditSupervisor(request, loggedInUser));
+        BadRequestException? ex = Assert.ThrowsAsync<BadRequestException>(async () => await this._userService.EditStudent(request, loggedInUser));
         Assert.That(ex?.Message, Is.EqualTo("Invalid Edit Request"));
     }
 
     [Test]
-    public async Task EditSupervisor_ShouldReturnFailure_WhenSupervisorDoesNotExist()
+    public async Task EditStudent_ShouldReturnFailure_WhenStudentDoesNotExist()
     {
         // Arrange
-        var request = new EditSupervisorRequestDto
+        var request = new EditStudentRequestDto
         {
-            DepartmentId = 1,
-            StaffId = "staff",
+            CourseId = 1,
+            StudentId = "student",
             FirstName = this._applicationUser!.FirstName!,
             UserId = this._applicationUser!.Id,
             LastName = this._applicationUser.LastName
@@ -101,45 +104,70 @@ public class EditSupervisorTest
         this._userManager.Setup(manager => manager.FindByIdAsync(request.UserId)).ReturnsAsync((ApplicationUser)null!);
 
         // Act
-        ResponseDto<UserDto> result = await this._userService.EditSupervisor(request, loggedInUser);
+        ResponseDto<UserDto> result = await this._userService.EditStudent(request, loggedInUser);
         Assert.Multiple(() =>
         {
 
             // Assert
             Assert.That(result.IsSuccess, Is.False);
-            Assert.That(result.Message, Is.EqualTo($"Supervisor with this userid - {request.UserId} does not exist"));
+            Assert.That(result.Message, Is.EqualTo($"Student with this userid - {request.UserId} does not exist"));
         });
     }
 
     [Test]
-    public async Task EditSupervisor_ShouldReturnSuccess_WhenUpdateIsSuccessful()
+    public async Task EditStudent_ShouldReturnFailure_WhenUsernameAlreadyExists()
     {
         // Arrange
-        var request = new EditSupervisorRequestDto
+        var request = new EditStudentRequestDto
         {
-            StaffId = this._applicationUser!.UserName!,
-            FirstName = this._applicationUser.FirstName,
-            LastName = this._applicationUser.LastName,
-            UserId = this._applicationUser.Id,
-            DepartmentId = 1
+            CourseId = 1,
+            StudentId = "student",
+            FirstName = this._applicationUser!.FirstName!,
+            UserId = this._applicationUser!.Id,
+            LastName = this._applicationUser.LastName
         };
         var loggedInUser = "user@test.com";
-        var user = new ApplicationUser { /* ... populate user data ... */ };
-        var mappedUserDto = new UserDto { /* ... populate mapped user dto data ... */ };
-        this._userManager.Setup(manager => manager.FindByIdAsync(request.UserId)).ReturnsAsync(user);
-        this._userManager.Setup(manager => manager.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
-        this._mockUnitOfWork.Setup(db => db.ApplicationUserRepository.DoesUserNameExist(request.StaffId, It.IsAny<CancellationToken>())).ReturnsAsync(false);
-        this._mapper.Setup(mapper => mapper.Map<UserDto>(It.IsAny<ApplicationUser>())).Returns(mappedUserDto);
+        this._userManager.Setup(manager => manager.FindByIdAsync(request.UserId)).ReturnsAsync(this._applicationUser);
+        this._mockUnitOfWork.Setup(db => db.ApplicationUserRepository.DoesUserNameExist(request.StudentId, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         // Act
-        ResponseDto<UserDto> result = await this._userService.EditSupervisor(request, loggedInUser);
-
-        // Assert
-        Assert.That(result.IsSuccess, Is.True);
+        ResponseDto<UserDto> result = await this._userService.EditStudent(request, loggedInUser);
         Assert.Multiple(() =>
         {
+
+            // Assert
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.Message, Is.EqualTo("Username already exists for another user"));
+        });
+    }
+
+    [Test]
+    public async Task EditStudent_ShouldReturnSuccess_WhenUpdateIsSuccessful()
+    {
+        // Arrange
+        var request = new EditStudentRequestDto
+        {
+            CourseId = 1,
+            StudentId = "student",
+            FirstName = this._applicationUser!.FirstName!,
+            UserId = this._applicationUser!.Id,
+            LastName = this._applicationUser.LastName
+        };
+        var loggedInUser = "user@test.com";
+        this._userManager.Setup(manager => manager.FindByIdAsync(request.UserId)).ReturnsAsync(this._applicationUser);
+        this._userManager.Setup(manager => manager.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
+        this._mockUnitOfWork.Setup(db => db.ApplicationUserRepository.DoesUserNameExist(request.StudentId, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+        this._mapper.Setup(mapper => mapper.Map<UserDto>(It.IsAny<ApplicationUser>())).Returns(this._userDto);
+
+        // Act
+        ResponseDto<UserDto> result = await this._userService.EditStudent(request, loggedInUser);
+        Assert.Multiple(() =>
+        {
+
+            // Assert
+            Assert.That(result.IsSuccess, Is.True);
             Assert.That(result.Message, Is.EqualTo(SuccessMessages.DefaultSuccess));
-            Assert.That(result.Result, Is.EqualTo(mappedUserDto));
+            Assert.That(result.Result, Is.EqualTo(this._userDto));
         });
     }
 }

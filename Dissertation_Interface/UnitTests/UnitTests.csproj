@@ -13,6 +13,7 @@
         <PackageReference Include="Asp.Versioning.Mvc" Version="7.1.0" />
         <PackageReference Include="Bogus" Version="34.0.2" />
         <PackageReference Include="FluentAssertions" Version="6.12.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.15" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.11" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
@@ -27,6 +28,10 @@
       <ProjectReference Include="..\Dissertation.Application\Dissertation.Application.csproj" />
       <ProjectReference Include="..\UserManagement_API\UserManagement_API.csproj" />
         <ProjectReference Include="..\Notification_API\Notification_API.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="NotificationAPI\Service\" />
     </ItemGroup>
 
 </Project>

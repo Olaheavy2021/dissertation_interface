@@ -25,7 +25,7 @@ public class EmailService : IEmailService
         this._configuration = configuration;
     }
 
-    private async Task<string> SaveEmail(LogEmailRequestDto request)
+    public async Task<string> SaveEmail(LogEmailRequestDto request)
     {
         EmailLogger emailLog = new()
         {

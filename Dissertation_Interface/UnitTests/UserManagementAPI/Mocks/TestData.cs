@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using Dissertation.Domain.Entities;
+using Notification_API.Settings;
 using Shared.DTO;
 using Shared.Settings;
 using UserManagement_API.Data.Models;
@@ -55,6 +57,15 @@ public static class TestData
         EmailLoggerQueue = "emaillogger"
     };
 
+    internal static readonly SendGridSettings SendGridSettings = new()
+    {
+        ApiKey = "gdgdgddgdgdg",
+        From = "c2042523@hallam.shu.ac.uk",
+        Name = "SHU Dissertation Interface",
+        TestEmail = "dissertationinterfacetest@gmail.com",
+        AdminEmail = "dissertationinterfacetest@gmail.com"
+    };
+
     internal static readonly UserDto UserDtoResponse = new()
     {
         UserName = UserName,
@@ -89,4 +100,16 @@ public static class TestData
         LastName = LastName,
         Role = "Admin"
     };
+
+    internal static readonly StudentOrSupervisorRegistrationDto StudentOrSupervisorRegistrationDto = new()
+    {
+        Password = "Password",
+        FirstName = FirstName,
+        LastName = LastName,
+        UserName = UserName,
+        CourseId = 1,
+        DepartmentId = 2
+    };
+
+    internal static readonly Supervisor Supervisor = Supervisor.Create(User.Id, 1);
 }

@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Primitives;
 
 namespace Notification_API.Middleware.Correlation;
 
+[ExcludeFromCodeCoverage]
 public class CorrelationIdMiddleware
 {
     private readonly RequestDelegate _next;

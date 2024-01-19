@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 
 namespace Notification_API.Data.Models;
 
+[ExcludeFromCodeCoverage]
 public class EmailLogger
 {
     [Key]

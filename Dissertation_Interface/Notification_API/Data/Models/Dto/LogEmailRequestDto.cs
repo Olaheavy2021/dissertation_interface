@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Notification_API.Data.Models.Dto;
 
+[ExcludeFromCodeCoverage]
 public class LogEmailRequestDto
 {
     public string Message { get; set; } = string.Empty;

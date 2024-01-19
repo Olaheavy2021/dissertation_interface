@@ -1,4 +1,4 @@
-﻿using UserManagement_API.Data.Models;
+using UserManagement_API.Data.Models;
 
 namespace UnitTests.UserManagementAPI.Models;
 

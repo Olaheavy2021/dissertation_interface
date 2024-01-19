@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
@@ -7,6 +8,7 @@ using Shared.DTO;
 
 namespace Gateway_Solution.Middleware;
 
+[ExcludeFromCodeCoverage]
 public static class OcelotConfigurator
 {
     public static OcelotPipelineConfiguration CreateConfiguration()

@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Notification_API
 {
+    [ExcludeFromCodeCoverage]
     public class WeatherForecast
     {
         public DateOnly Date { get; set; }

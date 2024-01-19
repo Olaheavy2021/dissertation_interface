@@ -9,6 +9,7 @@ using UserManagement_API.Service.IService;
 
 namespace UnitTests.UserManagementAPI.SupervisionCohortService;
 
+[TestFixture]
 public class CreateSupervisionCohortServiceTest
 {
     private Mock<IUnitOfWork> _mockUnitOfWork = null!;

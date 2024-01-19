@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
@@ -52,3 +53,6 @@ app.UseAuthorization();
 OcelotPipelineConfiguration configuration = OcelotConfigurator.CreateConfiguration();
 app.UseOcelot(configuration).GetAwaiter().GetResult();
 app.Run();
+
+[ExcludeFromCodeCoverage]
+public partial class Program { }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -9,9 +9,7 @@ namespace Dissertation.Infrastructure.Migrations
     public partial class CreateSupervisorSuggestionTable : Migration
     {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.CreateTable(
+        protected override void Up(MigrationBuilder migrationBuilder) => migrationBuilder.CreateTable(
                 name: "SupervisorSuggestions",
                 columns: table => new
                 {
@@ -32,13 +30,9 @@ namespace Dissertation.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_SupervisorSuggestions", x => x.Id);
                 });
-        }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
+        protected override void Down(MigrationBuilder migrationBuilder) => migrationBuilder.DropTable(
                 name: "SupervisorSuggestions");
-        }
     }
 }

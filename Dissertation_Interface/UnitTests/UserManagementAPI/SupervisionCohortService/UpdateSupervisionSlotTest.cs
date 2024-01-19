@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -36,7 +36,7 @@ public class UpdateSupervisionSlotTest
     {
         // Arrange
         var request = new UpdateSupervisionCohortRequest { SupervisionCohortId = 99, SupervisionSlots = 10 };
-        this._mockUnitOfWork.Setup(u => u.SupervisionCohortRepository.GetAsync(It.IsAny<Expression<Func<SupervisionCohort, bool>>>(),null, null))
+        this._mockUnitOfWork.Setup(u => u.SupervisionCohortRepository.GetAsync(It.IsAny<Expression<Func<SupervisionCohort, bool>>>(), null, null))
             .ReturnsAsync((SupervisionCohort)null!);
 
         // Act & Assert
