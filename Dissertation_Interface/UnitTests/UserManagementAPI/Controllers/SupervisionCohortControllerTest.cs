@@ -19,10 +19,35 @@ public class SupervisionCohortControllerTest
     }
 
     [Test]
-    public async Task CreateSupervisionCohort_ReturnsOkResult_WithValidModel()
+    public async Task CreateSupervisionCohort_ReturnsOkResult_WithInvalidModel()
     {
         // Arrange
         var createSupervisionCohortListRequest = new CreateSupervisionCohortListRequest { /* set properties */ };
+        var responseDto = new ResponseDto<string> { /* set properties */ };
+
+        this._mockSupervisionCohortService.Setup(service => service.CreateSupervisionCohort(createSupervisionCohortListRequest, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(responseDto);
+
+        // Act
+        IActionResult result = await this._controller.CreateSupervisionCohort(createSupervisionCohortListRequest);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+    }
+
+    [Test]
+    public async Task CreateSupervisionCohort_ReturnsOkResult_WithValidModel()
+    {
+        var request1 = new CreateSupervisionCohortRequest() { SupervisionSlot = 4 };
+        // Arrange
+        var createSupervisionCohortListRequest = new CreateSupervisionCohortListRequest
+        {
+            DissertationCohortId = 2,
+            SupervisionCohortRequests = new List<CreateSupervisionCohortRequest>()
+            {
+                request1
+            }
+        };
         var responseDto = new ResponseDto<string> { /* set properties */ };
 
         this._mockSupervisionCohortService.Setup(service => service.CreateSupervisionCohort(createSupervisionCohortListRequest, It.IsAny<CancellationToken>()))
@@ -132,6 +157,23 @@ public class SupervisionCohortControllerTest
 
         // Act
         IActionResult result = await this._controller.GetSupervisionCohortMetrics(cohortId);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+    }
+
+    [Test]
+    public async Task GetAllSupervisionCohort_ReturnsOkResult()
+    {
+        // Arrange
+        long cohortId = 1; // Example ID
+        var responseDto = new ResponseDto<IReadOnlyList<GetSupervisionCohort>>();
+
+        this._mockSupervisionCohortService.Setup(service => service.GetAllSupervisionCohort(cohortId))
+            .ReturnsAsync(responseDto);
+
+        // Act
+        IActionResult result = await this._controller.GetAllSupervisionCohort(cohortId);
 
         // Assert
         Assert.That(result, Is.InstanceOf<OkObjectResult>());

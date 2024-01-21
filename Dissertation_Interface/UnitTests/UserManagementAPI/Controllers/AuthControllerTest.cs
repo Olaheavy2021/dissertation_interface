@@ -45,6 +45,23 @@ public class AuthControllerTest
     }
 
     [Test]
+    public async Task Login_ReturnsUnauthorized_WhenCredentialsAreInValid()
+    {
+        //Arrange
+        var loginDto = new LoginRequestDto { Password = "Password10$", Email = "email@shu.ac.uk" };
+        var authResponseDto = new ResponseDto<AuthResponseDto> { IsSuccess = false, };
+        this._mockAuthService?.Setup(service => service.Login(It.IsAny<LoginRequestDto>())).ReturnsAsync(authResponseDto);
+
+        var controller = new AuthController(this._mockAuthService?.Object!, this._mockProfilePictureService?.Object!);
+
+        // Act
+        IActionResult result = await controller.Login(loginDto);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<UnauthorizedObjectResult>());
+    }
+
+    [Test]
     public async Task InitiateResetPassword_ReturnsOkResult_WithValidModel()
     {
         var responseDto = new ResponseDto<string> { IsSuccess = true };
@@ -124,6 +141,22 @@ public class AuthControllerTest
 
         // Act
         IActionResult result = await controller.UpdateProfile(profilePictureUploadRequestDto);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+    }
+
+    [Test]
+    public async Task ConfirmEmail_ReturnsOKResult_WithValidModel()
+    {
+        var responseDto = new ResponseDto<ConfirmEmailResponseDto> { IsSuccess = true };
+        this._mockAuthService?.Setup(service => service.ConfirmEmail(It.IsAny<ConfirmEmailRequestDto>())).ReturnsAsync(responseDto);
+        var requestDto = new ConfirmEmailRequestDto() { UserName = "c234563", Token = "hgdsgsdh" };
+
+        var controller = new AuthController(this._mockAuthService!.Object, this._mockProfilePictureService!.Object);
+
+        // Act
+        IActionResult result = await controller.ConfirmEmail(requestDto);
 
         // Assert
         Assert.That(result, Is.InstanceOf<OkObjectResult>());

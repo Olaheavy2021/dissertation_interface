@@ -136,6 +136,35 @@ public class SupervisionRequestTest
     }
 
     [Test]
+    public async Task CreateSupervisionRequest_ShouldReturnFailure_WhenSupervisionCohortDoesNotExist()
+    {
+        // Arrange
+        var request = new CreateSupervisionRequest
+        {
+            SupervisorId = this._applicationUser?.Id!
+        };
+        var dissertationCohort = new GetDissertationCohort
+        {
+            SupervisionChoiceDeadline = DateTime.UtcNow.AddDays(5)
+        };
+        this._mockDissertationApiService.SetupSequence(service => service.GetActiveDissertationCohort())
+            .ReturnsAsync(new ResponseDto<GetDissertationCohort> { Result = dissertationCohort })
+            .ReturnsAsync(new ResponseDto<GetDissertationCohort> { Result = dissertationCohort }); // If called more than once
+        this._mockSupervisionCohortService.Setup(service => service.GetSupervisionCohort(It.IsAny<SupervisionCohortParameters>()))
+            .ReturnsAsync(new ResponseDto<SupervisionCohort> { Result = null!, IsSuccess = false });
+
+        // Act
+        ResponseDto<string> result = await this._supervisionRequestService.CreateSupervisionRequest(request, new CancellationToken());
+        Assert.Multiple(() =>
+        {
+
+            // Assert
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.Result, Is.EqualTo(ErrorMessages.DefaultError));
+        });
+    }
+
+    [Test]
     public async Task CreateSupervisionRequest_ShouldReturnFailure_WhenStudentHasThreeActiveRequests()
     {
         // Arrange
@@ -153,6 +182,28 @@ public class SupervisionRequestTest
         {
             Assert.That(result.IsSuccess, Is.False);
             Assert.That(result.Message, Is.EqualTo("You can only have 3 pending requests at a time"));
+        });
+    }
+
+    [Test]
+    public async Task CreateSupervisionRequest_ShouldReturnFailure_WhenStudentIdIsNull()
+    {
+        // Arrange
+        var request = new CreateSupervisionRequest { /* ... populate request data ... */ };
+        SetupDissertationApiWithActiveCohort();
+        var context = new DefaultHttpContext {  Items = { ["UserId"] = string.Empty }};
+        this._mockHttpContextAccessor.Setup(accessor => accessor.HttpContext).Returns(context);
+        SetupSupervisionCohortServiceWithAvailableSlot();
+        SetupSupervisionRequestRepositoryWithActiveRequests(3);
+
+        // Act
+        ResponseDto<string> result = await this._supervisionRequestService.CreateSupervisionRequest(request, new CancellationToken());
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.Message, Is.EqualTo("Invalid Request"));
         });
     }
 
@@ -615,7 +666,16 @@ public class SupervisionRequestTest
             .Setup(repo => repo.SupervisionListRepository.AddAsync(It.IsAny<SupervisionList>()))
             .Returns(Task.CompletedTask) // As AddAsync is likely a void async method, we return a completed task
             .Verifiable();
-        ReadOnlyCollection<SupervisionRequest> supervisionRequests = new List<SupervisionRequest>().AsReadOnly();
+        var studentSupervisionRequests = SupervisionRequest.Create(
+            "supervisorId",
+            "studentId",
+            20222
+        );
+        ReadOnlyCollection<SupervisionRequest> supervisionRequests = new List<SupervisionRequest>()
+        {
+            studentSupervisionRequests
+        }.AsReadOnly();
+
 
         this._mockUnitOfWork
             .Setup(repo => repo.SupervisionRequestRepository.GetAllAsync(
@@ -678,7 +738,6 @@ public class SupervisionRequestTest
             .ReturnsAsync(supervisionRequest);
     }
 
-
     private void SetupDissertationApiWithActiveCohort()
     {
         var dissertationCohort = new GetDissertationCohort
@@ -714,7 +773,6 @@ public class SupervisionRequestTest
         this._mockUnitOfWork.Setup(repo => repo.SupervisionRequestRepository.CountWhere(
                 It.IsAny<Expression<Func<SupervisionRequest, bool>>>()))
             .ReturnsAsync(activeRequestsCount);
-
 
     private void SetupCheckIfStudentHasAPendingRequestWithThisSupervisor(bool hasPendingRequest) =>
         this._mockUnitOfWork.Setup(repo => repo.SupervisionRequestRepository.AnyAsync(It.IsAny<Expression<Func<SupervisionRequest, bool>>>()))
@@ -805,6 +863,4 @@ public class SupervisionRequestTest
             ))
             .ReturnsAsync(expectedSupervisionCohort);
     }
-
-
 }
